@@ -13,6 +13,7 @@ public:
 
 	double dec_ET;
 	double lambda;
+	double mu;
 	double lam_w;
 	double half_p[DIMENSION];
 	double stress[DIMENSION][DIMENSION];

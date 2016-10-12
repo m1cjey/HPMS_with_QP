@@ -4307,6 +4307,7 @@ hyperelastic::hyperelastic()
 	pnd0=0;
 	flag_wall=0;
 	lambda=1;
+	mu=0;
 	J=0;
 	pnd=0;
 	for(int D=0;D<DIMENSION;D++)
