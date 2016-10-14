@@ -19,7 +19,7 @@ mpsconfig::mpsconfig()
 	ss>>step;
 	fin.close();*/
 	
-	step=350000;				//全step数	step=20000;//40000;	//30000;//10000;;	//79*20+1;
+	step=1000;				//全step数	step=20000;//40000;	//30000;//10000;;	//79*20+1;
 	switch_FEM=false;		//FEMを実行するかしないか false
 	nonlinear_elastic=false;	//弾性体非線形計算するかtrue
 	switch_vis=OFF;			//粘性項計算するかしないか・・・これはあとで消す
@@ -33,7 +33,7 @@ mpsconfig::mpsconfig()
 	current_time=0.0;
 	dimension=3;
 
-	interval=10; //10	//particle_movie.mgfの出力間隔。2以上の整数にすること
+	interval=1; //10	//particle_movie.mgfの出力間隔。2以上の整数にすること
 	EM_interval=1;//1	//電磁場計算を何ステップに一回行うか。通常は1に設定
 	motion_interval=1;	//運動方程式を何回に一回解くか
 	
@@ -333,7 +333,7 @@ mpsconfig::mpsconfig()
 	h_dis=1.9*distancebp;
 	h_dis_w=0.5*distancebp;
 	//h_vis=100;
-	flag_vis=ON;
+	flag_vis=OFF;
 	nr_time=5000;	//15/2/8
 	flag_wall=OFF;
 }

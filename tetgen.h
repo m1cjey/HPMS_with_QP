@@ -360,7 +360,7 @@ class tetgenio {
 
   // `segmentconstraintlist': An array of segment max. length constraints.
   //   Three REALs per constraint. The first two (at indcies [0] and [1]) 
-  //   are the indices of the endpoints of the segment, the third (at index
+  //   are the indices of the endqoints of the segment, the third (at index
   //   [2]) is its maximum length bound.
   REAL *segmentconstraintlist;
   int numberofsegmentconstraints;
@@ -369,8 +369,8 @@ class tetgenio {
   pbcgroup *pbcgrouplist;
   int numberofpbcgroups;
 
-  // `trifacelist':  An array of triangular face endpoints.  The first
-  //   face's endpoints are at indices [0], [1] and [2], followed by the
+  // `trifacelist':  An array of triangular face endqoints.  The first
+  //   face's endqoints are at indices [0], [1] and [2], followed by the
   //   remaining faces.  Three ints per face.
   // `adjtetlist':  An array of adjacent tetrahedra to the faces of
   //   trifacelist. Each face has at most two adjacent tets, the first
@@ -383,7 +383,7 @@ class tetgenio {
   int *trifacemarkerlist;
   int numberoftrifaces;
 
-  // `edgelist':  An array of edge endpoints.  The first edge's endpoints
+  // `edgelist':  An array of edge endqoints.  The first edge's endqoints
   //   are at indices [0] and [1], followed by the remaining edges.  Two
   //   ints per edge.
   // `edgemarkerlist':  An array of edge markers; one int per edge.
@@ -658,7 +658,7 @@ class tetgenbehavior {
   int metric;                                              // '-m' switch, 0.
   int varvolume;                            // '-a' switch without number, 0.
   int fixedvolume;                             // '-a' switch with number, 0.
-  int insertaddpoints;                                     // '-i' switch, 0.
+  int insertaddqoints;                                     // '-i' switch, 0.
   int regionattrib;                                        // '-A' switch, 0.
   int conformdel;                                          // '-D' switch, 0.
   int diagnose;                                            // '-d' switch, 0.
@@ -741,7 +741,7 @@ class tetgenbehavior {
     fixedvolume = 0;
     maxvolume = -1.0;
     regionattrib = 0;
-    insertaddpoints = 0;
+    insertaddqoints = 0;
     diagnose = 0;
     offcenter = 0;
     conformdel = 0;
@@ -895,11 +895,11 @@ class tetgenmesh {
 // then we have: e0 (v0, v1), e1 (v1, v2), e2 (v2, v0).                      //
 //                                                                           //
 // A subsegment has exactly the same data fields as a subface has, but only  //
-// uses some of them. It has 2 pointers to its endpoints, 2 pointers to its  //
+// uses some of them. It has 2 pointers to its endqoints, 2 pointers to its  //
 // adjoining (and collinear) subsegments, a pointer to a subface containing  //
 // it (there may exist any number of subfaces having it, choose one of them  //
-// arbitrarily). The geometric relation between its endpoints and adjoining  //
-// subsegments is kept with respect to the storing order of its endpoints.   //
+// arbitrarily). The geometric relation between its endqoints and adjoining  //
+// subsegments is kept with respect to the storing order of its endqoints.   //
 //                                                                           //
 // The data structure of point is relatively simple.  A point is a list of   //
 // floating-point numbers, starting with the x, y, and z coords, followed by //
@@ -937,7 +937,7 @@ class tetgenmesh {
 //                                                                           //
 // How is the face ring formed?  Let s be a subsegment, f is one of subfaces //
 // containing s as an edge.  The direction of s is stipulated from its first //
-// endpoint to its second (according to their storage in s). Once the dir of //
+// endqoint to its second (according to their storage in s). Once the dir of //
 // s is determined, the other two edges of f are oriented to follow this dir.//
 // The "directional normal" N_f is a vector formed from any point in f and a //
 // points orthogonally above f.                                              //
@@ -1899,7 +1899,7 @@ class tetgenmesh {
 
   void transfernodes();
   long reconstructmesh();
-  void insertconstrainedpoints(tetgenio *addio);
+  void insertconstrainedqoints(tetgenio *addio);
   bool p1interpolatebgm(point pt, triface* bgmtet, long *scount);
   void interpolatesizemap();
   void duplicatebgmesh();
@@ -3345,7 +3345,7 @@ inline bool tetgenmesh::isfacehaspoint(face* s, point testpoint) {
          (s->sh[5] == (shellface) testpoint);
 }
 
-// isfacehasedge() returns TRUE if the edge (given by its two endpoints) is
+// isfacehasedge() returns TRUE if the edge (given by its two endqoints) is
 //   one of the three edges of the subface 's'.
 
 inline bool tetgenmesh::isfacehasedge(face* s, point tend1, point tend2) {

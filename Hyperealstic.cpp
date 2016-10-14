@@ -78,7 +78,63 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HY
 		output_energy(CON,PART,HYPER,t);
 	}
 
-	newton_raphson(CON,PART,HYPER,HYPER1,t,F);
+	//newton_raphson(CON,PART,HYPER,HYPER1,t,F);
+	double *Nr=new double [h_num];
+	double *Nl=new double [h_num*h_num];
+	for(int i=0;i<h_num;i++)
+	{
+		Nr[i]=0;
+		for(int j=0;j<h_num;j++)
+		{
+			if(j==i)	Nl[i*h_num+j]=1;
+			else
+			{
+				Nl[i*h_num+j]=0;
+			}
+		}
+	}
+
+	for(int i=0;i<h_num;i++)
+	{
+		for(int j=0;j<h_num;j++)
+		{
+			Nr[i]+=HYPER[i].stress[A_X][A_X]*HYPER1[i*h_num+j].DgDq[A_X]+HYPER[i].stress[A_X][A_Y]*HYPER1[i*h_num+j].DgDq[A_Y]+HYPER[i].stress[A_X][A_Z]*HYPER1[i*h_num+j].DgDq[A_Z]
+			+HYPER[i].stress[A_Y][A_X]*HYPER1[i*h_num+j].DgDq[A_X]+HYPER[i].stress[A_Y][A_Y]*HYPER1[i*h_num+j].DgDq[A_Y]+HYPER[i].stress[A_Y][A_Z]*HYPER1[i*h_num+j].DgDq[A_Z]
+			+HYPER[i].stress[A_Z][A_X]*HYPER1[i*h_num+j].DgDq[A_X]+HYPER[i].stress[A_Z][A_Y]*HYPER1[i*h_num+j].DgDq[A_Y]+HYPER[i].stress[A_Z][A_Z]*HYPER1[i*h_num+j].DgDq[A_Z];
+
+			Nl[i*h_num+j]=HYPER1[i*h_num+j].DgDq[A_X]+HYPER1[i*h_num+j].DgDq[A_Y]+HYPER1[i*h_num+j].DgDq[A_Z];
+		}
+	}
+	gauss(Nl,Nr,h_num);
+	for(int i=0;i<h_num;i++)	HYPER[i].lambda=Nr[i];		
+
+
+	delete[]	Nr;
+	delete[]	Nl;
+
+
+	double dis_x=0;
+	double dis_y=0;
+	double dis_z=0;
+	for(int i=0;i<h_num;i++)
+	{
+		for(int j=0;j<h_num;j++)
+		{
+			dis_x+=HYPER[i].stress[A_X][A_X]*HYPER1[i*h_num+j].DgDq[A_X]+HYPER[i].stress[A_X][A_Y]*HYPER1[i*h_num+j].DgDq[A_Y]+HYPER[i].stress[A_X][A_Z]*HYPER1[i*h_num+j].DgDq[A_Z]-HYPER[i].lambda*HYPER1[i*h_num+j].DgDq[A_X];
+			dis_y+=HYPER[i].stress[A_Y][A_X]*HYPER1[i*h_num+j].DgDq[A_X]+HYPER[i].stress[A_Y][A_Y]*HYPER1[i*h_num+j].DgDq[A_Y]+HYPER[i].stress[A_Y][A_Z]*HYPER1[i*h_num+j].DgDq[A_Z]-HYPER[i].lambda*HYPER1[i*h_num+j].DgDq[A_Y];
+			dis_z+=HYPER[i].stress[A_Z][A_X]*HYPER1[i*h_num+j].DgDq[A_X]+HYPER[i].stress[A_Z][A_Y]*HYPER1[i*h_num+j].DgDq[A_Y]+HYPER[i].stress[A_Z][A_Z]*HYPER1[i*h_num+j].DgDq[A_Z]-HYPER[i].lambda*HYPER1[i*h_num+j].DgDq[A_Z];
+		}
+	}
+	if(t==1)
+	{
+		ofstream int0("dis.csv", ios::trunc);
+		int0.close();
+	}
+
+	ofstream fs("dis.csv",ios::app);
+	fs<<dis_x<<","<<dis_y<<", "<<dis_z<<endl;
+	fs.close();
+
 
 	int f_wall=CON.get_flag_wall();
 	//壁計算無
@@ -311,9 +367,9 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HY
 		}//*/
 		delete[]	old_hpz;
 	
+		calc_half_p(CON,PART,HYPER,HYPER1,1,F);
 	}
 	
-		calc_half_p(CON,PART,HYPER,HYPER1,1,F);
 
 	//	for(int i=0;i<p_num;i++)	cout<<"renew_p_x"<<i<<"="<<HYPER[i].p[A_X]<<endl;
 	cout<<"Hypercalculation ends."<<endl;
@@ -619,7 +675,7 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> 
 	double *DfDx=new double [h_num*h_num];//関数の偏微分値。
 	double *XX=new double [h_num];//現在の解。	
 	double *XX_old=new double [h_num];//1ステップ前の解。
-	double ep=1e-5;//収束判定
+	double ep=1e-10;//収束判定
 	double E=1;//現在の誤差
 	int count=0;//反復回数
 	double d;
@@ -628,7 +684,7 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> 
 	double Dt=CON.get_interval();
 	double sum=0;
 	double E_old=0;
-	int dec_flag=ON;
+	int dec_flag=OFF;
 
 	#pragma omp parallel for
 	for(int i=0;i<h_num;i++)
@@ -774,9 +830,9 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> 
 		else if(dec_flag==ON)	if(E_old-E<0)	break;	
 	}
 
-	ofstream fs("Newton_Convergence_rate.csv", ios::app);
-	fs<<count<<","<<E<<endl;
-	fs.close();
+//	ofstream fs("Newton_Convergence_rate.csv", ios::app);
+//	fs<<count<<","<<E<<endl;
+//	fs.close();
 
 //	end=clock();
 //	newton_t=(end-start)/CLOCKS_PER_SEC;
@@ -971,9 +1027,9 @@ void newton_raphson2(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic>
 		else if(dec_flag==ON)	if(E_old-E<0)	break;	
 	}
 
-	ofstream fs("Newton_Convergence_rate.csv", ios::app);
-	fs<<count<<","<<E<<endl;
-	fs.close();
+	//ofstream fs("Newton_Convergence_rate.csv", ios::app);
+	//fs<<count<<","<<E<<endl;
+	//fs.close();
 
 //	end=clock();
 //	newton_t=(end-start)/CLOCKS_PER_SEC;
@@ -1337,7 +1393,7 @@ void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperela
 	delete[]	w_fx;
 	delete[]	part_fx;//*/
 
-	output_newton_data1(fx,DfDx,n_rx,n_ry,n_rz,h_num,count,t);
+	//output_newton_data1(fx,DfDx,n_rx,n_ry,n_rz,h_num,count,t);
 	
 
 
