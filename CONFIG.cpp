@@ -19,7 +19,7 @@ mpsconfig::mpsconfig()
 	ss>>step;
 	fin.close();*/
 	
-	step=1000;				//全step数	step=20000;//40000;	//30000;//10000;;	//79*20+1;
+	step=10000;				//全step数	step=20000;//40000;	//30000;//10000;;	//79*20+1;
 	switch_FEM=false;		//FEMを実行するかしないか false
 	nonlinear_elastic=false;	//弾性体非線形計算するかtrue
 	switch_vis=OFF;			//粘性項計算するかしないか・・・これはあとで消す
@@ -335,7 +335,7 @@ mpsconfig::mpsconfig()
 	//h_vis=100;
 	flag_vis=OFF;
 	nr_time=5000;	//15/2/8
-	flag_wall=OFF;
+	flag_wall=ON;
 }
 
 

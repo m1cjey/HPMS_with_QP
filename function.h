@@ -207,8 +207,6 @@ void check_FEM_flag(mpsconfig &CON, elastic &ELAST, double ave_P);
 
 //í¥íeê´
 void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t,double **F);
-double calc_det3(double **M);
-void inverse(double **a,int N);
 
 
 //îSê´çÄåvéZ
@@ -222,3 +220,4 @@ void force_movie_AVS(mpsconfig *CON,int t,vector<mpselastic> &PART,int particle_
 void Magnetic_Moment_Method(mpsconfig &CON,vector<mpselastic>&PART,double **F,double n0,double lamda,int fluid_number,int particle_number, double current_time, int t);
 void Magnetic_Moment_Methodv2(mpsconfig &CON,vector<mpselastic> &PART,double **F,double n0,double lamda,int fluid_number,int particle_number, double current_time, int t);
 void Magnetic_Moment_Methodv2_mag2(mpsconfig &CON,vector<mpselastic> &PART,double **F,double n0,double lamda,int fluid_number,int particle_number, double current_time, int t);
+

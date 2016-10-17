@@ -16,7 +16,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 	clock_t t1=clock();	//経過時間を秒で表現するには、CLOCKS_PER_SECで割る
-	
+
     int particle_number=0;	//全粒子数
 	int fluid_number=0;		//流体粒子数（弾性体の場合は弾性体粒子数）
 	int out;				//fluid_number<=i<outがINWALL群で、out<=iがOUTWALL群になる。 なってないなら自動であとで並び替える
@@ -186,6 +186,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	//計算スタート
 	for(t=1;t<=STEP;t++)
 	{	
+		ofstream t0_log("time_log.dat", ios::app);
+		t0_log<<"step="<<t<<", ";
+		t0_log.close();
+
 		cout<<"陽解析 start:step="<<t<<", 粒子数="<<particle_number<<", dt="<<dt<<endl;
 
 		//陽解析の前にreloadINDEX（粒子は移動するので毎ステップ実行する必要がある）
@@ -381,8 +385,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			clock_t t3=clock();
 			cout<<"CPU time="<<(t3-t1)/CLOCKS_PER_SEC<<"[sec]"<<endl;
 			ofstream t_log("time_log.dat", ios::app);
-
-			t_log<<"step="<<t<<", time="<<(t3-t1)/CLOCKS_PER_SEC<<"[sec]"<<endl;
+			t_log<<"time="<<(t3-t1)/CLOCKS_PER_SEC<<"[sec]"<<endl;
 			t_log.close();
 			//最下面の圧力表示
 	/*	/////////////////////////////////////////////
