@@ -5,7 +5,7 @@ void calc_nabla_laplacian(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperel
 void calc_HYPER_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t,double **F)
 {
 
-	////定義
+	////////////定義///////////////
 	int h_num=HYPER.size();
 	int Nx=h_num*4;
 
@@ -62,7 +62,7 @@ void calc_HYPER_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> 
 	double *th_dgdt=new double [h_num];
 	double *th_dhdt=new double [h_num];
 
-	//初期化
+	////////////初期化算///////////////
 	for(int i=0;i<h_num;i++)
 	{
 		L_n+=0.5/mi*(HYPER[i].p_n[A_X]*HYPER[i].p_n[A_X]+HYPER[i].p_n[A_Y]*HYPER[i].p_n[A_Y]+HYPER[i].p_n[A_Z]*HYPER[i].p_n[A_Z])-V*HYPER[i].W_n;
@@ -130,8 +130,8 @@ void calc_HYPER_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> 
 
 
 
-	////t=n　変数計算結果は既値とする。下記での計算はなし。
-	cout<<"QP START----------------------";
+	////////////QP計算///////////////		
+	cout<<"QP START----------------------";		
 	double E_min=1;
 	int count_min=0;
 	while(E_min>ep)
@@ -154,7 +154,8 @@ void calc_HYPER_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> 
 		{
 			count++;
 
-			//t=n+1 変数計算
+			////////////////////////////////t=n+1 変数計算//////////////////////////////	/////t=n　変数計算結果は既値とする。下記での計算はなし。
+
 
 
 
@@ -163,7 +164,7 @@ void calc_HYPER_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> 
 			calc_nabla_laplacian(CON,PART,HYPER,HYPER1,dL,rL,dg,dh,d_dgdt,d_dhdt,rg,rh,r_dgdt,r_dhdt);
 
 
-			//目的関数計算
+			////////////////////////////////目的関数計算/////////////////////////////////
 			T=0;
 			for(int i=0;i<h_num;i++)
 			{
@@ -177,11 +178,10 @@ void calc_HYPER_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> 
 
 			for(int i=0;i<Nx;i++)
 			{
+				//勾配計算
 				dT[i]=0;
-
 				df[i]=2*dL[i]*(L-L_n);
 				dT[i]+=df[i];
-
 				for(int j=0;j<h_num;j++)
 				{
 					dT[i]+=r*( dg[j][i]*(g[j]+th_g[j]) + d_dgdt[j][i]*(dgdt[j]+th_dgdt[j]) );
@@ -189,6 +189,7 @@ void calc_HYPER_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> 
 					if(dhdt[j]+th_dhdt[j]>0)	dT[i]+=r*d_dhdt[j][i]*(dhdt[j]+th_dhdt[j]);
 				}
 
+				//発散計算
 				for(int j=0;j<Nx;j++)
 				{
 					rT[i*Nx+j]=0;
@@ -246,7 +247,7 @@ void calc_HYPER_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> 
 
 
 	
-	//メモリ解放
+	///////////メモリ解放///////////////		
 	delete[]	g;
 	delete[]	h;
 	delete[]	dgdt;
