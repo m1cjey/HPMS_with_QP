@@ -12,9 +12,7 @@ public:
 	int flag_wall;
 
 	double W;
-	double dec_ET;
 	double lambda;
-	double lam_w;
 	double half_p[DIMENSION];
 	double stress[DIMENSION][DIMENSION];
 	double differential_p[DIMENSION];
@@ -28,8 +26,27 @@ public:
 	double pnd;
 	double Fi[DIMENSION][DIMENSION];
 	double vis_force[DIMENSION];
-	double vec_norm[DIMENSION];
-	double Fw[DIMENSION];
+
+
+	//QP—p
+	double lam;
+	double h_lam;
+	double mu;
+	double h_mu;
+
+	double old_lam;
+	double old_h_lam;
+	double old_mu;
+	double old_h_mu;
+
+	double W_n;
+	double q_n[DIMENSION];
+	double p_n[DIMENSION];
+	double t_inverse_Fi_n[DIMENSION][DIMENSION];
+	double J_n;
+	double pnd_n;
+	double Fi_n[DIMENSION][DIMENSION];
+
 	hyperelastic();
 };
 
@@ -39,10 +56,11 @@ public:
 	unsigned ID;
 	double wiin;
 	double DgDq[DIMENSION];
-	double DgDq_w[DIMENSION];
 	double aiin[DIMENSION];
 	double n0ij[DIMENSION];
 	double spl_f;
+
+	double DgDq_n[DIMENSION];
 
 	hyperelastic2();
 };
