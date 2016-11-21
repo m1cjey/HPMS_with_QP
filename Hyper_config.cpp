@@ -23,6 +23,7 @@ hyperelastic::hyperelastic()
 	old_mu=0;
 	old_h_mu=0;
 
+	
 	W_n=0;
 	J_n=0;
 	pnd_n=0;
@@ -46,8 +47,12 @@ hyperelastic::hyperelastic()
 			t_inverse_Fi[D][D2]=0;
 			Fi[D][D2]=0;
 
+			stress_n[D][D2]=0;
 			t_inverse_Fi_n[D][D2]=0;
 			Fi_n[D][D2]=0;
+
+			S[D][D2]=0;
+			dSdc[D][D2]=0;
 		}
 	}
 }
