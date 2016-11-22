@@ -105,7 +105,7 @@ void calc_HYPER_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> 
 
 
 	////////////QP計算///////////////		
-	cout<<"QP START----------------------";		
+	cout<<"QP START----------------------"<<endl;		
 	double E_min=1;
 	int count_min=0;
 	while(E_min>ep)
@@ -129,8 +129,12 @@ void calc_HYPER_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> 
 			count++;
 
 			////////////////////////////////t=n+1 変数計算//////////////////////////////	/////t=n　変数計算結果は既値とする。下記での計算はなし。
+			//cout<<"calc_variables";
 			calc_variables(CON,PART,HYPER,HYPER1);
+			//cout<<"終了"<<endl;
+			//cout<<"calc_nabla_laplacian";
 			calc_nabla_laplacian(CON,PART,HYPER,HYPER1,dL,rL,dg,dh,d_dgdt,d_dhdt);
+			//cout<<"終了"<<endl;
 
 
 			////////////////////////////////目的関数計算/////////////////////////////////
@@ -173,14 +177,11 @@ void calc_HYPER_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> 
 				/////////////発散計算
 				for(int j=0;j<Nx;j++)
 				{
-					rT[i*Nx+j]=0;
-					
-					rf[i*Nx+j]=2*(rL[i*Nx+j]*(L-L_n)+dL[i]*dL[j]);
-					rT[i*Nx+j]+=rf[i*Nx+j];
+					rT[i*Nx+j]=2*(rL[i*Nx+j]*(L-L_n)+dL[i]*dL[j]);
 				}
 			}
 
-			gauss(rT,dT,Nx);
+			gauss(rT,dT,Nx);			
 
 			for(int i=0;i<h_num;i++)
 			{
@@ -261,6 +262,7 @@ void calc_nabla_laplacian(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperel
 	double nG[DIMENSION]={0,0,1};
 
 
+
 	/////////////////dL計算///////////////////
 	for(int k=0;k<h_num;k++)
 	{
@@ -273,12 +275,14 @@ void calc_nabla_laplacian(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperel
 		double dL2_k=0;
 		double dL3_p=0;
 
-
-
 		for(int i=0;i<h_num;i++)
 		{			
 			dL_k+=HYPER[i].p[A_X]*HYPER1[k*h_num+i].DgDq_n[A_X]+HYPER[i].p[A_Y]*HYPER1[k*h_num+i].DgDq_n[A_Y]+HYPER[i].p[A_Z]*HYPER1[k*h_num+i].DgDq_n[A_Z];
 			dL2_k+=HYPER[i].p[A_X]*HYPER1[k*h_num+i].DgDq[A_X]+HYPER[i].p[A_Y]*HYPER1[k*h_num+i].DgDq[A_Y]+HYPER[i].p[A_Z]*HYPER1[k*h_num+i].DgDq[A_Z];
+
+			dL3_p+=Dt*( (HYPER[i].stress[A_X][0]*HYPER1[i*h_num+k].DgDq[0]+HYPER[i].stress[A_X][1]*HYPER1[i*h_num+k].DgDq[1]+HYPER[i].stress[A_X][2]*HYPER1[i*h_num+k].DgDq[2])*nG[A_X]
+			+(HYPER[i].stress[A_Y][0]*HYPER1[i*h_num+k].DgDq[0]+HYPER[i].stress[A_Y][1]*HYPER1[i*h_num+k].DgDq[1]+HYPER[i].stress[A_Y][2]*HYPER1[i*h_num+k].DgDq[2])*nG[A_Y]
+			+(HYPER[i].stress[A_Z][0]*HYPER1[i*h_num+k].DgDq[0]+HYPER[i].stress[A_Z][1]*HYPER1[i*h_num+k].DgDq[1]+HYPER[i].stress[A_Z][2]*HYPER1[i*h_num+k].DgDq[2])*nG[A_Z] );
 
 			dg[i][k]=0;
 			dg[i][k+2*h_num]=0;
@@ -292,33 +296,43 @@ void calc_nabla_laplacian(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperel
 			d_dhdt[i][k+h_num]=0;
 			d_dhdt[i][k+2*h_num]=0;
 			d_dhdt[i][k+3*h_num]=0;
-			for(int j=0;j<h_num;j++)
+
+			int Ni=HYPER[i].N;
+			for(int j=0;j<Ni;j++)
 			{
-				dL_p+=Dt*( (HYPER[i].stress[A_X][0]*HYPER1[i*h_num+j].DgDq[0]+HYPER[i].stress[A_X][1]*HYPER1[i*h_num+j].DgDq[1]+HYPER[i].stress[A_X][2]*HYPER1[i*h_num+j].DgDq[2])*HYPER1[k*h_num+j].DgDq_n[A_X]
-				+(HYPER[i].stress[A_Y][0]*HYPER1[i*h_num+j].DgDq[0]+HYPER[i].stress[A_Y][1]*HYPER1[i*h_num+j].DgDq[1]+HYPER[i].stress[A_Y][2]*HYPER1[i*h_num+j].DgDq[2])*HYPER1[k*h_num+j].DgDq_n[A_Y]
-				+(HYPER[i].stress[A_Z][0]*HYPER1[i*h_num+j].DgDq[0]+HYPER[i].stress[A_Z][1]*HYPER1[i*h_num+j].DgDq[1]+HYPER[i].stress[A_Z][2]*HYPER1[i*h_num+j].DgDq[2])*HYPER1[k*h_num+j].DgDq_n[A_Z] );
-				dL3_p+=Dt*( (HYPER[i].stress[A_X][0]*HYPER1[i*h_num+k].DgDq[0]+HYPER[i].stress[A_X][1]*HYPER1[i*h_num+k].DgDq[1]+HYPER[i].stress[A_X][2]*HYPER1[i*h_num+k].DgDq[2])*nG[A_X]
-				+(HYPER[i].stress[A_Y][0]*HYPER1[i*h_num+k].DgDq[0]+HYPER[i].stress[A_Y][1]*HYPER1[i*h_num+k].DgDq[1]+HYPER[i].stress[A_Y][2]*HYPER1[i*h_num+k].DgDq[2])*nG[A_Y]
-				+(HYPER[i].stress[A_Z][0]*HYPER1[i*h_num+k].DgDq[0]+HYPER[i].stress[A_Z][1]*HYPER1[i*h_num+k].DgDq[1]+HYPER[i].stress[A_Z][2]*HYPER1[i*h_num+k].DgDq[2])*nG[A_Z] );
+				int jn=HYPER[i].NEI[j];
+
+				dL_p+=Dt*( (HYPER[i].stress[A_X][0]*HYPER1[i*h_num+jn].DgDq[0]+HYPER[i].stress[A_X][1]*HYPER1[i*h_num+jn].DgDq[1]+HYPER[i].stress[A_X][2]*HYPER1[i*h_num+jn].DgDq[2])*HYPER1[k*h_num+jn].DgDq_n[A_X]
+				+(HYPER[i].stress[A_Y][0]*HYPER1[i*h_num+jn].DgDq[0]+HYPER[i].stress[A_Y][1]*HYPER1[i*h_num+jn].DgDq[1]+HYPER[i].stress[A_Y][2]*HYPER1[i*h_num+jn].DgDq[2])*HYPER1[k*h_num+jn].DgDq_n[A_Y]
+				+(HYPER[i].stress[A_Z][0]*HYPER1[i*h_num+jn].DgDq[0]+HYPER[i].stress[A_Z][1]*HYPER1[i*h_num+jn].DgDq[1]+HYPER[i].stress[A_Z][2]*HYPER1[i*h_num+jn].DgDq[2])*HYPER1[k*h_num+jn].DgDq_n[A_Z] );
 	
-				dg[i][k]+=-0.5*Dt*Dt/mi*(HYPER1[i*h_num+j].DgDq[A_X]*HYPER1[k*h_num+j].DgDq_n[A_X]+HYPER1[i*h_num+j].DgDq[A_Y]*HYPER1[k*h_num+j].DgDq_n[A_Y]+HYPER1[i*h_num+j].DgDq[A_Z]*HYPER1[k*h_num+j].DgDq_n[A_Z]);				
-				d_dgdt[i][k]+=-0.5*Dt/mi*(HYPER1[i*h_num+j].DgDq[A_X]*HYPER1[k*h_num+j].DgDq_n[A_X]+HYPER1[i*h_num+j].DgDq[A_Y]*HYPER1[k*h_num+j].DgDq_n[A_Y]+HYPER1[i*h_num+j].DgDq[A_Z]*HYPER1[k*h_num+j].DgDq_n[A_Z]);
-				d_dgdt[i][k+h_num]+=-0.5*Dt/mi*(HYPER1[i*h_num+j].DgDq[A_X]*HYPER1[k*h_num+j].DgDq[A_X]+HYPER1[i*h_num+j].DgDq[A_Y]*HYPER1[k*h_num+j].DgDq[A_Y]+HYPER1[i*h_num+j].DgDq[A_Z]*HYPER1[k*h_num+j].DgDq[A_Z]);				
+				dg[i][k]+=-0.5*Dt*Dt/mi*(HYPER1[i*h_num+jn].DgDq[A_X]*HYPER1[k*h_num+jn].DgDq_n[A_X]+HYPER1[i*h_num+jn].DgDq[A_Y]*HYPER1[k*h_num+jn].DgDq_n[A_Y]+HYPER1[i*h_num+jn].DgDq[A_Z]*HYPER1[k*h_num+jn].DgDq_n[A_Z]);				
+				d_dgdt[i][k]+=-0.5*Dt/mi*(HYPER1[i*h_num+jn].DgDq[A_X]*HYPER1[k*h_num+jn].DgDq_n[A_X]+HYPER1[i*h_num+jn].DgDq[A_Y]*HYPER1[k*h_num+jn].DgDq_n[A_Y]+HYPER1[i*h_num+jn].DgDq[A_Z]*HYPER1[k*h_num+jn].DgDq_n[A_Z]);
+				d_dgdt[i][k+h_num]+=-0.5*Dt/mi*(HYPER1[i*h_num+jn].DgDq[A_X]*HYPER1[k*h_num+jn].DgDq[A_X]+HYPER1[i*h_num+jn].DgDq[A_Y]*HYPER1[k*h_num+jn].DgDq[A_Y]+HYPER1[i*h_num+jn].DgDq[A_Z]*HYPER1[k*h_num+jn].DgDq[A_Z]);				
 			}	
+			dL_p+=Dt*( (HYPER[i].stress[A_X][0]*HYPER1[i*h_num+i].DgDq[0]+HYPER[i].stress[A_X][1]*HYPER1[i*h_num+i].DgDq[1]+HYPER[i].stress[A_X][2]*HYPER1[i*h_num+i].DgDq[2])*HYPER1[k*h_num+i].DgDq_n[A_X]
+			+(HYPER[i].stress[A_Y][0]*HYPER1[i*h_num+i].DgDq[0]+HYPER[i].stress[A_Y][1]*HYPER1[i*h_num+i].DgDq[1]+HYPER[i].stress[A_Y][2]*HYPER1[i*h_num+i].DgDq[2])*HYPER1[k*h_num+i].DgDq_n[A_Y]
+			+(HYPER[i].stress[A_Z][0]*HYPER1[i*h_num+i].DgDq[0]+HYPER[i].stress[A_Z][1]*HYPER1[i*h_num+i].DgDq[1]+HYPER[i].stress[A_Z][2]*HYPER1[i*h_num+i].DgDq[2])*HYPER1[k*h_num+i].DgDq_n[A_Z] );
+	
+			dg[i][k]+=-0.5*Dt*Dt/mi*(HYPER1[i*h_num+i].DgDq[A_X]*HYPER1[k*h_num+i].DgDq_n[A_X]+HYPER1[i*h_num+i].DgDq[A_Y]*HYPER1[k*h_num+i].DgDq_n[A_Y]+HYPER1[i*h_num+i].DgDq[A_Z]*HYPER1[k*h_num+i].DgDq_n[A_Z]);				
+			d_dgdt[i][k]+=-0.5*Dt/mi*(HYPER1[i*h_num+i].DgDq[A_X]*HYPER1[k*h_num+i].DgDq_n[A_X]+HYPER1[i*h_num+i].DgDq[A_Y]*HYPER1[k*h_num+i].DgDq_n[A_Y]+HYPER1[i*h_num+i].DgDq[A_Z]*HYPER1[k*h_num+i].DgDq_n[A_Z]);
+			d_dgdt[i][k+h_num]+=-0.5*Dt/mi*(HYPER1[i*h_num+i].DgDq[A_X]*HYPER1[k*h_num+i].DgDq[A_X]+HYPER1[i*h_num+i].DgDq[A_Y]*HYPER1[k*h_num+i].DgDq[A_Y]+HYPER1[i*h_num+i].DgDq[A_Z]*HYPER1[k*h_num+i].DgDq[A_Z]);				
+
+	
 			dg[i][k+2*h_num]=0.5*Dt*Dt/mi*(HYPER1[i*h_num+k].DgDq[A_X]*nG[A_X]+HYPER1[i*h_num+k].DgDq[A_Y]*nG[A_Y]+HYPER1[i*h_num+k].DgDq[A_Z]*nG[A_Z]);
 			d_dgdt[i][k+2*h_num]=0.5*Dt/mi*(HYPER1[i*h_num+k].DgDq[A_X]*nG[A_X]+HYPER1[i*h_num+k].DgDq[A_Y]*nG[A_Y]+HYPER1[i*h_num+k].DgDq[A_Z]*nG[A_Z]);
 			d_dgdt[i][k+3*h_num]=0.5*Dt/mi*(HYPER1[i*h_num+k].DgDq[A_X]*nG[A_X]+HYPER1[i*h_num+k].DgDq[A_Y]*nG[A_Y]+HYPER1[i*h_num+k].DgDq[A_Z]*nG[A_Z]);
 			dh[i][k]=0.5*Dt*Dt/mi*(HYPER1[k*h_num+i].DgDq_n[A_X]*nG[A_X]+HYPER1[k*h_num+i].DgDq_n[A_Y]*nG[A_Y]+HYPER1[k*h_num+i].DgDq_n[A_Z]*nG[A_Z]);
-			dh[i][k+2*h_num]=-0.5*Dt*Dt/mi*(nG[A_X]*nG[A_X]+nG[A_Y]*nG[A_Y]+nG[A_Z]*nG[A_Z]);
 			d_dhdt[i][k]=0.5*Dt/mi*(HYPER1[k*h_num+i].DgDq_n[A_X]*nG[A_X]+HYPER1[k*h_num+i].DgDq_n[A_Y]*nG[A_Y]+HYPER1[k*h_num+i].DgDq_n[A_Z]*nG[A_Z]);
 			d_dhdt[i][k+h_num]=0.5*Dt/mi*(HYPER1[k*h_num+i].DgDq[A_X]*nG[A_X]+HYPER1[k*h_num+i].DgDq[A_Y]*nG[A_Y]+HYPER1[k*h_num+i].DgDq[A_Z]*nG[A_Z]);
-			d_dhdt[i][k+2*h_num]=-0.5*Dt/mi*(nG[A_X]*nG[A_X]+nG[A_Y]*nG[A_Y]+nG[A_Z]*nG[A_Z]);
-			d_dhdt[i][k+3*h_num]=-0.5*Dt/mi*(nG[A_X]*nG[A_X]+nG[A_Y]*nG[A_Y]+nG[A_Z]*nG[A_Z]);
 		}
 		dL[k]=-0.5*Dt/mi*(dL_k+dL_p);
 		dL[k+h_num]=-0.5*Dt/mi*dL2_k;
 		dL[k+2*h_num]=0.5*Dt/mi*(HYPER[k].p[A_X]*nG[A_X]+HYPER[k].p[A_Y]*nG[A_Y]+HYPER[k].p[A_Z]*nG[A_Z]+dL3_p);
 		dL[k+3*h_num]=0.5*Dt/mi*(HYPER[k].p[A_X]*nG[A_X]+HYPER[k].p[A_Y]*nG[A_Y]+HYPER[k].p[A_Z]*nG[A_Z]);
+		dh[k][k+2*h_num]=-0.5*Dt*Dt/mi*(nG[A_X]*nG[A_X]+nG[A_Y]*nG[A_Y]+nG[A_Z]*nG[A_Z]);
+		d_dhdt[k][k+2*h_num]=-0.5*Dt/mi*(nG[A_X]*nG[A_X]+nG[A_Y]*nG[A_Y]+nG[A_Z]*nG[A_Z]);
+		d_dhdt[k][k+3*h_num]=-0.5*Dt/mi*(nG[A_X]*nG[A_X]+nG[A_Y]*nG[A_Y]+nG[A_Z]*nG[A_Z]);
 	}
 
 
@@ -376,24 +390,41 @@ void calc_nabla_laplacian(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperel
 					////////rL_h_lam_h_lam
 					double p_rL_p=0;
 					double p_rg=0;
-					for(int m=0;m<h_num;m++)
-					{
-						p_rL_p+=( (HYPER[i].S[A_X][A_X]+2*(HYPER[i].dSdc[A_X][A_X]*HYPER[i].Fi[A_X][A_X]+HYPER[i].dSdc[A_X][A_Y]*HYPER[i].Fi[A_Y][A_X]+HYPER[i].dSdc[A_X][A_Z]*HYPER[i].Fi[A_Z][A_X]))*HYPER1[m*h_num+i].n0ij[A_X]
-						+(HYPER[i].S[A_X][A_Y]+2*(HYPER[i].dSdc[A_X][A_X]*HYPER[i].Fi[A_X][A_Y]+HYPER[i].dSdc[A_X][A_Y]*HYPER[i].Fi[A_Y][A_Y]+HYPER[i].dSdc[A_X][A_Z]*HYPER[i].Fi[A_Z][A_Y]))*HYPER1[m*h_num+i].n0ij[A_Y]
-						+(HYPER[i].S[A_X][A_Z]+2*(HYPER[i].dSdc[A_X][A_X]*HYPER[i].Fi[A_X][A_Z]+HYPER[i].dSdc[A_X][A_Y]*HYPER[i].Fi[A_Y][A_Z]+HYPER[i].dSdc[A_X][A_Z]*HYPER[i].Fi[A_Z][A_Z]))*HYPER1[m*h_num+i].n0ij[A_Z] )
-						*HYPER1[l*h_num+m].DgDq_n[A_X]
 					
-						+( (HYPER[i].S[A_Y][A_X]+2*(HYPER[i].dSdc[A_Y][A_X]*HYPER[i].Fi[A_X][A_X]+HYPER[i].dSdc[A_Y][A_Y]*HYPER[i].Fi[A_Y][A_X]+HYPER[i].dSdc[A_Y][A_Z]*HYPER[i].Fi[A_Z][A_X]))*HYPER1[m*h_num+i].n0ij[A_X]
-						+(HYPER[i].S[A_Y][A_Y]+2*(HYPER[i].dSdc[A_Y][A_X]*HYPER[i].Fi[A_X][A_Y]+HYPER[i].dSdc[A_Y][A_Y]*HYPER[i].Fi[A_Y][A_Y]+HYPER[i].dSdc[A_Y][A_Z]*HYPER[i].Fi[A_Z][A_Y]))*HYPER1[m*h_num+i].n0ij[A_Y]
-						+(HYPER[i].S[A_Y][A_Z]+2*(HYPER[i].dSdc[A_Y][A_X]*HYPER[i].Fi[A_X][A_Z]+HYPER[i].dSdc[A_Y][A_Y]*HYPER[i].Fi[A_Y][A_Z]+HYPER[i].dSdc[A_Y][A_Z]*HYPER[i].Fi[A_Z][A_Z]))*HYPER1[m*h_num+i].n0ij[A_Z] )
-						*HYPER1[l*h_num+m].DgDq_n[A_Y]
+					int Nl=HYPER[l].N;
+					for(int m=0;m<Nl;m++)
+					{
+						int mn=HYPER[l].NEI[m];
+						p_rL_p+=( (HYPER[i].S[A_X][A_X]+2*(HYPER[i].dSdc[A_X][A_X]*HYPER[i].Fi[A_X][A_X]+HYPER[i].dSdc[A_X][A_Y]*HYPER[i].Fi[A_Y][A_X]+HYPER[i].dSdc[A_X][A_Z]*HYPER[i].Fi[A_Z][A_X]))*HYPER1[mn*h_num+i].n0ij[A_X]
+						+(HYPER[i].S[A_X][A_Y]+2*(HYPER[i].dSdc[A_X][A_X]*HYPER[i].Fi[A_X][A_Y]+HYPER[i].dSdc[A_X][A_Y]*HYPER[i].Fi[A_Y][A_Y]+HYPER[i].dSdc[A_X][A_Z]*HYPER[i].Fi[A_Z][A_Y]))*HYPER1[mn*h_num+i].n0ij[A_Y]
+						+(HYPER[i].S[A_X][A_Z]+2*(HYPER[i].dSdc[A_X][A_X]*HYPER[i].Fi[A_X][A_Z]+HYPER[i].dSdc[A_X][A_Y]*HYPER[i].Fi[A_Y][A_Z]+HYPER[i].dSdc[A_X][A_Z]*HYPER[i].Fi[A_Z][A_Z]))*HYPER1[mn*h_num+i].n0ij[A_Z] )
+						*HYPER1[l*h_num+mn].DgDq_n[A_X]
+					
+						+( (HYPER[i].S[A_Y][A_X]+2*(HYPER[i].dSdc[A_Y][A_X]*HYPER[i].Fi[A_X][A_X]+HYPER[i].dSdc[A_Y][A_Y]*HYPER[i].Fi[A_Y][A_X]+HYPER[i].dSdc[A_Y][A_Z]*HYPER[i].Fi[A_Z][A_X]))*HYPER1[mn*h_num+i].n0ij[A_X]
+						+(HYPER[i].S[A_Y][A_Y]+2*(HYPER[i].dSdc[A_Y][A_X]*HYPER[i].Fi[A_X][A_Y]+HYPER[i].dSdc[A_Y][A_Y]*HYPER[i].Fi[A_Y][A_Y]+HYPER[i].dSdc[A_Y][A_Z]*HYPER[i].Fi[A_Z][A_Y]))*HYPER1[mn*h_num+i].n0ij[A_Y]
+						+(HYPER[i].S[A_Y][A_Z]+2*(HYPER[i].dSdc[A_Y][A_X]*HYPER[i].Fi[A_X][A_Z]+HYPER[i].dSdc[A_Y][A_Y]*HYPER[i].Fi[A_Y][A_Z]+HYPER[i].dSdc[A_Y][A_Z]*HYPER[i].Fi[A_Z][A_Z]))*HYPER1[mn*h_num+i].n0ij[A_Z] )
+						*HYPER1[l*h_num+mn].DgDq_n[A_Y]
 						
-						+( (HYPER[i].S[A_Z][A_X]+2*(HYPER[i].dSdc[A_Z][A_X]*HYPER[i].Fi[A_X][A_X]+HYPER[i].dSdc[A_Z][A_Y]*HYPER[i].Fi[A_Y][A_X]+HYPER[i].dSdc[A_Z][A_Z]*HYPER[i].Fi[A_Z][A_X]))*HYPER1[m*h_num+i].n0ij[A_X]
-						+(HYPER[i].S[A_Z][A_Y]+2*(HYPER[i].dSdc[A_Z][A_X]*HYPER[i].Fi[A_X][A_Y]+HYPER[i].dSdc[A_Z][A_Y]*HYPER[i].Fi[A_Y][A_Y]+HYPER[i].dSdc[A_Z][A_Z]*HYPER[i].Fi[A_Z][A_Y]))*HYPER1[m*h_num+i].n0ij[A_Y]
-						+(HYPER[i].S[A_Z][A_Z]+2*(HYPER[i].dSdc[A_Z][A_X]*HYPER[i].Fi[A_X][A_Z]+HYPER[i].dSdc[A_Z][A_Y]*HYPER[i].Fi[A_Y][A_Z]+HYPER[i].dSdc[A_Z][A_Z]*HYPER[i].Fi[A_Z][A_Z]))*HYPER1[m*h_num+i].n0ij[A_Z] )
-						*HYPER1[l*h_num+m].DgDq_n[A_Z];
-
+						+( (HYPER[i].S[A_Z][A_X]+2*(HYPER[i].dSdc[A_Z][A_X]*HYPER[i].Fi[A_X][A_X]+HYPER[i].dSdc[A_Z][A_Y]*HYPER[i].Fi[A_Y][A_X]+HYPER[i].dSdc[A_Z][A_Z]*HYPER[i].Fi[A_Z][A_X]))*HYPER1[mn*h_num+i].n0ij[A_X]
+						+(HYPER[i].S[A_Z][A_Y]+2*(HYPER[i].dSdc[A_Z][A_X]*HYPER[i].Fi[A_X][A_Y]+HYPER[i].dSdc[A_Z][A_Y]*HYPER[i].Fi[A_Y][A_Y]+HYPER[i].dSdc[A_Z][A_Z]*HYPER[i].Fi[A_Z][A_Y]))*HYPER1[mn*h_num+i].n0ij[A_Y]
+						+(HYPER[i].S[A_Z][A_Z]+2*(HYPER[i].dSdc[A_Z][A_X]*HYPER[i].Fi[A_X][A_Z]+HYPER[i].dSdc[A_Z][A_Y]*HYPER[i].Fi[A_Y][A_Z]+HYPER[i].dSdc[A_Z][A_Z]*HYPER[i].Fi[A_Z][A_Z]))*HYPER1[mn*h_num+i].n0ij[A_Z] )
+						*HYPER1[l*h_num+mn].DgDq_n[A_Z];
 					}
+					p_rL_p+=( (HYPER[i].S[A_X][A_X]+2*(HYPER[i].dSdc[A_X][A_X]*HYPER[i].Fi[A_X][A_X]+HYPER[i].dSdc[A_X][A_Y]*HYPER[i].Fi[A_Y][A_X]+HYPER[i].dSdc[A_X][A_Z]*HYPER[i].Fi[A_Z][A_X]))*HYPER1[l*h_num+i].n0ij[A_X]
+					+(HYPER[i].S[A_X][A_Y]+2*(HYPER[i].dSdc[A_X][A_X]*HYPER[i].Fi[A_X][A_Y]+HYPER[i].dSdc[A_X][A_Y]*HYPER[i].Fi[A_Y][A_Y]+HYPER[i].dSdc[A_X][A_Z]*HYPER[i].Fi[A_Z][A_Y]))*HYPER1[l*h_num+i].n0ij[A_Y]
+					+(HYPER[i].S[A_X][A_Z]+2*(HYPER[i].dSdc[A_X][A_X]*HYPER[i].Fi[A_X][A_Z]+HYPER[i].dSdc[A_X][A_Y]*HYPER[i].Fi[A_Y][A_Z]+HYPER[i].dSdc[A_X][A_Z]*HYPER[i].Fi[A_Z][A_Z]))*HYPER1[l*h_num+i].n0ij[A_Z] )
+					*HYPER1[l*h_num+l].DgDq_n[A_X]
+					
+					+( (HYPER[i].S[A_Y][A_X]+2*(HYPER[i].dSdc[A_Y][A_X]*HYPER[i].Fi[A_X][A_X]+HYPER[i].dSdc[A_Y][A_Y]*HYPER[i].Fi[A_Y][A_X]+HYPER[i].dSdc[A_Y][A_Z]*HYPER[i].Fi[A_Z][A_X]))*HYPER1[l*h_num+i].n0ij[A_X]
+					+(HYPER[i].S[A_Y][A_Y]+2*(HYPER[i].dSdc[A_Y][A_X]*HYPER[i].Fi[A_X][A_Y]+HYPER[i].dSdc[A_Y][A_Y]*HYPER[i].Fi[A_Y][A_Y]+HYPER[i].dSdc[A_Y][A_Z]*HYPER[i].Fi[A_Z][A_Y]))*HYPER1[l*h_num+i].n0ij[A_Y]
+					+(HYPER[i].S[A_Y][A_Z]+2*(HYPER[i].dSdc[A_Y][A_X]*HYPER[i].Fi[A_X][A_Z]+HYPER[i].dSdc[A_Y][A_Y]*HYPER[i].Fi[A_Y][A_Z]+HYPER[i].dSdc[A_Y][A_Z]*HYPER[i].Fi[A_Z][A_Z]))*HYPER1[l*h_num+i].n0ij[A_Z] )
+					*HYPER1[l*h_num+l].DgDq_n[A_Y]
+						
+					+( (HYPER[i].S[A_Z][A_X]+2*(HYPER[i].dSdc[A_Z][A_X]*HYPER[i].Fi[A_X][A_X]+HYPER[i].dSdc[A_Z][A_Y]*HYPER[i].Fi[A_Y][A_X]+HYPER[i].dSdc[A_Z][A_Z]*HYPER[i].Fi[A_Z][A_X]))*HYPER1[l*h_num+i].n0ij[A_X]
+					+(HYPER[i].S[A_Z][A_Y]+2*(HYPER[i].dSdc[A_Z][A_X]*HYPER[i].Fi[A_X][A_Y]+HYPER[i].dSdc[A_Z][A_Y]*HYPER[i].Fi[A_Y][A_Y]+HYPER[i].dSdc[A_Z][A_Z]*HYPER[i].Fi[A_Z][A_Y]))*HYPER1[l*h_num+i].n0ij[A_Y]
+					+(HYPER[i].S[A_Z][A_Z]+2*(HYPER[i].dSdc[A_Z][A_X]*HYPER[i].Fi[A_X][A_Z]+HYPER[i].dSdc[A_Z][A_Y]*HYPER[i].Fi[A_Y][A_Z]+HYPER[i].dSdc[A_Z][A_Z]*HYPER[i].Fi[A_Z][A_Z]))*HYPER1[l*h_num+i].n0ij[A_Z] )
+					*HYPER1[l*h_num+l].DgDq_n[A_Z];
+
 					rL_p+=p_rL_p*(HYPER1[j*h_num+i].n0ij[A_X]*HYPER1[k*h_num+j].DgDq_n[A_X]+HYPER1[j*h_num+i].n0ij[A_Y]*HYPER1[k*h_num+j].DgDq_n[A_Y]+HYPER1[j*h_num+i].n0ij[A_Z]*HYPER1[k*h_num+j].DgDq_n[A_Z]);
 				
 					////////rL_h_mu_h_lam
@@ -443,14 +474,19 @@ void calc_nabla_laplacian(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperel
 
 			rL[l*Nx+k+2*h_num]=-0.25*Dt*Dt/mi*(HYPER1[l*h_num+k].DgDq_n[A_X]*nG[A_X]+HYPER1[l*h_num+k].DgDq_n[A_Y]*nG[A_Y]+HYPER1[l*h_num+k].DgDq_n[A_Z]*nG[A_Z]-Dt*Dt/mi/V*rL02_p); //rL_h_lam_h_mu
 			rL[(l+h_num)*Nx+k+2*h_num]=-0.25*Dt*Dt/mi*(HYPER1[l*h_num+k].DgDq[A_X]*nG[A_X]+HYPER1[l*h_num+k].DgDq[A_Y]*nG[A_Y]+HYPER1[l*h_num+k].DgDq[A_Z]*nG[A_Z]); //rL_lam_h_mu
-			rL[(l+2*h_num)*Nx+k+2*h_num]=0.25*Dt*Dt/mi*(nG[A_X]*nG[A_X]+nG[A_Y]*nG[A_Y]+nG[A_Z]*nG[A_Z]-Dt*Dt/mi/V*rL22_p); //rL_h_mu_h_mu
-			rL[(l+3*h_num)*Nx+k+2*h_num]=0.25*Dt*Dt/mi*(nG[A_X]*nG[A_X]+nG[A_Y]*nG[A_Y]+nG[A_Z]*nG[A_Z]); //rL_mu_h_mu
+			if(k==l)	rL[(l+2*h_num)*Nx+k+2*h_num]=0.25*Dt*Dt/mi*(nG[A_X]*nG[A_X]+nG[A_Y]*nG[A_Y]+nG[A_Z]*nG[A_Z]-Dt*Dt/mi/V*rL22_p); //rL_h_mu_h_mu
+			else
+			{
+				rL[(l+2*h_num)*Nx+k+2*h_num]=-0.25*Dt*Dt/mi*Dt*Dt/mi/V*rL22_p; //rL_h_mu_h_mu
+			}
 
 			rL[l*Nx+k+3*h_num]=-0.25*Dt*Dt/mi*(HYPER1[l*h_num+k].DgDq_n[A_X]*nG[A_X]+HYPER1[l*h_num+k].DgDq_n[A_Y]*nG[A_Y]+HYPER1[l*h_num+k].DgDq_n[A_Z]*nG[A_Z]); //rL_h_lam_mu
 			rL[(l+h_num)*Nx+k+3*h_num]=-0.25*Dt*Dt/mi*(HYPER1[l*h_num+k].DgDq[A_X]*nG[A_X]+HYPER1[l*h_num+k].DgDq[A_Y]*nG[A_Y]+HYPER1[l*h_num+k].DgDq[A_Z]*nG[A_Z]); //rL_lam_mu
-			rL[(l+2*h_num)*Nx+k+3*h_num]=0.25*Dt*Dt/mi*(nG[A_X]*nG[A_X]+nG[A_Y]*nG[A_Y]+nG[A_Z]*nG[A_Z]); //rL_h_mu_mu
-			rL[(l+3*h_num)*Nx+k+3*h_num]=0.25*Dt*Dt/mi*(nG[A_X]*nG[A_X]+nG[A_Y]*nG[A_Y]+nG[A_Z]*nG[A_Z]); //rL_mu_mu
 		}
+		rL[(l+3*h_num)*Nx+l+2*h_num]=0.25*Dt*Dt/mi*(nG[A_X]*nG[A_X]+nG[A_Y]*nG[A_Y]+nG[A_Z]*nG[A_Z]); //rL_mu_h_mu
+		
+		rL[(l+2*h_num)*Nx+l+3*h_num]=0.25*Dt*Dt/mi*(nG[A_X]*nG[A_X]+nG[A_Y]*nG[A_Y]+nG[A_Z]*nG[A_Z]); //rL_h_mu_mu
+		rL[(l+3*h_num)*Nx+l+3*h_num]=0.25*Dt*Dt/mi*(nG[A_X]*nG[A_X]+nG[A_Y]*nG[A_Y]+nG[A_Z]*nG[A_Z]); //rL_mu_mu
 	}
 }
 
@@ -466,6 +502,23 @@ void calc_variables(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic>
 	double c01=CON.get_c01();
 	double nG[DIMENSION]={0,0,1};
 
+
+	/////////////r計算
+	for(int i=0;i<h_num;i++)
+	{
+		double p_r[DIMENSION]={0,0,0};
+		int Ni=HYPER[i].N;
+		for(int j=0;j<Ni;j++)
+		{
+			int jn=HYPER[i].NEI[j];
+			p_r[A_X]+=(HYPER[jn].stress_n[A_X][A_X]-HYPER[jn].h_lam)*HYPER1[jn*h_num+i].DgDq_n[A_X]+HYPER[jn].stress_n[A_X][A_Y]*HYPER1[jn*h_num+i].DgDq_n[A_Y]+HYPER[jn].stress_n[A_X][A_Z]*HYPER1[jn*h_num+i].DgDq_n[A_Z];
+			p_r[A_Y]+=HYPER[jn].stress_n[A_Y][A_X]*HYPER1[jn*h_num+i].DgDq_n[A_X]+(HYPER[jn].stress_n[A_Y][A_Y]-HYPER[jn].h_lam)*HYPER1[jn*h_num+i].DgDq_n[A_Y]+HYPER[jn].stress_n[A_Y][A_Z]*HYPER1[jn*h_num+i].DgDq_n[A_Z];
+			p_r[A_Z]+=HYPER[jn].stress_n[A_Z][A_X]*HYPER1[jn*h_num+i].DgDq_n[A_X]+HYPER[jn].stress_n[A_Z][A_Y]*HYPER1[jn*h_num+i].DgDq_n[A_Y]+(HYPER[jn].stress_n[A_Z][A_Z]-HYPER[jn].h_lam)*HYPER1[jn*h_num+i].DgDq_n[A_Z];
+		}
+		PART[i].r[A_X]=HYPER[i].q_n[A_X]+Dt/mi*( HYPER[i].p_n[A_X]+0.5*Dt*(p_r[A_X]+nG[A_X]*HYPER[i].h_mu) );
+		PART[i].r[A_Y]=HYPER[i].q_n[A_Y]+Dt/mi*( HYPER[i].p_n[A_Y]+0.5*Dt*(p_r[A_Y]+nG[A_Y]*HYPER[i].h_mu) );
+		PART[i].r[A_Z]=HYPER[i].q_n[A_Z]+Dt/mi*( HYPER[i].p_n[A_Z]+0.5*Dt*(p_r[A_Z]+nG[A_Z]*HYPER[i].h_mu) );
+	}
 
 	/////////////F, J, t_inverseの計算
 	double **p_Fi=new double *[DIMENSION];
@@ -502,7 +555,7 @@ void calc_variables(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic>
 		HYPER[i].Fi[2][0]=p_Fi[2][0];	HYPER[i].Fi[2][1]=p_Fi[2][1];	HYPER[i].Fi[2][2]=p_Fi[2][2];	
 
 		double J=calc_det3(p_Fi);
-		HYPER[i].J=J;
+		HYPER[i].J=J;	
 
 		inverse(p_Fi,DIMENSION);
 		HYPER[i].t_inverse_Fi[0][0]=p_Fi[0][0];	HYPER[i].t_inverse_Fi[0][1]=p_Fi[1][0];	HYPER[i].t_inverse_Fi[0][2]=p_Fi[2][0];
@@ -545,7 +598,7 @@ void calc_variables(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic>
 		HYPER1[j*h_num+j].DgDq[A_Z]=HYPER[j].J*(HYPER[j].t_inverse_Fi[A_Z][0]*HYPER1[j*h_num+j].n0ij[0]+HYPER[j].t_inverse_Fi[A_Z][1]*HYPER1[j*h_num+j].n0ij[1]+HYPER[j].t_inverse_Fi[A_Z][2]*HYPER1[j*h_num+j].n0ij[2]);
 
 		////////Stress計算
-		double J=HYPER[j].J;
+		double J=HYPER[j].J;	
 		if(J<0){
 			d_Fi[0][0]=-1/pow(-J,1/3)*HYPER[j].Fi[0][0];	d_Fi[0][1]=-1/pow(-J,1/3)*HYPER[j].Fi[0][1];	d_Fi[0][2]=-1/pow(-J,1/3)*HYPER[j].Fi[0][2];
 			d_Fi[1][0]=-1/pow(-J,1/3)*HYPER[j].Fi[1][0];	d_Fi[1][1]=-1/pow(-J,1/3)*HYPER[j].Fi[1][1];	d_Fi[1][2]=-1/pow(-J,1/3)*HYPER[j].Fi[1][2];
@@ -701,28 +754,28 @@ void calc_variables(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic>
 	delete[]	in_Ci;
 
 
-	/////////////r, p計算
+	/////////////p計算
 	for(int i=0;i<h_num;i++)
 	{
 		double p_r[DIMENSION]={0,0,0};
 		double p_p[DIMENSION]={0,0,0};
-		for(int j=0;j<h_num;j++)
+		int Ni=HYPER[i].N;
+		for(int j=0;j<Ni;j++)
 		{
-			p_r[A_X]=(HYPER[j].stress_n[A_X][A_X]-HYPER[j].h_lam)*HYPER1[j*h_num+i].DgDq_n[A_X]+HYPER[j].stress_n[A_X][A_Y]*HYPER1[j*h_num+i].DgDq_n[A_Y]+HYPER[j].stress_n[A_X][A_Z]*HYPER1[j*h_num+i].DgDq_n[A_Z];
-			p_r[A_Y]=HYPER[j].stress_n[A_Y][A_X]*HYPER1[j*h_num+i].DgDq_n[A_X]+(HYPER[j].stress_n[A_Y][A_Y]-HYPER[j].h_lam)*HYPER1[j*h_num+i].DgDq_n[A_Y]+HYPER[j].stress_n[A_Y][A_Z]*HYPER1[j*h_num+i].DgDq_n[A_Z];
-			p_r[A_Z]=HYPER[j].stress_n[A_Z][A_X]*HYPER1[j*h_num+i].DgDq_n[A_X]+HYPER[j].stress_n[A_Z][A_Y]*HYPER1[j*h_num+i].DgDq_n[A_Y]+(HYPER[j].stress_n[A_Z][A_Z]-HYPER[j].h_lam)*HYPER1[j*h_num+i].DgDq_n[A_Z];
-				
-			p_p[A_X]=(HYPER[j].stress[A_X][A_X]-HYPER[j].lam)*HYPER1[j*h_num+i].DgDq_n[A_X]+HYPER[j].stress[A_X][A_Y]*HYPER1[j*h_num+i].DgDq_n[A_Y]+HYPER[j].stress[A_X][A_Z]*HYPER1[j*h_num+i].DgDq[A_Z];
-			p_p[A_Y]=HYPER[j].stress[A_Y][A_X]*HYPER1[j*h_num+i].DgDq_n[A_X]+(HYPER[j].stress[A_Y][A_Y]-HYPER[j].lam)*HYPER1[j*h_num+i].DgDq_n[A_Y]+HYPER[j].stress[A_Y][A_Z]*HYPER1[j*h_num+i].DgDq[A_Z];
-			p_p[A_Z]=HYPER[j].stress[A_Z][A_X]*HYPER1[j*h_num+i].DgDq_n[A_X]+HYPER[j].stress[A_Z][A_Y]*HYPER1[j*h_num+i].DgDq_n[A_Y]+(HYPER[j].stress[A_Z][A_Z]-HYPER[j].lam)*HYPER1[j*h_num+i].DgDq[A_Z];
+			int jn=HYPER[i].NEI[j];
+			p_r[A_X]+=(HYPER[jn].stress_n[A_X][A_X]-HYPER[jn].h_lam)*HYPER1[jn*h_num+i].DgDq_n[A_X]+HYPER[jn].stress_n[A_X][A_Y]*HYPER1[jn*h_num+i].DgDq_n[A_Y]+HYPER[jn].stress_n[A_X][A_Z]*HYPER1[jn*h_num+i].DgDq_n[A_Z];
+			p_r[A_Y]+=HYPER[jn].stress_n[A_Y][A_X]*HYPER1[jn*h_num+i].DgDq_n[A_X]+(HYPER[jn].stress_n[A_Y][A_Y]-HYPER[jn].h_lam)*HYPER1[jn*h_num+i].DgDq_n[A_Y]+HYPER[jn].stress_n[A_Y][A_Z]*HYPER1[jn*h_num+i].DgDq_n[A_Z];
+			p_r[A_Z]+=HYPER[jn].stress_n[A_Z][A_X]*HYPER1[jn*h_num+i].DgDq_n[A_X]+HYPER[jn].stress_n[A_Z][A_Y]*HYPER1[jn*h_num+i].DgDq_n[A_Y]+(HYPER[jn].stress_n[A_Z][A_Z]-HYPER[jn].h_lam)*HYPER1[jn*h_num+i].DgDq_n[A_Z];
+	
+			p_p[A_X]+=(HYPER[jn].stress[A_X][A_X]-HYPER[jn].lam)*HYPER1[jn*h_num+i].DgDq_n[A_X]+HYPER[jn].stress[A_X][A_Y]*HYPER1[jn*h_num+i].DgDq_n[A_Y]+HYPER[jn].stress[A_X][A_Z]*HYPER1[jn*h_num+i].DgDq[A_Z];
+			p_p[A_Y]+=HYPER[jn].stress[A_Y][A_X]*HYPER1[jn*h_num+i].DgDq_n[A_X]+(HYPER[jn].stress[A_Y][A_Y]-HYPER[jn].lam)*HYPER1[jn*h_num+i].DgDq_n[A_Y]+HYPER[jn].stress[A_Y][A_Z]*HYPER1[jn*h_num+i].DgDq[A_Z];
+			p_p[A_Z]+=HYPER[jn].stress[A_Z][A_X]*HYPER1[jn*h_num+i].DgDq_n[A_X]+HYPER[jn].stress[A_Z][A_Y]*HYPER1[jn*h_num+i].DgDq_n[A_Y]+(HYPER[jn].stress[A_Z][A_Z]-HYPER[jn].lam)*HYPER1[jn*h_num+i].DgDq[A_Z];
 		}
-		PART[i].r[A_X]=HYPER[i].q_n[A_X]+Dt/mi*( HYPER[i].p_n[A_X]+0.5*Dt*(p_r[A_X]+nG[A_X]*HYPER[i].h_mu) );
-		PART[i].r[A_Y]=HYPER[i].q_n[A_Y]+Dt/mi*( HYPER[i].p_n[A_Y]+0.5*Dt*(p_r[A_Y]+nG[A_Y]*HYPER[i].h_mu) );
-		PART[i].r[A_Z]=HYPER[i].q_n[A_Z]+Dt/mi*( HYPER[i].p_n[A_Z]+0.5*Dt*(p_r[A_Z]+nG[A_Z]*HYPER[i].h_mu) );
 		HYPER[i].p[A_X]=HYPER[i].p_n[A_X]+0.5*Dt*( p_r[A_X]+p_p[A_X]+nG[A_X]*(HYPER[i].h_mu+HYPER[i].mu) );
 		HYPER[i].p[A_Y]=HYPER[i].p_n[A_Y]+0.5*Dt*( p_r[A_Y]+p_p[A_Y]+nG[A_Y]*(HYPER[i].h_mu+HYPER[i].mu) );
 		HYPER[i].p[A_Z]=HYPER[i].p_n[A_Z]+0.5*Dt*( p_r[A_Z]+p_p[A_Z]+nG[A_Z]*(HYPER[i].h_mu+HYPER[i].mu) );
 	}
+
 }
 
 
