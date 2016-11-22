@@ -297,13 +297,10 @@ class mpsconfig
 	int flag_HYPER;
 	int flag_GRAVITY;
 	int flag_vis;
-	int flag_wall;
 	double hyper_density;
 	double c01;
 	double c10;
-	double r_z_wall;
 	double h_dis;
-	double h_dis_w;
 	double h_vis;
 	int tension_test;	//引っ張り試験解析用15/2/8
 	int nr_time;
@@ -596,14 +593,13 @@ public:
 	int get_flag_HYPER(){return flag_HYPER;}
 	int get_flag_G(){return flag_GRAVITY;}
 	int get_flag_vis(){return flag_vis;}
-	int get_flag_wall(){return flag_wall;}
 	double get_hyper_density(){return hyper_density;}
 	double get_c10(){return c10;}
 	double get_c01(){return c01;}
 	double get_h_dis(){return h_dis;}
-	double get_h_dis_w(){return h_dis_w;}
 	double get_h_viscousity(){return h_vis;}
 	int get_nr(){return nr_time;}
+
 };
 
 class elastic; //前方宣言 これがないとエラーが出る?

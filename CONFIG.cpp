@@ -331,11 +331,9 @@ mpsconfig::mpsconfig()
 	c10=30000;//30000;
 	c01=20000;//20000;
 	h_dis=1.9*distancebp;
-	h_dis_w=0.5*distancebp;
 	//h_vis=100;
 	flag_vis=OFF;
 	nr_time=5000;	//15/2/8
-	flag_wall=ON;
 }
 
 

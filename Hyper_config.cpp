@@ -13,20 +13,18 @@ hyperelastic::hyperelastic()
 	J=0;
 	pnd=0;
 
-	lam=0;
-	h_lam=0;
-	mu=0;
-	h_mu=0;
+	lam=1;
+	h_lam=1;
+	mu=1;
+	h_mu=1;
 
-	old_lam=0;
-	old_h_lam=0;
-	old_mu=0;
-	old_h_mu=0;
+	old_lam=1;
+	old_h_lam=1;
+	old_mu=1;
+	old_h_mu=1;
 
 	
 	W_n=0;
-	J_n=0;
-	pnd_n=0;
 
 	for(int D=0;D<DIMENSION;D++)
 	{
@@ -48,8 +46,6 @@ hyperelastic::hyperelastic()
 			Fi[D][D2]=0;
 
 			stress_n[D][D2]=0;
-			t_inverse_Fi_n[D][D2]=0;
-			Fi_n[D][D2]=0;
 
 			S[D][D2]=0;
 			dSdc[D][D2]=0;

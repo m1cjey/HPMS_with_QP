@@ -45,10 +45,6 @@ public:
 	double stress_n[DIMENSION][DIMENSION];
 	double q_n[DIMENSION];
 	double p_n[DIMENSION];
-	double t_inverse_Fi_n[DIMENSION][DIMENSION];
-	double J_n;
-	double pnd_n;
-	double Fi_n[DIMENSION][DIMENSION];
 
 	hyperelastic();
 };
