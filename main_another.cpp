@@ -2689,40 +2689,41 @@ void file_initialization()
 	ofstream init2("./Elastic/kinetic_energy.dat", ios::trunc);
 	ofstream init3("./Elastic/elastic_energy.dat", ios::trunc);
 	ofstream init4("./Elastic/potential_energy.dat", ios::trunc);
-	
-	ofstream init5("aveave_P_history.txt", ios::trunc);
-	ofstream init6("node.dat", ios::trunc);
+	//
+	//ofstream init5("aveave_P_history.txt", ios::trunc);
+	//ofstream init6("node.dat", ios::trunc);
 	ofstream init7("time_log.dat", ios::trunc);
-	ofstream init8("A-t.dat", ios::trunc);
-	ofstream init9("longZ.dat", ios::trunc);
-	system("rmdir /s /q Mesh");
-	system("rmdir /s /q Lorentz");
-	system("rmdir /s /q Speed");
-	system("rmdir /s /q FluxContour");
-	system("rmdir /s /q FluxAVS");
+	//ofstream init8("A-t.dat", ios::trunc);
+	//ofstream init9("longZ.dat", ios::trunc);
+	//system("rmdir /s /q Mesh");
+	//system("rmdir /s /q Lorentz");
+	//system("rmdir /s /q Speed");
+	//system("rmdir /s /q FluxContour");
+	//system("rmdir /s /q FluxAVS");
 	
-	system("rmdir /s /q Residual");
-	system("rmdir /s /q Pressure");
-	system("rmdir /s /q Current");
+	//system("rmdir /s /q Residual");
+	//system("rmdir /s /q Pressure");
+	//system("rmdir /s /q Current");
 	/////////////////////////make file///////////////////////////////////////
-	system("mkdir Mesh");
-	system("mkdir Lorentz");
-	system("mkdir Speed");
-	system("mkdir FluxContour");
-	system("mkdir FluxAVS");
+	//system("mkdir Mesh");
+	//system("mkdir Lorentz");
+	//system("mkdir Speed");
+	//system("mkdir FluxContour");
+	//system("mkdir FluxAVS");
 
-	system("mkdir Residual");
-	system("mkdir Pressure");
-	system("mkdir Current");
-	system("mkdir Position");
+	//system("mkdir Residual");
+	//system("mkdir Pressure");
+	//system("mkdir Current");
+	
 	//í¥íeê´
-	system("mkdir DgDq");
-	system("mkdir Stress");
-	system("mkdir Wall");
-	system("mkdir P");
-	system("mkdir Half_P");
-	system("mkdir Lambda");
-	system("mkdir Newton_raphson2");
+	//system("mkdir DgDq");
+	//system("mkdir Stress");
+	////system("mkdir Wall");
+	//system("mkdir P");
+	////system("mkdir Half_P");
+	//system("mkdir Lambda");
+	//system("mkdir Position");
+	//system("mkdir Newton_raphson2");
 	ofstream init10("P.csv", ios::trunc);
 /*	ofstream init11("d_P.csv", ios::trunc);
 	ofstream init12("h_P.csv", ios::trunc);*/
@@ -2735,15 +2736,15 @@ void file_initialization()
 	ofstream init19("E_lam.csv", ios::trunc);*/
 	ofstream init31("E_sum.csv", ios::trunc);
 	ofstream init20("J.csv", ios::trunc);
-	ofstream init22("stress.csv",ios::trunc);
-	ofstream init23("ti_Fi.csv", ios::trunc);
-	ofstream init24("Fi.csv", ios::trunc);
+	//ofstream init22("stress.csv",ios::trunc);
+	//ofstream init23("ti_Fi.csv", ios::trunc);
+	//ofstream init24("Fi.csv", ios::trunc);
 	ofstream init25("P_ave_norm.csv", ios::trunc);
 	ofstream init28("Vis.csv",ios::trunc);
-	ofstream init29("Convergence_rate.csv", ios::trunc);
-	ofstream init30("Newton_Convergence_rate.csv", ios::trunc);
+	//ofstream init29("Convergence_rate.csv", ios::trunc);
+	ofstream init30("Newton_E.csv", ios::trunc);
 	ofstream init32("model_height.csv", ios::trunc);
-	ofstream init33("r_CG.csv", ios::trunc);
+	//ofstream init33("r_CG.csv", ios::trunc);
 	system("mkdir Newton_raphson");
 	system("mkdir Viscosity");
 
@@ -2752,11 +2753,11 @@ void file_initialization()
 	init2.close();
 	init3.close();
 	init4.close();
-	init5.close();
-	init6.close();
+	//init5.close();
+	//init6.close();
 	init7.close();
-	init8.close();
-	init9.close();
+	//init8.close();
+	//init9.close();
 	init10.close();
 /*	init11.close();
 	init12.close();*/
@@ -2768,16 +2769,16 @@ void file_initialization()
 	init18.close();
 	init19.close();*/
 	init20.close();
-	init22.close();
-	init23.close();
-	init24.close();
+	//init22.close();
+	//init23.close();
+	//init24.close();
 	init25.close();
 	init28.close();
-	init29.close();
+	//init29.close();
 	init30.close();
 	init31.close();
 	init32.close();
-	init33.close();
+	//init33.close();
 }
 
 void Make_STL(){

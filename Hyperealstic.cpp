@@ -87,6 +87,7 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HY
 		double hi=-1*((PART[i].r[A_X]-aG[A_X])*nG[A_X]+(PART[i].r[A_Y]-aG[A_Y])*nG[A_Y]+(PART[i].r[A_Z]-aG[A_Z])*nG[A_Z]);
 		if(hi>0)	Nw++;
 	}
+	cout<<"ÚG"<<Nw<<endl;
 	if(Nw>0)	calc_HYPER_QP(CON,PART,HYPER,HYPER1,t,F);
 
 
@@ -539,7 +540,7 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> 
 		else if(dec_flag==ON)	if(E_old-E<0)	break;	
 	}
 
-	ofstream fs("Newton_Convergence_rate.csv", ios::app);
+	ofstream fs("Newton_E.csv", ios::app);
 	fs<<count<<","<<E<<endl;
 	fs.close();
 
@@ -1553,7 +1554,7 @@ void output_hyper_data(vector<mpselastic> PART,vector<hyperelastic> HYPER,vector
 	ofstream lam("lambda.csv", ios::app);
 //	ofstream p("P.csv", ios::app);
 	ofstream p_an("P_ave_norm.csv", ios::app);
-//	ofstream h("model_height.csv", ios::app);
+	ofstream h("model_height.csv", ios::app);
 
 //	if(t==1)	p<<"h_p,,,d_p,,,p\n";
 //	p<<"t"<<t<<endl;
@@ -1572,8 +1573,8 @@ void output_hyper_data(vector<mpselastic> PART,vector<hyperelastic> HYPER,vector
 		p_sum+=sqrt(HYPER[i].p[A_X]*HYPER[i].p[A_X]+HYPER[i].p[A_Y]*HYPER[i].p[A_Y]+HYPER[i].p[A_Z]*HYPER[i].p[A_Z]);
 		d_p_sum+=sqrt(HYPER[i].differential_p[A_X]*HYPER[i].differential_p[A_X]+HYPER[i].differential_p[A_Y]*HYPER[i].differential_p[A_Y]+HYPER[i].differential_p[A_Z]*HYPER[i].differential_p[A_Z]);
 		h_p_sum+=sqrt(HYPER[i].half_p[A_X]*HYPER[i].half_p[A_X]+HYPER[i].half_p[A_Y]*HYPER[i].half_p[A_Y]+HYPER[i].half_p[A_Z]*HYPER[i].half_p[A_Z]);
-//		if(h_min>PART[i].r[A_Z])	h_min=PART[i].r[A_Z];
-//		if(h_max<PART[i].r[A_Z])	h_max=PART[i].r[A_Z];
+		if(h_min>PART[i].r[A_Z])	h_min=PART[i].r[A_Z];
+		if(h_max<PART[i].r[A_Z])	h_max=PART[i].r[A_Z];
 	}
 	
 	lam<<sum_lam/h_num<<endl;
@@ -1582,16 +1583,16 @@ void output_hyper_data(vector<mpselastic> PART,vector<hyperelastic> HYPER,vector
 	if(t==1)
 	{
 		p_an<<"p_sum,d_p_sum,h_p_sum\n";
-//		h<<"h_min,h_max\n";
+		h<<"h_min,h_max\n";
 	}
 	p_an<<p_sum/h_num<<","<<d_p_sum/h_num<<","<<h_p_sum/h_num<<endl;
-//	h<<h_min<<","<<h_max<<endl;
+	h<<h_min<<","<<h_max<<endl;
 
 	lam.close();
 	j.close();
 //	p.close();
 	p_an.close();
-//	h.close();
+	h.close();
 
 	/*if(t==1)
 	{
@@ -1639,39 +1640,39 @@ void output_hyper_data(vector<mpselastic> PART,vector<hyperelastic> HYPER,vector
 //	ofstream dg(ss_dgdq.str());
 /*	ofstream d_p("d_P.csv", ios::app);
 	ofstream h_p("h_P.csv", ios::app);*/
-	stringstream ss_stress;
-	ss_stress<<"./Stress/stress"<<t<<".csv";
-	ofstream fs(ss_stress.str());
-	for(int i=0;i<h_num;i++)
-	{
-		int N=HYPER[i].N;
-//		dg<<i;
-		for(int j=0;j<N;j++)
-		{
-			int nei=HYPER[i].NEI[j];
-	//		dg<<","<<nei<<","<<HYPER1[i*h_num+nei].DgDq[A_X]<<","<<HYPER1[i*h_num+nei].DgDq[A_Y]<<","<<HYPER1[i*h_num+nei].DgDq[A_Z]<<","<<HYPER[nei].p[A_X]<<","<<HYPER[nei].p[A_Y]<<","<<HYPER[nei].p[A_Z]<<endl;
-		}
-		fs<<i<<","<<HYPER[i].stress[A_X][A_X]<<","<<HYPER[i].stress[A_X][A_Y]<<","<<HYPER[i].stress[A_X][A_Z]<<endl;
-		fs<<","<<HYPER[i].stress[A_Y][A_X]<<","<<HYPER[i].stress[A_Y][A_Y]<<","<<HYPER[i].stress[A_Y][A_Z]<<endl;
-		fs<<","<<HYPER[i].stress[A_Z][A_X]<<","<<HYPER[i].stress[A_Z][A_Y]<<","<<HYPER[i].stress[A_Z][A_Z]<<endl;
-	}
-//	dg.close();
-	fs.close();
-
-	ofstream r("r_CG.csv", ios::app);
-	double r_cg_x=0;
-	double r_cg_y=0;
-	double r_cg_z=0;
-
-	for(int i=0;i<h_num;i++)
-	{
-		r_cg_x+=PART[i].r[A_X];
-		r_cg_y+=PART[i].r[A_Y];
-		r_cg_z+=PART[i].r[A_Z];
-	}
-
-	r<<r_cg_x/h_num<<","<<r_cg_y/h_num<<","<<r_cg_z/h_num<<endl;
-	r.close();
+////	stringstream ss_stress;
+////	ss_stress<<"./Stress/stress"<<t<<".csv";
+////	ofstream fs(ss_stress.str());
+//	for(int i=0;i<h_num;i++)
+//	{
+//		int N=HYPER[i].N;
+////		dg<<i;
+//		for(int j=0;j<N;j++)
+//		{
+//			int nei=HYPER[i].NEI[j];
+//	//		dg<<","<<nei<<","<<HYPER1[i*h_num+nei].DgDq[A_X]<<","<<HYPER1[i*h_num+nei].DgDq[A_Y]<<","<<HYPER1[i*h_num+nei].DgDq[A_Z]<<","<<HYPER[nei].p[A_X]<<","<<HYPER[nei].p[A_Y]<<","<<HYPER[nei].p[A_Z]<<endl;
+//		}
+//		fs<<i<<","<<HYPER[i].stress[A_X][A_X]<<","<<HYPER[i].stress[A_X][A_Y]<<","<<HYPER[i].stress[A_X][A_Z]<<endl;
+//		fs<<","<<HYPER[i].stress[A_Y][A_X]<<","<<HYPER[i].stress[A_Y][A_Y]<<","<<HYPER[i].stress[A_Y][A_Z]<<endl;
+//		fs<<","<<HYPER[i].stress[A_Z][A_X]<<","<<HYPER[i].stress[A_Z][A_Y]<<","<<HYPER[i].stress[A_Z][A_Z]<<endl;
+//	}
+////	dg.close();
+//	fs.close();
+//
+//	ofstream r("r_CG.csv", ios::app);
+//	double r_cg_x=0;
+//	double r_cg_y=0;
+//	double r_cg_z=0;
+//
+//	for(int i=0;i<h_num;i++)
+//	{
+//		r_cg_x+=PART[i].r[A_X];
+//		r_cg_y+=PART[i].r[A_Y];
+//		r_cg_z+=PART[i].r[A_Z];
+//	}
+//
+//	r<<r_cg_x/h_num<<","<<r_cg_y/h_num<<","<<r_cg_z/h_num<<endl;
+//	r.close();
 
 /*	ofstream J("J.csv", ios::app);
 	ofstream ti_Fi("ti_Fi.csv", ios::app);
