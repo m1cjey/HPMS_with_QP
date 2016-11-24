@@ -39,8 +39,7 @@ public:
 	double old_mu;
 	double old_h_mu;
 
-	double S[DIMENSION][DIMENSION];
-	double dSdc[DIMENSION][DIMENSION];
+	double dPIdF[DIMENSION][DIMENSION];
 	double W_n;
 	double stress_n[DIMENSION][DIMENSION];
 	double q_n[DIMENSION];
