@@ -63,5 +63,8 @@ hyperelastic2::hyperelastic2()
 
 		DgDq_n[D]=0;
 	}
+	dPIdlam=0;
+	dPIdmu=0;
+	Dg_n_Dg_n=0;
 }
 

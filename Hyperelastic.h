@@ -39,12 +39,11 @@ public:
 	double old_mu;
 	double old_h_mu;
 
-	double dPIdF[DIMENSION][DIMENSION];
 	double W_n;
 	double stress_n[DIMENSION][DIMENSION];
 	double q_n[DIMENSION];
 	double p_n[DIMENSION];
-
+	double dPIdF[DIMENSION][DIMENSION];
 	hyperelastic();
 };
 
@@ -59,7 +58,9 @@ public:
 	double spl_f;
 
 	double DgDq_n[DIMENSION];
-
+	double dPIdlam;
+	double dPIdmu;
+	double Dg_n_Dg_n;
 	hyperelastic2();
 };
 
