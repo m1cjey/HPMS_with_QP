@@ -2,7 +2,7 @@
 void calc_nabla_laplacian(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,double *dL,double *rL,double **dg,double **dh,double **d_dgdt,double **d_dhdt);
 void calc_variables(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1);
 void calc_n(mpsconfig &CON,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,double *rL,double **dh,double **d_dhdt);
-void output_data(vector<mpselastic>PART,vector<hyperelastic>HYPER, double *rT, double *dT,double *rL,double *dL,int h_num,int count);
+void output_data(vector<mpselastic>PART,vector<hyperelastic>HYPER, double *rT, double *dT,double *rL,double *dL,int h_num,int count,int count_min,int t,double E);
 
 void calc_HYPER_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t,double **F)
 {
@@ -49,7 +49,7 @@ void calc_HYPER_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> 
 		d_dhdt[i]=new double [Nx];
 	}
 
-	double r=0.0001;
+	double r=0.01;
 	double ep=1e-10;
 	double *th_g=new double [h_num];
 	double *th_h=new double [h_num];
@@ -265,11 +265,11 @@ void calc_HYPER_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> 
 				HYPER[i].mu-=dT[i+3*h_num];
 			}	
 
-			output_data(PART,HYPER,rT,dT,rL,dL,h_num,count);
 			double p_E=0;
 			for(int i=0;i<Nx;i++)	p_E+=dT[i]*dT[i];
 			E=sqrt(p_E);
-			if(count%100==0)	cout<<"	E"<<count<<"="<<E<<endl;
+			if(count%100==0)	cout<<"E"<<count<<"="<<E<<endl;
+			output_data(PART,HYPER,rT,dT,rL,dL,h_num,count,count_min,t,E);
 			if(count>2000)	break;
 		}
 
@@ -290,6 +290,22 @@ void calc_HYPER_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> 
 			if(dhdt[i]+th_dhdt[i]>0)	th_dhdt[i]+=dhdt[i];
 		}
 		if(count_min%100==0)	cout<<"E_min"<<count_min<<"="<<E_min<<endl;
+
+		stringstream ss12;
+		ss12<<"./E_min/E_min"<<t<<".csv";
+		if(count_min==1)
+		{
+			ofstream f_E_min(ss12.str(), ios::trunc);
+			f_E_min<<E_min<<endl;
+			f_E_min.close();
+
+		}
+		else
+		{
+			ofstream f_E_min(ss12.str(), ios::app);
+			f_E_min<<E_min<<endl;
+			f_E_min.close();
+		}
 	}
 	cout<<"OK"<<endl;
 
@@ -963,32 +979,35 @@ void calc_variables(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic>
 
 }
 
-void output_data(vector<mpselastic>PART,vector<hyperelastic>HYPER, double *rT, double *dT,double *rL,double *dL,int h_num,int count)
+void output_data(vector<mpselastic>PART,vector<hyperelastic>HYPER, double *rT, double *dT,double *rL,double *dL,int h_num,int count,int count_min,int t,double E)
 {
+
 	int Nx=4*h_num;
 
 	stringstream ss0;
-	ss0<<"rT"<<count<<".csv";
+	ss0<<"./rT/rT_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss1;
-	ss1<<"dT"<<count<<".csv";
+	ss1<<"./dT/dT_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss2;
-	ss2<<"h_lam"<<count<<".csv";
+	ss2<<"./h_lam/h_lam_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss3;
-	ss3<<"lam"<<count<<".csv";
+	ss3<<"./lam/lam_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss4;
-	ss4<<"h_mu"<<count<<".csv";
+	ss4<<"./h_mu/h_mu_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss5;
-	ss5<<"mu"<<count<<".csv";
+	ss5<<"./mu/mu_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss6;
-	ss6<<"rL"<<count<<".csv";
+	ss6<<"./rL/rL_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss7;
-	ss7<<"dL"<<count<<".csv";
+	ss7<<"./dL/dL_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss8;
-	ss8<<"p"<<count<<".csv";
+	ss8<<"./p/p_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss9;
-	ss9<<"q"<<count<<".csv";
+	ss9<<"./q/q_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss10;
-	ss10<<"w"<<count<<".csv";
+	ss10<<"./w/w_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
+	stringstream ss11;
+	ss11<<"./E/E_"<<t<<"_"<<count_min<<".csv";
 
 	ofstream f_rt(ss0.str(), ios::trunc);
 	ofstream f_dt(ss1.str(), ios::trunc);
@@ -1001,6 +1020,18 @@ void output_data(vector<mpselastic>PART,vector<hyperelastic>HYPER, double *rT, d
 	ofstream f_p(ss8.str(), ios::trunc);
 	ofstream f_q(ss9.str(), ios::trunc);
 	ofstream f_w(ss10.str(), ios::trunc);
+	if(count==1)
+	{
+		ofstream f_E(ss11.str(), ios::trunc);
+		f_E<<E<<endl;
+		f_E.close();
+	}	
+	else
+	{
+		ofstream f_E(ss11.str(), ios::app);
+		f_E<<E<<endl;
+		f_E.close();
+	}
 
 	for(int i=0;i<Nx;i++)
 	{				

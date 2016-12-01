@@ -2716,6 +2716,19 @@ void file_initialization()
 	//system("mkdir Current");
 	
 	//í¥íeê´
+	system("mkdir rT");
+	system("mkdir dT");
+	system("mkdir p");
+	system("mkdir q");
+	system("mkdir h_lam");
+	system("mkdir lam");
+	system("mkdir h_mu");
+	system("mkdir mu");
+	system("mkdir rL");
+	system("mkdir dL");
+	system("mkdir w");
+	system("mkdir E");
+	system("mkdir E_min");
 	//system("mkdir DgDq");
 	//system("mkdir Stress");
 	////system("mkdir Wall");
