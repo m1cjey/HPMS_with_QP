@@ -29,7 +29,7 @@ public:
 
 
 	//QP—p
-	double pi;
+	double pi[DIMENSION][DIMENSION];
 	double lam;
 	double h_lam;
 	double mu;
