@@ -4,6 +4,9 @@ void calc_variables(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic>
 void calc_n(mpsconfig &CON,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,double *rL,double **dh,double **d_dhdt);
 void output_data(vector<mpselastic>PART,vector<hyperelastic>HYPER, double *rT, double *dT,double *rL,double *dL,int h_num,int count,int count_min,int t,double E);
 
+
+
+
 void calc_HYPER_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t,double **F)
 {
 
