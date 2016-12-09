@@ -36,6 +36,7 @@ hyperelastic::hyperelastic()
 
 		q_n[D]=0;
 		p_n[D]=0;
+		ph_n[D]=0;
 		for(int D2=0;D2<DIMENSION;D2++)
 		{
 			stress[D][D2]=0;
@@ -45,8 +46,9 @@ hyperelastic::hyperelastic()
 			t_inverse_Fi[D][D2]=0;
 			Fi[D][D2]=0;
 
+			pi[D][D2]=0;
 			stress_n[D][D2]=0;
-			dPIdF[D][D2]=0;
+			dpidF[D][D2]=0;
 		}
 	}
 }

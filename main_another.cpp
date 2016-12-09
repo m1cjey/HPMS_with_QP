@@ -2729,7 +2729,9 @@ void file_initialization()
 	system("mkdir w");
 	system("mkdir E");
 	system("mkdir E_min");
-	//system("mkdir DgDq");
+	system("mkdir DgDq");
+	system("mkdir n0");
+
 	//system("mkdir Stress");
 	////system("mkdir Wall");
 	//system("mkdir P");

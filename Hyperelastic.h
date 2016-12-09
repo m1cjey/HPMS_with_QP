@@ -43,7 +43,9 @@ public:
 	double W_n;
 	double stress_n[DIMENSION][DIMENSION];
 	double q_n[DIMENSION];
+	double ph_n[DIMENSION];
 	double p_n[DIMENSION];
+
 	double dpidF[DIMENSION][DIMENSION];
 	hyperelastic();
 };
