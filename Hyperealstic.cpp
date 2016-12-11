@@ -81,26 +81,26 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HY
 
 	
 	///////////ï«åvéZÉvÉçÉZÉX
-	calc_W(CON,HYPER,h_num);
-	vector<double> NEIw;
-	double nG[DIMENSION]={0,0,1};
-	double aG[DIMENSION]={0,0,0};
-	for(int i=0;i<h_num;i++)
-	{
-		double hi=-1*((PART[i].r[A_X]-aG[A_X])*nG[A_X]+(PART[i].r[A_Y]-aG[A_Y])*nG[A_Y]+(PART[i].r[A_Z]-aG[A_Z])*nG[A_Z]);
-		if(hi>0)
-		{
-			NEIw.push_back(i);
-		}
-	}
-	
-	if(NEIw.size()>0)
-	{
-		cout<<"ê⁄êG ";
-		for(int i=0;i<NEIw.size();i++)	cout<<NEIw[i]<<", ";
-		cout<<endl;
-		calc_HYPER_QP_gh(CON,PART,HYPER,HYPER1,t,F);
-	}
+	//calc_W(CON,HYPER,h_num);
+	//vector<double> NEIw;
+	//double nG[DIMENSION]={0,0,1};
+	//double aG[DIMENSION]={0,0,0};
+	//for(int i=0;i<h_num;i++)
+	//{
+	//	double hi=-1*((PART[i].r[A_X]-aG[A_X])*nG[A_X]+(PART[i].r[A_Y]-aG[A_Y])*nG[A_Y]+(PART[i].r[A_Z]-aG[A_Z])*nG[A_Z]);
+	//	if(hi>0)
+	//	{
+	//		NEIw.push_back(i);
+	//	}
+	//}
+	//
+	//if(NEIw.size()>0)
+	//{
+	//	cout<<"ê⁄êG ";
+	//	for(int i=0;i<NEIw.size();i++)	cout<<NEIw[i]<<", ";
+	//	cout<<endl;
+	//	calc_HYPER_QP_g(CON,PART,HYPER,HYPER1,t,F);
+	//}
 
 	cout<<"Hypercalculation ends."<<endl;
 
@@ -126,7 +126,9 @@ void calc_constant(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> &
 	fc<<"le"<<","<<le<<endl;
 	fc<<"r"<<","<<r<<endl;
 	fc<<"Dt"<<","<<Dt<<endl;
-	for(int i=0;i<h_num;i++)	HYPER[i].p[A_Z]=-1.0*mi;
+
+	//êÇíºç~â∫
+	//for(int i=0;i<h_num;i++)	HYPER[i].p[A_Z]=-1.0*mi;
 	
 	//ã»Ç∞ÇÀÇ∂ÇË
 	/*if(model==21)
@@ -156,26 +158,26 @@ void calc_constant(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> &
 	}//*/
 
 	//ã»Ç∞
-	//if(model==21)
-	//{
-	//	int b=10;
-	//	double max=0,min=0;
+	if(model==21)
+	{
+		int b=10;
+		double max=0,min=0;
 
-	//	for(int i=0;i<h_num;i++)
-	//	{
-	//		if(max<PART[i].q0[A_Z])	max=PART[i].q0[A_Z];
-	//		if(min>PART[i].q0[A_Z])	min=PART[i].q0[A_Z];
-	//	}
-	//	double H=max-min+le;
-	//	cout<<H;
-	//	//double H=1.8;
-	//	for(int i=0;i<h_num;i++)	
-	//	{
-	//		double Z=PART[i].q0[A_Z];
-	//		double part_p=(Z/H)*2;
-	//		HYPER[i].p[A_X]=mi*b*(3*part_p*part_p-1);
-	//	}
-	//}//*/
+		for(int i=0;i<h_num;i++)
+		{
+			if(max<PART[i].q0[A_Z])	max=PART[i].q0[A_Z];
+			if(min>PART[i].q0[A_Z])	min=PART[i].q0[A_Z];
+		}
+		double H=max-min+le;
+		cout<<H;
+		//double H=1.8;
+		for(int i=0;i<h_num;i++)	
+		{
+			double Z=PART[i].q0[A_Z];
+			double part_p=(Z/H)*2;
+			HYPER[i].p[A_X]=mi*b*(3*part_p*part_p-1);
+		}
+	}//*/
 
 	//ÇÀÇ∂ÇË
 	/*if(model==21)

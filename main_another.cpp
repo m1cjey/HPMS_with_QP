@@ -289,7 +289,7 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 
 		//í¥íeê´åvéZ
 		if(CON.get_flag_HYPER()==ON)	calc_hyper(CON,PART,HYPER,HYPER1,t,F);//ifï™ÇÃí«â¡15/2/10
-
+		//if(CON.get_flag_HYPER()==ON)	calc_HYPER_QP_g(CON,PART,HYPER,HYPER1,t,F);
 		cout<<"hyper_calculation is ended."<<endl;
 
 
@@ -2720,12 +2720,14 @@ void file_initialization()
 	system("mkdir dT");
 	system("mkdir p");
 	system("mkdir q");
-	system("mkdir h_lam");
+	system("mkdir g");
+	system("mkdir dg");
+	//system("mkdir h_lam");
 	system("mkdir lam");
-	system("mkdir h_mu");
-	system("mkdir mu");
-	system("mkdir rL");
-	system("mkdir dL");
+	//system("mkdir h_mu");
+	//system("mkdir mu");
+	system("mkdir rE");
+	system("mkdir dE");
 	system("mkdir w");
 	system("mkdir E");
 	system("mkdir E_min");

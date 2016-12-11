@@ -47,6 +47,7 @@ hyperelastic::hyperelastic()
 			Fi[D][D2]=0;
 
 			pi[D][D2]=0;
+			pi_n[D][D2]=0;
 			stress_n[D][D2]=0;
 			dpidF[D][D2]=0;
 		}
