@@ -6,10 +6,9 @@ class hyperelastic
 public:
 
 	unsigned ID;
-	int NEI[1000];
+	int NEI[60];
 	int N;
 	double pnd0;
-	int flag_wall;
 
 	double W;
 	double lambda;
@@ -32,14 +31,10 @@ public:
 	double pi[DIMENSION][DIMENSION];
 	double pi_n[DIMENSION][DIMENSION];
 	double lam;
-	double h_lam;
 	double mu;
-	double h_mu;
 
 	double old_lam;
-	double old_h_lam;
 	double old_mu;
-	double old_h_mu;
 
 	double W_n;
 	double stress_n[DIMENSION][DIMENSION];
@@ -47,7 +42,6 @@ public:
 	double ph_n[DIMENSION];
 	double p_n[DIMENSION];
 
-	double dpidF[DIMENSION][DIMENSION];
 	hyperelastic();
 };
 
@@ -62,9 +56,6 @@ public:
 	double spl_f;
 
 	double DgDq_n[DIMENSION];
-	double dPIdlam;
-	double dPIdmu;
-	double Dg_n_Dg_n;
 	hyperelastic2();
 };
 

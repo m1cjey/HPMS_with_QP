@@ -2,26 +2,22 @@
 
 hyperelastic::hyperelastic()
 {
-	for(int i=0;i<600;i++)
+	for(int i=0;i<60;i++)
 	{
 		NEI[i]=0;
 	}
 	N=0;
 	pnd0=0;
-	flag_wall=0;
+	W=0;
 	lambda=1;
 	J=0;
 	pnd=0;
 
 	lam=1;
-	h_lam=1;
 	mu=1;
-	h_mu=1;
 
 	old_lam=1;
-	old_h_lam=1;
 	old_mu=1;
-	old_h_mu=1;
 
 	
 	W_n=0;
@@ -49,7 +45,6 @@ hyperelastic::hyperelastic()
 			pi[D][D2]=0;
 			pi_n[D][D2]=0;
 			stress_n[D][D2]=0;
-			dpidF[D][D2]=0;
 		}
 	}
 }
@@ -66,8 +61,5 @@ hyperelastic2::hyperelastic2()
 
 		DgDq_n[D]=0;
 	}
-	dPIdlam=0;
-	dPIdmu=0;
-	Dg_n_Dg_n=0;
 }
 

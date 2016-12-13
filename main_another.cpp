@@ -1262,7 +1262,6 @@ void gauss(double *matrix,double *B,int N)
 		}
 	}
 	for(int k=0;k<N;k++) B[k]/=matrix[k*N+k];
-
 }
 
 
@@ -2721,6 +2720,7 @@ void file_initialization()
 	system("mkdir p");
 	system("mkdir q");
 	system("mkdir g");
+	system("mkdir h");
 	system("mkdir dg");
 	//system("mkdir h_lam");
 	system("mkdir lam");
