@@ -56,6 +56,7 @@ public:
 	double spl_f;
 
 	double DgDq_n[DIMENSION];
+	double DpiDq[DIMENSION];
 	hyperelastic2();
 };
 

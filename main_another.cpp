@@ -2715,20 +2715,20 @@ void file_initialization()
 	//system("mkdir Current");
 	
 	//í¥íeê´
-	system("mkdir rT");
-	system("mkdir dT");
+	system("mkdir T");
+	//system("mkdir dT");
 	system("mkdir p");
 	system("mkdir q");
 	system("mkdir g");
 	system("mkdir h");
-	system("mkdir dg");
+	//system("mkdir dg");
 	//system("mkdir h_lam");
 	system("mkdir lam");
 	//system("mkdir h_mu");
-	//system("mkdir mu");
-	system("mkdir rE");
-	system("mkdir dE");
-	system("mkdir w");
+	system("mkdir mu");
+	//system("mkdir rE");
+	//system("mkdir dE");
+	//system("mkdir w");
 	system("mkdir E");
 	system("mkdir E_min");
 	system("mkdir DgDq");

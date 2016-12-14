@@ -148,7 +148,7 @@ void q_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,ve
 			q_variables(CON,PART,HYPER,HYPER1);
 			q_nab_lap(PART,HYPER,HYPER1,dE,rE,dg,Dt,V,mi,nG);
 
-			for(int i=0;i<h_num;i++)	En=0.5/mi*(HYPER[i].half_p[A_X]*HYPER[i].half_p[A_X]+HYPER[i].half_p[A_Y]*HYPER[i].half_p[A_Y]+HYPER[i].half_p[A_Z]*HYPER[i].half_p[A_Z])+V*HYPER[i].W;
+			for(int i=0;i<h_num;i++)	En+=0.5/mi*(HYPER[i].half_p[A_X]*HYPER[i].half_p[A_X]+HYPER[i].half_p[A_Y]*HYPER[i].half_p[A_Y]+HYPER[i].half_p[A_Z]*HYPER[i].half_p[A_Z])+V*HYPER[i].W;
 
 			T=(En-E0)*(En-E0);
 			//cout<<"T="<<T<<", En"<<En<<endl;
