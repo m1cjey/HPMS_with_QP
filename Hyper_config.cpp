@@ -29,7 +29,7 @@ hyperelastic::hyperelastic()
 		p[D]=0;	
 		ang_p[D]=0;
 		vis_force[D]=0;
-
+		E=0;
 		q_n[D]=0;
 		p_n[D]=0;
 		ph_n[D]=0;

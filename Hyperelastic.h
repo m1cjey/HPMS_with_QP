@@ -32,6 +32,7 @@ public:
 	//double pi_n[DIMENSION][DIMENSION];
 	double lam;
 	double mu;
+	double E;
 
 	double old_lam;
 	double old_mu;
