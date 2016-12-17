@@ -21,7 +21,7 @@ hyperelastic::hyperelastic()
 
 	
 	W_n=0;
-
+	fw=0;
 	for(int D=0;D<DIMENSION;D++)
 	{
 		half_p[D]=0;
