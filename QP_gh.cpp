@@ -645,7 +645,6 @@ void q_variables(mpsconfig &CON, vector<mpselastic> &PART,vector<hyperelastic> &
 
 void q_nab_lap(vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,double **dg, double Dt, double V, double mi, vector<double > NEIw)
 {
-
 	int h_num=HYPER.size();
 	int Nw=NEIw.size();
 	int Nx=h_num+Nw;

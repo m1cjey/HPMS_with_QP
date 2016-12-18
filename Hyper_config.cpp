@@ -22,6 +22,8 @@ hyperelastic::hyperelastic()
 	
 	W_n=0;
 	fw=0;
+	W0=0;
+
 	for(int D=0;D<DIMENSION;D++)
 	{
 		half_p[D]=0;
@@ -29,7 +31,7 @@ hyperelastic::hyperelastic()
 		p[D]=0;	
 		ang_p[D]=0;
 		vis_force[D]=0;
-		E=0;
+		p0[D]=0;
 		q_n[D]=0;
 		p_n[D]=0;
 		ph_n[D]=0;

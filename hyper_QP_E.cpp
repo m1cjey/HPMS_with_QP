@@ -28,7 +28,7 @@ void calc_HYPER_QP_gh(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelasti
 	double E0=0;
 	for(int i=0;i<h_num;i++)
 	{
-		E0+=0.5/mi*(HYPER[i].p_n[A_X]*HYPER[i].p_n[A_X]+HYPER[i].p_n[A_Y]*HYPER[i].p_n[A_Y]+HYPER[i].p_n[A_Z]*HYPER[i].p_n[A_Z])+V*HYPER[i].W_n;
+		E0+=0.5/mi*(HYPER[i].p0[A_X]*HYPER[i].p0[A_X]+HYPER[i].p0[A_Y]*HYPER[i].p0[A_Y]+HYPER[i].p0[A_Z]*HYPER[i].p0[A_Z])+V*HYPER[i].W0;
 	}
 	cout<<"E0="<<E0<<endl<<endl;
 	ofstream fq0("q0_QP.csv");

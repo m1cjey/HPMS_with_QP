@@ -33,11 +33,12 @@ public:
 	int fw;
 	double lam;
 	double mu;
-	double E;
+	double p0[DIMENSION];
 
 	double old_lam;
 	double old_mu;
 
+	double W0;
 	double W_n;
 	double stress_n[DIMENSION][DIMENSION];
 	double q_n[DIMENSION];

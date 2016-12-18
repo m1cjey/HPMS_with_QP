@@ -19,14 +19,14 @@ mpsconfig::mpsconfig()
 	ss>>step;
 	fin.close();*/
 	
-	step=1000;				//全step数	step=20000;//40000;	//30000;//10000;;	//79*20+1;
+	step=100;				//全step数	step=20000;//40000;	//30000;//10000;;	//79*20+1;
 	switch_FEM=false;		//FEMを実行するかしないか false
 	nonlinear_elastic=false;	//弾性体非線形計算するかtrue
 	switch_vis=OFF;			//粘性項計算するかしないか・・・これはあとで消す
 	FEMCG=2;				//FEMにおける行列解法 0:CG 1:ICCG 2:並列ICCG 3:MRTR 4:ICMRTR
 
 //	dt= (switch_FEM==OFF) ? 1.0e-5: 5.0e-6; //0.0001;不安定要因！ 0.00001:推奨(Courant数考えて) //Cf. dt_for_FEM=0.000001/2;
-	dt=1.e-4;//1e-3;////5.e-3;//1.e-4;//5.e-3;//1e-5;
+	dt=1e-3;//1.e-4;//1e-3;////5.e-3;//1.e-4;//5.e-3;//1e-5;
 	dt_for_FEM=5.0e-6;
 	//FEMだと0.000001で止まる・・・
 	current_step=2;

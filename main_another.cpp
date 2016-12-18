@@ -2729,6 +2729,7 @@ void file_initialization()
 	//system("mkdir rE");
 	//system("mkdir dE");
 	//system("mkdir w");
+	system("mkdir Energy");
 	system("mkdir E");
 	system("mkdir E_min");
 	system("mkdir DgDq");
@@ -2753,10 +2754,11 @@ void file_initialization()
 	ofstream init19("E_lam.csv", ios::trunc);*/
 	ofstream init31("E_sum.csv", ios::trunc);
 	ofstream init20("J.csv", ios::trunc);
+	ofstream init21("g.csv", ios::trunc);
 	//ofstream init22("stress.csv",ios::trunc);
 	//ofstream init23("ti_Fi.csv", ios::trunc);
 	//ofstream init24("Fi.csv", ios::trunc);
-	ofstream init25("P_ave_norm.csv", ios::trunc);
+	//ofstream init25("P_ave_norm.csv", ios::trunc);
 	ofstream init28("Vis.csv",ios::trunc);
 	//ofstream init29("Convergence_rate.csv", ios::trunc);
 	ofstream init30("Newton_E.csv", ios::trunc);
@@ -2786,10 +2788,11 @@ void file_initialization()
 	init18.close();
 	init19.close();*/
 	init20.close();
+	init21.close();
 	//init22.close();
 	//init23.close();
 	//init24.close();
-	init25.close();
+	//init25.close();
 	init28.close();
 	//init29.close();
 	init30.close();
