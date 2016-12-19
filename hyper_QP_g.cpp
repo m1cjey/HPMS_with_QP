@@ -310,7 +310,6 @@ void q_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,ve
 			}
 
 		}
-		break;
 		E_sum=0;
 		for(int i=0;i<h_num;i++)	E_sum+=(HYPER[i].old_lam-HYPER[i].lam)*(HYPER[i].old_lam-HYPER[i].lam);
 		E_min=sqrt(E_sum);

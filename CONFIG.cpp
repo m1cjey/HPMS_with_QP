@@ -27,7 +27,7 @@ mpsconfig::mpsconfig()
 
 //	dt= (switch_FEM==OFF) ? 1.0e-5: 5.0e-6; //0.0001;不安定要因！ 0.00001:推奨(Courant数考えて) //Cf. dt_for_FEM=0.000001/2;
 	dt=1e-3;//1.e-4;//1e-3;////5.e-3;//1.e-4;//5.e-3;//1e-5;
-	dt_for_FEM=5.0e-6;
+	dt_for_FEM=1e-5;
 	//FEMだと0.000001で止まる・・・
 	current_step=2;
 	current_time=0.0;

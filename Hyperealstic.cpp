@@ -79,14 +79,14 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HY
 
 
 	///////////////通常計算プロセス
-	newton_raphson(CON,PART,HYPER,HYPER1,t,F);
-	calc_half_p(CON,PART,HYPER,HYPER1,0,F);
-	calc_F(CON,PART,HYPER,HYPER1);
-	calc_stress(CON,HYPER);
-	//calc_pi(CON,HYPER);
-	calc_differential_p(CON,PART,HYPER,HYPER1,F);
-	renew_lambda(CON,PART,HYPER,HYPER1,t);
-	calc_half_p(CON,PART,HYPER,HYPER1,1,F);
+	//newton_raphson(CON,PART,HYPER,HYPER1,t,F);
+	//calc_half_p(CON,PART,HYPER,HYPER1,0,F);
+	//calc_F(CON,PART,HYPER,HYPER1);
+	//calc_stress(CON,HYPER);
+	////calc_pi(CON,HYPER);
+	//calc_differential_p(CON,PART,HYPER,HYPER1,F);
+	//renew_lambda(CON,PART,HYPER,HYPER1,t);
+	//calc_half_p(CON,PART,HYPER,HYPER1,1,F);
 
 
 	/////////////壁計算プロセス
@@ -118,7 +118,7 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HY
 	//	calc_HYPER_QP_g(CON,PART,HYPER,HYPER1,t,F);
 	//}
 
-	//calc_HYPER_QP_g(CON,PART,HYPER,HYPER1,t,F);
+	calc_HYPER_QP_g(CON,PART,HYPER,HYPER1,t,F);
 	cout<<"Hypercalculation ends."<<endl;
 
 	clock_t end_t=clock();
@@ -2215,8 +2215,7 @@ void output_energy(mpsconfig CON, vector<mpselastic> PART, vector<hyperelastic> 
 	double IIc=0.50*(trace_dC*trace_dC-trace_dC2);
 	W[i]=c10*(Ic-3)+c01*(IIc-3);
 	}*/
-
-
+	
 	//for(int i=0;i<h_num;i++)
 	//{
 	//	double J=HYPER[i].J;
