@@ -93,32 +93,32 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HY
 	calc_W(CON,HYPER,h_num);
 	//////calc_HYPER_QP_gh(CON,PART,HYPER,HYPER1,t,F);
 
-	//vector<double> NEIw;
-	//double nG[DIMENSION]={0,0,1};
-	//double aG[DIMENSION]={0,0,0};
-	//for(int i=0;i<h_num;i++)
-	//{
-	//	double hi=-1*((PART[i].r[A_X]-aG[A_X])*nG[A_X]+(PART[i].r[A_Y]-aG[A_Y])*nG[A_Y]+(PART[i].r[A_Z]-aG[A_Z])*nG[A_Z]);
-	//	if(hi>0)
-	//	{
-	//		NEIw.push_back(i);
-	//		HYPER[i].fw=1;
-	//	}
-	//	else
-	//	{
-	//		HYPER[i].fw=0;
-	//	}
-	//}
-	//int Nw=NEIw.size();
-	//if(Nw>0)
-	//{
-	//	cout<<"ÚG ";
-	//	for(int i=0;i<Nw;i++)	cout<<NEIw[i]<<", ";
-	//	cout<<endl;
-	//	calc_HYPER_QP_g(CON,PART,HYPER,HYPER1,t,F);
-	//}
+	vector<double> NEIw;
+	double nG[DIMENSION]={0,0,1};
+	double aG[DIMENSION]={0,0,0};
+	for(int i=0;i<h_num;i++)
+	{
+		double hi=-1*((PART[i].r[A_X]-aG[A_X])*nG[A_X]+(PART[i].r[A_Y]-aG[A_Y])*nG[A_Y]+(PART[i].r[A_Z]-aG[A_Z])*nG[A_Z]);
+		if(hi>0)
+		{
+			NEIw.push_back(i);
+			HYPER[i].fw=1;
+		}
+		else
+		{
+			HYPER[i].fw=0;
+		}
+	}
+	int Nw=NEIw.size();
+	if(Nw>0)
+	{
+		cout<<"ÚG ";
+		for(int i=0;i<Nw;i++)	cout<<NEIw[i]<<", ";
+		cout<<endl;
+		calc_HYPER_QP_gh(CON,PART,HYPER,HYPER1,t,F,NEIw);
+	}
 
-	calc_HYPER_QP_g(CON,PART,HYPER,HYPER1,t,F);
+	//calc_HYPER_QP_gh(CON,PART,HYPER,HYPER1,t,F,NEIw);
 	cout<<"Hypercalculation ends."<<endl;
 
 	clock_t end_t=clock();

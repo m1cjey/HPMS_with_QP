@@ -1409,13 +1409,12 @@ void p_QP(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int h
 			}
 
 
-			//T=(En-E0)*(En-E0);
-			//for(int k=0;k<h_num;k++)
-			//{	
-			//	dT[k]=2.*dE[k]*(E-E0);
-			//	for(int l=0;l<h_num;l++)	rT[l*h_num+k]=2.*rE[l*h_num+k]*(E-E0)+2*dE[k]*dE[l];
-			//}
-			T=0.;
+			T=(En-E0)*(En-E0);
+			for(int k=0;k<h_num;k++)
+			{	
+				dT[k]=2.*dE[k]*(E-E0);
+				for(int l=0;l<h_num;l++)	rT[l*h_num+k]=2.*rE[l*h_num+k]*(E-E0)+2*dE[k]*dE[l];
+			}
 			for(int i=0;i<h_num;i++)
 			{	
 				if(G[i]<0)	T+=0.5*r*(-1.*G[i]+th_G[i])*(-1.*G[i]+th_G[i]);
