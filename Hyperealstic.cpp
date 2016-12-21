@@ -79,14 +79,14 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HY
 
 
 	///////////////通常計算プロセス
-	//newton_raphson(CON,PART,HYPER,HYPER1,t,F);
-	//calc_half_p(CON,PART,HYPER,HYPER1,0,F);
-	//calc_F(CON,PART,HYPER,HYPER1);
-	//calc_stress(CON,HYPER);
-	////calc_pi(CON,HYPER);
-	//calc_differential_p(CON,PART,HYPER,HYPER1,F);
-	//renew_lambda(CON,PART,HYPER,HYPER1,t);
-	//calc_half_p(CON,PART,HYPER,HYPER1,1,F);
+	newton_raphson(CON,PART,HYPER,HYPER1,t,F);
+	calc_half_p(CON,PART,HYPER,HYPER1,0,F);
+	calc_F(CON,PART,HYPER,HYPER1);
+	calc_stress(CON,HYPER);
+	//calc_pi(CON,HYPER);
+	calc_differential_p(CON,PART,HYPER,HYPER1,F);
+	renew_lambda(CON,PART,HYPER,HYPER1,t);
+	calc_half_p(CON,PART,HYPER,HYPER1,1,F);
 
 
 	/////////////壁計算プロセス
@@ -96,9 +96,10 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HY
 	vector<double> NEIw;
 	double nG[DIMENSION]={0,0,1};
 	double aG[DIMENSION]={0,0,0};
+	double hi=0.;
 	for(int i=0;i<h_num;i++)
 	{
-		double hi=-1*((PART[i].r[A_X]-aG[A_X])*nG[A_X]+(PART[i].r[A_Y]-aG[A_Y])*nG[A_Y]+(PART[i].r[A_Z]-aG[A_Z])*nG[A_Z]);
+		hi=-1.*PART[i].r[A_Z];
 		if(hi>0)
 		{
 			NEIw.push_back(i);
@@ -145,7 +146,7 @@ void calc_constant(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> &
 	fc<<"Dt"<<","<<Dt<<endl;
 
 	//垂直降下
-	//for(int i=0;i<h_num;i++)	HYPER[i].p[A_Z]=-1.0*mi;
+	for(int i=0;i<h_num;i++)	HYPER[i].p[A_Z]=-1.*mi;
 
 	//曲げねじり
 	/*if(model==21)
@@ -175,26 +176,26 @@ void calc_constant(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> &
 	}//*/
 
 	//////曲げ
-	if(model==21)
-	{
-		int b=10;
-		double max=0,min=0;
+	//if(model==21)
+	//{
+	//	int b=10;
+	//	double max=0,min=0;
 
-		for(int i=0;i<h_num;i++)
-		{
-			if(max<PART[i].q0[A_Z])	max=PART[i].q0[A_Z];
-			if(min>PART[i].q0[A_Z])	min=PART[i].q0[A_Z];
-		}
-		double H=max-min+le;
-		cout<<H;
-		//double H=1.8;
-		for(int i=0;i<h_num;i++)	
-		{
-			double Z=PART[i].q0[A_Z];
-			double part_p=(Z/H)*2;
-			HYPER[i].p[A_X]=mi*b*(3*part_p*part_p-1);
-		}
-	}//*/
+	//	for(int i=0;i<h_num;i++)
+	//	{
+	//		if(max<PART[i].q0[A_Z])	max=PART[i].q0[A_Z];
+	//		if(min>PART[i].q0[A_Z])	min=PART[i].q0[A_Z];
+	//	}
+	//	double H=max-min+le;
+	//	cout<<H;
+	//	//double H=1.8;
+	//	for(int i=0;i<h_num;i++)	
+	//	{
+	//		double Z=PART[i].q0[A_Z];
+	//		double part_p=(Z/H)*2;
+	//		HYPER[i].p[A_X]=mi*b*(3*part_p*part_p-1);
+	//	}
+	//}//*/
 
 	////ねじり
 	/*if(model==21)
