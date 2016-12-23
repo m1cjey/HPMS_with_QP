@@ -93,6 +93,8 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HY
 	calc_W(CON,HYPER,h_num);
 	//////calc_HYPER_QP_gh(CON,PART,HYPER,HYPER1,t,F);
 
+	//calc_HYPER_QP_g(CON,PART,HYPER,HYPER1,t,F);
+
 	vector<double> NEIw;
 	double nG[DIMENSION]={0,0,1};
 	double aG[DIMENSION]={0,0,0};

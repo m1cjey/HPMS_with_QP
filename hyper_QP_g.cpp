@@ -1,17 +1,17 @@
 #include "stdafx.h"	
 
-void q_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int h_num, int Nx, double V, double mi, double Dt, double nG[DIMENSION], double E0);
-void q_nab_lap(vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,double *dE,double *rE,double *dg, double Dt, double V, double mi,double nG[DIMENSION]);
-void q_variables(mpsconfig &CON, vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1);
-void output_data(vector<mpselastic>PART,vector<hyperelastic>HYPER,vector<hyperelastic2>HYPER1, double T,double *dT, double *rT, double *g, double *dg, double *th_g, double *d, int h_num,int count,int count_min,int t,double E,double En,double E0,double mi, double V);
+void q_QP_g(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int h_num, int Nx, double V, double mi, double Dt, double nG[DIMENSION], double E0);
+void q_nab_lap_g(vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,double *dE,double *rE,double *dg, double Dt, double V, double mi,double nG[DIMENSION]);
+void q_variables_g(mpsconfig &CON, vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1);
+void output_data_g(vector<mpselastic>PART,vector<hyperelastic>HYPER,vector<hyperelastic2>HYPER1, double T,double *dT, double *rT, double *g, double *dg, double *th_g, double *d, int h_num,int count,int count_min,int t,double E,double En,double E0,double mi, double V);
 
-void calc_n(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1);
+void calc_n_g(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1);
 
-void p_QP(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int h_num, int Nx, double V, double mi, double Dt, double E0);
-void p_variables(vector<hyperelastic> &HYPER,vector<hyperelastic2> HYPER1,int h_num,double Dt,double mi);
-void p_nab(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,double *dE, double *G, double Dt, double V, double mi);
-void p_lap(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,double *rE, double *dG, double Dt, double V, double mi);
-void output_data_p(vector<hyperelastic>HYPER,vector<hyperelastic2>HYPER1, double *dG, double *G, double *th_G, double *rT, double *dT, double T, double *d, int Nx, int h_num,int count,int count_min,int t,double E,double En, double E0);
+void p_QP_g(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int h_num, int Nx, double V, double mi, double Dt, double E0);
+void p_variables_g(vector<hyperelastic> &HYPER,vector<hyperelastic2> HYPER1,int h_num,double Dt,double mi);
+void p_nab_g(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,double *dE, double *G, double Dt, double V, double mi);
+void p_lap_g(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,double *rE, double *dG, double Dt, double V, double mi);
+void output_data_p_g(vector<hyperelastic>HYPER,vector<hyperelastic2>HYPER1, double *dG, double *G, double *th_G, double *rT, double *dT, double T, double *d, int Nx, int h_num,int count,int count_min,int t,double E,double En, double E0);
 //void output_data(vector<mpselastic>PART,vector<hyperelastic>HYPER, double *rT, double *dT, double *dN,double *g, double **dg, double *h, double *th_h, int Nx, int h_num,int count,int count_min,int t,double E);
 
 
@@ -69,11 +69,11 @@ void calc_HYPER_QP_g(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic
 	fhpn.close();
 
 	////////////QPŒvŽZ///////////////		
-	q_QP(CON,PART,HYPER,HYPER1,t,h_num,Nx,V,mi,Dt,nG,E0);
+	q_QP_g(CON,PART,HYPER,HYPER1,t,h_num,Nx,V,mi,Dt,nG,E0);
 
-	calc_n(CON,PART,HYPER,HYPER1);
+	calc_n_g(CON,PART,HYPER,HYPER1);
 
-	p_QP(HYPER,HYPER1,t,h_num,Nx,V,mi,Dt,E0);
+	p_QP_g(HYPER,HYPER1,t,h_num,Nx,V,mi,Dt,E0);
 	for(int i=0;i<h_num;i++)	HYPER[i].lambda=HYPER[i].lam;
 
 	cout<<"--------------------------OK"<<endl;
@@ -81,7 +81,7 @@ void calc_HYPER_QP_g(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic
 
 }
 
-void q_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int h_num, int Nx, double V, double mi, double Dt, double nG[DIMENSION], double E0)
+void q_QP_g(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int h_num, int Nx, double V, double mi, double Dt, double nG[DIMENSION], double E0)
 {
 	////////////’è‹`///////////////
 	int count=0;
@@ -99,7 +99,7 @@ void q_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,ve
 	double hp[DIMENSION]={0,0,0};
 	double W=0.;
 
-	double r=10;
+	double r=0.1;
 	
 	double En=0.;
 	double *dE=new double [h_num];	
@@ -151,8 +151,8 @@ void q_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,ve
 		while(E>ep)
 		{
 			count++;
-			q_variables(CON,PART,HYPER,HYPER1);
-			q_nab_lap(PART,HYPER,HYPER1,dE,rE,dg,Dt,V,mi,nG);
+			q_variables_g(CON,PART,HYPER,HYPER1);
+			q_nab_lap_g(PART,HYPER,HYPER1,dE,rE,dg,Dt,V,mi,nG);
 
 			En=0.;
 			for(int i=0;i<h_num;i++)	
@@ -305,7 +305,7 @@ void q_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,ve
 			if(count==1||count%100==0)
 			{
 				cout<<"E"<<count<<"="<<E<<", En="<<En<<endl;
-				output_data(PART,HYPER,HYPER1,T,dT,rT,g,dg,th_g,d,h_num,count,count_min,t,E,En,E0,mi,V);
+				output_data_g(PART,HYPER,HYPER1,T,dT,rT,g,dg,th_g,d,h_num,count,count_min,t,E,En,E0,mi,V);
 
 			}
 
@@ -426,7 +426,7 @@ void q_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,ve
 	delete[]	th_h;
 }
 
-void q_variables(mpsconfig &CON, vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1)
+void q_variables_g(mpsconfig &CON, vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1)
 {
 	int h_num=HYPER.size();
 
@@ -749,7 +749,7 @@ void q_variables(mpsconfig &CON, vector<mpselastic> &PART,vector<hyperelastic> &
 }
 
 
-void q_nab_lap(vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,double *dE,double *rE,double *dg, double Dt, double V, double mi,double nG[DIMENSION])
+void q_nab_lap_g(vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,double *dE,double *rE,double *dg, double Dt, double V, double mi,double nG[DIMENSION])
 {
 
 	int h_num=HYPER.size();
@@ -949,7 +949,7 @@ void q_nab_lap(vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyper
 	delete[]	DpiDlam;
 }
 
-void output_data(vector<mpselastic>PART,vector<hyperelastic>HYPER,vector<hyperelastic2>HYPER1, double T,double *dT, double *rT, double *g, double *dg, double *th_g, double *d, int h_num,int count,int count_min,int t,double E,double En,double E0,double mi, double V)
+void output_data_g(vector<mpselastic>PART,vector<hyperelastic>HYPER,vector<hyperelastic2>HYPER1, double T,double *dT, double *rT, double *g, double *dg, double *th_g, double *d, int h_num,int count,int count_min,int t,double E,double En,double E0,double mi, double V)
 {
 
 	stringstream ss0;
@@ -1155,7 +1155,7 @@ void output_data(vector<mpselastic>PART,vector<hyperelastic>HYPER,vector<hyperel
 }
 
 
-void calc_n(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1)
+void calc_n_g(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1)
 {
 	int h_num=HYPER.size();
 
@@ -1325,7 +1325,7 @@ void calc_n(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,
 }
 
 
-void p_QP(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int h_num, int Nx, double V, double mi, double Dt, double E0)
+void p_QP_g(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int h_num, int Nx, double V, double mi, double Dt, double E0)
 {
 	////////////’è‹`///////////////
 	int count=0;
@@ -1377,7 +1377,7 @@ void p_QP(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int h
 		}
 	}
 
-	p_lap(HYPER,HYPER1,rE,dG,Dt,V,mi);
+	p_lap_g(HYPER,HYPER1,rE,dG,Dt,V,mi);
 
 
 
@@ -1395,8 +1395,8 @@ void p_QP(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int h
 		while(E>ep)
 		{
 			count++;
-			p_variables(HYPER,HYPER1,h_num,Dt,mi);
-			p_nab(HYPER,HYPER1,dE,G,Dt,V,mi);
+			p_variables_g(HYPER,HYPER1,h_num,Dt,mi);
+			p_nab_g(HYPER,HYPER1,dE,G,Dt,V,mi);
 
 			En=0;
 			for(int i=0;i<h_num;i++)	
@@ -1529,7 +1529,7 @@ void p_QP(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int h
 			if(count==1||count%100==0)
 			{
 				//cout<<"E"<<count<<"="<<E<<", En="<<En<<endl;
-				output_data_p(HYPER,HYPER1,dG,G,th_G,rT,dT,T,d,Nx,h_num,count,count_min,t,E,En,E0);
+				output_data_p_g(HYPER,HYPER1,dG,G,th_G,rT,dT,T,d,Nx,h_num,count,count_min,t,E,En,E0);
 			}
 
 		}
@@ -1612,7 +1612,7 @@ void p_QP(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int h
 	delete[]	B;
 }
 
-void p_nab(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,double *dE, double *G, double Dt, double V, double mi)
+void p_nab_g(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,double *dE, double *G, double Dt, double V, double mi)
 {
 
 	int h_num=HYPER.size();
@@ -1653,7 +1653,7 @@ void p_nab(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,double *dE,
 }
 
 
-void p_lap(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,double *rE, double *dG, double Dt, double V, double mi)
+void p_lap_g(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,double *rE, double *dG, double Dt, double V, double mi)
 {
 
 	int h_num=HYPER.size();
@@ -1703,7 +1703,7 @@ void p_lap(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,double *rE,
 }
 
 
-void p_variables(vector<hyperelastic> &HYPER,vector<hyperelastic2> HYPER1,int h_num,double Dt,double mi)
+void p_variables_g(vector<hyperelastic> &HYPER,vector<hyperelastic2> HYPER1,int h_num,double Dt,double mi)
 {
 	/////////////pŒvŽZ
 	double p_p[DIMENSION]={0,0,0};
@@ -1736,7 +1736,7 @@ void p_variables(vector<hyperelastic> &HYPER,vector<hyperelastic2> HYPER1,int h_
 
 
 
-void output_data_p(vector<hyperelastic>HYPER,vector<hyperelastic2>HYPER1, double *dG, double *G, double *th_G, double *rT, double *dT, double T, double *d, int Nx, int h_num,int count,int count_min,int t,double E,double En, double E0)
+void output_data_p_g(vector<hyperelastic>HYPER,vector<hyperelastic2>HYPER1, double *dG, double *G, double *th_G, double *rT, double *dT, double T, double *d, int Nx, int h_num,int count,int count_min,int t,double E,double En, double E0)
 {
 	stringstream ss0;
 	ss0<<"./g/p_dG_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
