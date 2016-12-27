@@ -71,7 +71,7 @@ void calc_HYPER_QP_gh(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelasti
 
 	p_QP(PART,HYPER,HYPER1,t,V,mi,Dt,E0);
 	for(int i=0;i<h_num;i++)	HYPER[i].lambda=HYPER[i].lam;
-	exit(1);
+	//exit(1);
 	cout<<"--------------------------OK"<<endl;
 
 
@@ -92,7 +92,8 @@ void q_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,ve
 	double ep=1.e-5;
 	double ep_min=1.e-5;
 
-	double r=1;
+	double rg=0.1;
+	double rh=1.;
 
 
 	double T=0.;
@@ -244,13 +245,13 @@ void q_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,ve
 			{	
 				g[i]=V*(1.-HYPER[i].J);
 
-				if(g[i]<0)	T+=0.5*r*(-1.*g[i]+th_g[i])*(-1.*g[i]+th_g[i]);
+				if(g[i]<0)	T+=0.5*rg*(-1.*g[i]+th_g[i])*(-1.*g[i]+th_g[i]);
 				else
 				{
-					T+=0.5*r*(g[i]+th_g[i])*(g[i]+th_g[i]);
+					T+=0.5*rg*(g[i]+th_g[i])*(g[i]+th_g[i]);
 				}
 				h[i]=-1.*PART[i].r[A_Z];
-				if(h[i]+th_h[i]>0)	T+=0.5*r*(h[i]+th_h[i])*(h[i]+th_h[i]);
+				if(h[i]+th_h[i]>0)	T+=0.5*rh*(h[i]+th_h[i])*(h[i]+th_h[i]);
 			}
 
 
@@ -260,24 +261,24 @@ void q_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,ve
 			{	
 				for(int i=0;i<h_num;i++)
 				{	
-					if(g[i]<0)	dT[k]+=-1.*r*dg[i][k]*(-1.*g[i]+th_g[i]);
+					if(g[i]<0)	dT[k]+=-1.*rg*dg[i][k]*(-1.*g[i]+th_g[i]);
 					else
 					{
-						dT[k]+=r*dg[i][k]*(g[i]+th_g[i]);
+						dT[k]+=rg*dg[i][k]*(g[i]+th_g[i]);
 					}
 					//cout<<"dT"<<count_min<<"_"<<count<<"_"<<k<<"="<<2*r*dg[i][k]*(g[i]+th_g[i])<<endl;
-					if(h[i]+th_h[i]>0)	dT[k]+=r*dh[i][k]*(h[i]+th_h[i]);
+					if(h[i]+th_h[i]>0)	dT[k]+=rh*dh[i][k]*(h[i]+th_h[i]);
 				}
 				for(int l=0;l<Nx;l++)
 				{
 					for(int i=0;i<h_num;i++)
 					{	
-						rT[l*Nx+k]+=r*dg[i][k]*dg[i][l];
+						rT[l*Nx+k]+=rg*dg[i][k]*dg[i][l];
 
-						if(h[i]+th_h[i]>0)	rT[l*Nx+k]+=r*dh[i][k]*dh[i][l];
+						if(h[i]+th_h[i]>0)	rT[l*Nx+k]+=rh*dh[i][k]*dh[i][l];
 						else if(h[i]+th_h[i]>-1.e-20 && dh[i][k]*dh[i][l]>0)
 						{
-							rT[l*Nx+k]+=r*dh[i][k]*dh[i][l];
+							rT[l*Nx+k]+=rh*dh[i][k]*dh[i][l];
 						}
 					}
 				}
@@ -359,7 +360,11 @@ void q_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,ve
 		}
 
 		E_min=E_sum;
-		if(E_min<ep_min*1000)	r*=4;
+		if(E_min<ep_min*1000)
+		{
+			rg*=4;
+			rh*=4;
+		}
 
 		for(int i=0;i<h_num;i++)
 		{
@@ -1414,7 +1419,8 @@ void p_QP(vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelast
 	double p[DIMENSION]={0,0,0};
 	double W=0.;
 	double g=0.;
-	double r=1;
+	double rG=0.01;
+	double rH=1.;
 	double d_sum=0.;
 
 	double En=0.;
@@ -1506,29 +1512,29 @@ void p_QP(vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelast
 			for(int k=0;k<Nx;k++)
 			{	
 				dT[k]=2.*dE[k]*(En-E0);
-				for(int l=0;l<Nx;l++)	rT[l*Nx+k]=2.*rE[l*Nx+k]*(En-E0)+2*dE[k]*dE[l];
+				for(int l=0;l<Nx;l++)	rT[l*Nx+k]=2.*rE[l*Nx+k]*(En-E0)+2.*dE[k]*dE[l];
 			}
 			for(int i=0;i<h_num;i++)
 			{	
-				if(G[i]<0)	T+=0.5*r*(-1.*G[i]+th_G[i])*(-1.*G[i]+th_G[i]);
+				if(G[i]<0)	T+=0.5*rG*(-1.*G[i]+th_G[i])*(-1.*G[i]+th_G[i]);
 				else
 				{
-					T+=0.5*r*(G[i]+th_G[i])*(G[i]+th_G[i]);
+					T+=0.5*rG*(G[i]+th_G[i])*(G[i]+th_G[i]);
 				}
 
-				if(H[i]+th_H[i]>0)	T+=0.5*r*(H[i]+th_H[i])*(H[i]+th_H[i]);
+				if(H[i]+th_H[i]>0)	T+=0.5*rH*(H[i]+th_H[i])*(H[i]+th_H[i]);
 			}
 
 			for(int k=0;k<Nx;k++)
 			{	
 				for(int i=0;i<h_num;i++)
 				{	
-					if(G[i]<0)	dT[k]+=-1.*r*dG[i][k]*(-1.*G[i]+th_G[i]);
+					if(G[i]<0)	dT[k]+=-1.*rG*dG[i][k]*(-1.*G[i]+th_G[i]);
 					else
 					{
-						dT[k]+=r*dG[i][k]*(G[i]+th_G[i]);
+						dT[k]+=rG*dG[i][k]*(G[i]+th_G[i]);
 					}
-					if(H[i]+th_H[i]>0)	dT[k]+=r*dH[i][k]*(H[i]+th_H[i]);
+					if(H[i]+th_H[i]>0)	dT[k]+=rH*dH[i][k]*(H[i]+th_H[i]);
 				}
 
 
@@ -1537,11 +1543,11 @@ void p_QP(vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelast
 					for(int i=0;i<h_num;i++)
 					{	
 						//rT[l*h_num+k]+=r*2.*dG[i*h_num+k]*dG[i*h_num+l]*(3*G[i]*G[i]+th_G[i]);
-						rT[l*Nx+k]+=r*dG[i][k]*dG[i][l];
+						rT[l*Nx+k]+=rG*dG[i][k]*dG[i][l];
 						//rT[l*h_num+k]+=r*dG[i*h_num+k]*dG[i*h_num+l];
 						//rT[l*h_num+k]+=r*2.*dG[i*h_num+k]*dG[i*h_num+l]*(3*G[i]*G[i]+th_G[i]);
-						if(H[i]+th_H[i]>0)	rT[l*Nx+k]+=r*dH[i][k]*dH[i][l];
-						else if (H[i]+th_H[i]>-1.e-20 && dH[i][k]*dH[i][l]>0)	rT[l*Nx+k]+=r*dH[i][k]*dH[i][l];
+						if(H[i]+th_H[i]>0)	rT[l*Nx+k]+=rH*dH[i][k]*dH[i][l];
+						else if (H[i]+th_H[i]>-1.e-20 && dH[i][k]*dH[i][l]>0)	rT[l*Nx+k]+=rH*dH[i][k]*dH[i][l];
 						//rT[l*h_num+k]+=r*dG[i*h_num+k]*dG[i*h_num+l];
 					}
 				}
@@ -1566,7 +1572,8 @@ void p_QP(vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelast
 				E_sum+=fabs(d[i+h_num]);
 			}
 			E=E_sum;
-			if(count==1||count%100==0)cout<<"E"<<count<<"="<<E<<", En="<<En<<endl;
+			cout<<"E"<<count<<"="<<E<<", En="<<En<<endl;
+			//if(count==1||count%100==0)cout<<"E"<<count<<"="<<E<<", En="<<En<<endl;
 
 			p_variables(HYPER,HYPER1,h_num,Dt,mi);
 			//if(count==1||count%100==0)
@@ -1585,8 +1592,11 @@ void p_QP(vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelast
 		}
 
 		E_min=E_sum;
-		if(E_min<ep_min*1000)	r*=4;
-
+		if(E_min<ep_min*1000)
+		{
+			rG*=4;
+			rH*=4;
+		}
 
 		for(int i=0;i<h_num;i++)
 		{
@@ -1611,7 +1621,7 @@ void p_QP(vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelast
 			stringstream ss3;
 			ss3<<"./mu/mu"<<t<<"_"<<count_min<<".csv"<<endl;
 			stringstream ss4;
-			ss4<<"./T/T"<<t<<".csv"<<endl;
+			ss4<<"./p_T/T"<<t<<".csv"<<endl;
 
 			if(count_min==1)
 			{
@@ -1651,8 +1661,8 @@ void p_QP(vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelast
 
 	for(int i=0;i<h_num;i++)
 	{
-		delete[]	dG;
-		delete[]	dH;
+		delete[]	dG[i];
+		delete[]	dH[i];
 	}
 
 	delete[]	dE;
@@ -1661,7 +1671,6 @@ void p_QP(vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelast
 	delete[]	dG;
 	delete[]	th_G;
 	delete[]	H;
-	delete[]	dH;
 	delete[]	th_H;
 	delete[]	dT;
 	delete[]	rT;
@@ -1755,18 +1764,17 @@ void p_lap(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,double *rE,
 				int ln=HYPER[j].NEI[l];
 				/////////////rlam E
 				Dglj[A_X]=HYPER1[ln*h_num+j].DgDq[A_X];	Dglj[A_Y]=HYPER1[ln*h_num+j].DgDq[A_Y];	Dglj[A_Z]=HYPER1[ln*h_num+j].DgDq[A_Z];
-				rE[kn*Nx+ln]+=0.25*Dt*Dt/mi*(Dgkj[A_X]*Dglj[A_X]+Dgkj[A_Y]*Dglj[A_Y]+Dgkj[A_Z]*Dglj[A_Z]);
+				rE[ln*Nx+kn]+=0.25*Dt*Dt/mi*(Dgkj[A_X]*Dglj[A_X]+Dgkj[A_Y]*Dglj[A_Y]+Dgkj[A_Z]*Dglj[A_Z]);
 				/////////////dlam G
 				dG[kn][ln]-=0.5*Dt/mi*(Dgkj[A_X]*Dglj[A_X]+Dgkj[A_Y]*Dglj[A_Y]+Dgkj[A_Z]*Dglj[A_Z]);
 			}
 			/////////////rlam E
-			rE[kn*Nx+j]+=0.25*Dt*Dt/mi*(Dgkj[A_X]*Dgjj[A_X]+Dgkj[A_Y]*Dgjj[A_Y]+Dgkj[A_Z]*Dgjj[A_Z]);
-			rE[j*Nx+kn]+=0.25*Dt*Dt/mi*(Dgjj[A_X]*Dgkj[A_X]+Dgjj[A_Y]*Dgkj[A_Y]+Dgjj[A_Z]*Dgkj[A_Z]);
+			rE[j*Nx+kn]+=0.25*Dt*Dt/mi*(Dgkj[A_X]*Dgjj[A_X]+Dgkj[A_Y]*Dgjj[A_Y]+Dgkj[A_Z]*Dgjj[A_Z]);
+			rE[kn*Nx+j]+=0.25*Dt*Dt/mi*(Dgjj[A_X]*Dgkj[A_X]+Dgjj[A_Y]*Dgkj[A_Y]+Dgjj[A_Z]*Dgkj[A_Z]);
 
 			/////////////dlam G
 			dG[kn][j]-=0.5*Dt/mi*(Dgkj[A_X]*Dgjj[A_X]+Dgkj[A_Y]*Dgjj[A_Y]+Dgkj[A_Z]*Dgjj[A_Z]);
 			dG[j][kn]-=0.5*Dt/mi*(Dgjj[A_X]*Dgkj[A_X]+Dgjj[A_Y]*Dgkj[A_Y]+Dgjj[A_Z]*Dgkj[A_Z]);
-
 		}
 		/////////////rlam E
 		rE[j*Nx+j]+=0.25*Dt*Dt/mi*(Dgjj[A_X]*Dgjj[A_X]+Dgjj[A_Y]*Dgjj[A_Y]+Dgjj[A_Z]*Dgjj[A_Z]);
@@ -1861,26 +1869,26 @@ void output_data_p(vector<hyperelastic>HYPER,vector<hyperelastic2>HYPER1, double
 
 
 	stringstream ss0;
-	ss0<<"./g/p_dG_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
+	ss0<<"./p_G/dG_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss1;
-	ss1<<"./g/p_G_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
+	ss1<<"./p_G/G_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss2;
-	ss2<<"./T/p_rT_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
+	ss2<<"./p_T/rT_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss3;
-	ss3<<"./T/p_dT_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
+	ss3<<"./p_T/dT_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss4;
-	ss4<<"./T/p_T_"<<t<<"_"<<count_min<<".csv";
+	ss4<<"./p_T/T_"<<t<<"_"<<count_min<<".csv";
 	stringstream ss5;
 	ss5<<"./p/p_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss6;
 	ss6<<"./E/p_E_"<<t<<"_"<<count_min<<".csv";
 	stringstream ss7;
-	ss7<<"./T/p_d_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
+	ss7<<"./p_T/d_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 
 	stringstream ss8;
-	ss8<<"./h/p_dH_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
+	ss8<<"./p_H/dH_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss9;
-	ss9<<"./h/p_H_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
+	ss9<<"./p_H/H_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss10;
 	ss10<<"./lam/p_lam_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss11;

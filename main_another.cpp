@@ -2716,11 +2716,14 @@ void file_initialization()
 	
 	//í¥íeê´
 	system("mkdir T");
+	system("mkdir p_T");
 	//system("mkdir dT");
 	system("mkdir p");
 	system("mkdir q");
 	system("mkdir g");
 	system("mkdir h");
+	system("mkdir p_G");
+	system("mkdir p_H");
 	//system("mkdir dg");
 	//system("mkdir h_lam");
 	system("mkdir lam");

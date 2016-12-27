@@ -95,12 +95,12 @@ void q_QP_g(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,
 	double ep_min=1.e-5;
 	double d_ep=1.e-20;
 
-	double p_p[DIMENSION]={0,0,0};
+	double p_p[DIMENSION]={0,0,0}; 
 	double hp[DIMENSION]={0,0,0};
 	double W=0.;
 
-	double r=0.1;
-	
+	double r=1;
+
 	double En=0.;
 	double *dE=new double [h_num];	
 	double *rE=new double [h_num*h_num];
@@ -181,7 +181,7 @@ void q_QP_g(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,
 				{
 					T+=0.5*r*(g[i]+th_g[i])*(g[i]+th_g[i]);
 				}
-			
+
 			}
 
 			for(int k=0;k<h_num;k++)
@@ -1429,9 +1429,14 @@ void p_QP_g(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int
 				dT[k]=0.;
 				for(int i=0;i<h_num;i++)
 				{	
-					dT[k]+=r*dG[i*h_num+k]*G[i];
+
+					if(G[i]<0)	dT[k]+=-1.*r*dG[i*h_num+k]*(-1.*G[i]+th_G[i]);
+					else
+					{
+						dT[k]+=r*dG[i*h_num+k]*(G[i]+th_G[i]);
+					}
 				}
-		
+
 				for(int l=0;l<h_num;l++)
 				{
 					rT[l*h_num+k]=0.;
@@ -1562,7 +1567,7 @@ void p_QP_g(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int
 			stringstream ss3;
 			ss3<<"./mu/mu"<<t<<"_"<<count_min<<".csv"<<endl;
 			stringstream ss4;
-			ss4<<"./T/T"<<t<<".csv"<<endl;
+			ss4<<"./p_T/T"<<t<<".csv"<<endl;
 
 			if(count_min==1)
 			{
@@ -1739,21 +1744,21 @@ void p_variables_g(vector<hyperelastic> &HYPER,vector<hyperelastic2> HYPER1,int 
 void output_data_p_g(vector<hyperelastic>HYPER,vector<hyperelastic2>HYPER1, double *dG, double *G, double *th_G, double *rT, double *dT, double T, double *d, int Nx, int h_num,int count,int count_min,int t,double E,double En, double E0)
 {
 	stringstream ss0;
-	ss0<<"./g/p_dG_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
+	ss0<<"./p_G/dG_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss1;
-	ss1<<"./g/p_G_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
+	ss1<<"./p_G/G_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss2;
-	ss2<<"./T/p_rT_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
+	ss2<<"./p_T/rT_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss3;
-	ss3<<"./T/p_dT_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
+	ss3<<"./p_T/dT_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss4;
-	ss4<<"./T/p_T_"<<t<<"_"<<count_min<<".csv";
+	ss4<<"./p_T/T_"<<t<<"_"<<count_min<<".csv";
 	stringstream ss5;
 	ss5<<"./p/p_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 	stringstream ss6;
 	ss6<<"./E/p_E_"<<t<<"_"<<count_min<<".csv";
 	stringstream ss7;
-	ss7<<"./T/p_d_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
+	ss7<<"./p_T/d_"<<t<<"_"<<count_min<<"_"<<count<<".csv";
 
 
 	if(count==1)
