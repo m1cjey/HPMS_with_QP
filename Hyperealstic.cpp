@@ -79,21 +79,21 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HY
 
 
 	///////////////通常計算プロセス
-	newton_raphson(CON,PART,HYPER,HYPER1,t,F);
-	calc_half_p(CON,PART,HYPER,HYPER1,0,F);
-	calc_F(CON,PART,HYPER,HYPER1);
-	calc_stress(CON,HYPER);
-	//calc_pi(CON,HYPER);
-	calc_differential_p(CON,PART,HYPER,HYPER1,F);
-	renew_lambda(CON,PART,HYPER,HYPER1,t);
-	calc_half_p(CON,PART,HYPER,HYPER1,1,F);
+	//newton_raphson(CON,PART,HYPER,HYPER1,t,F);
+	//calc_half_p(CON,PART,HYPER,HYPER1,0,F);
+	//calc_F(CON,PART,HYPER,HYPER1);
+	//calc_stress(CON,HYPER);
+	////calc_pi(CON,HYPER);
+	//calc_differential_p(CON,PART,HYPER,HYPER1,F);
+	//renew_lambda(CON,PART,HYPER,HYPER1,t);
+	//calc_half_p(CON,PART,HYPER,HYPER1,1,F);
 
 
 	/////////////壁計算プロセス
 	calc_W(CON,HYPER,h_num);
 	//////calc_HYPER_QP_gh(CON,PART,HYPER,HYPER1,t,F);
 
-	//calc_HYPER_QP_g(CON,PART,HYPER,HYPER1,t,F);
+	calc_HYPER_QP_g(CON,PART,HYPER,HYPER1,t,F);
 
 	vector<double> NEIw;
 	double nG[DIMENSION]={0,0,1};
@@ -120,7 +120,7 @@ void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HY
 		cout<<endl;
 		calc_HYPER_QP_gh(CON,PART,HYPER,HYPER1,t,F,NEIw);
 	}
-
+	NEIw.clear();
 	//calc_HYPER_QP_gh(CON,PART,HYPER,HYPER1,t,F,NEIw);
 	cout<<"Hypercalculation ends."<<endl;
 
@@ -148,7 +148,7 @@ void calc_constant(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> &
 	fc<<"Dt"<<","<<Dt<<endl;
 
 	//垂直降下
-	for(int i=0;i<h_num;i++)	HYPER[i].p[A_Z]=-1.*mi;
+	for(int i=0;i<h_num;i++)	HYPER[i].p[A_Z]=-10.*mi;
 
 	//曲げねじり
 	/*if(model==21)

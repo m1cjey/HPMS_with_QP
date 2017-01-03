@@ -44,7 +44,7 @@ void calc_HYPER_QP_g(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic
 
 
 
-	cout<<"QP start-------------------------"<<endl;
+	cout<<"QP_g start-------------------------"<<endl;
 	ofstream fq0("q0_QP.csv");
 	ofstream fp0("hp0_QP.csv");
 	ofstream fhp0("hp0_QP.csv");
@@ -94,12 +94,13 @@ void q_QP_g(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,
 	double ep=1.e-5;
 	double ep_min=1.e-5;
 	double d_ep=1.e-20;
+	double d_sum=0.;
 
 	double p_p[DIMENSION]={0,0,0}; 
 	double hp[DIMENSION]={0,0,0};
 	double W=0.;
 
-	double r=1;
+	double r=0.1;
 
 	double En=0.;
 	double *dE=new double [h_num];	
@@ -250,14 +251,18 @@ void q_QP_g(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,
 			//}
 
 
+			d_sum=0.;
+
 			for(int i=0;i<h_num;i++)
 			{
 				d[i]=dT[i];
+				d_sum+=fabs(dT[i]);
 				for(int j=0;j<h_num;j++)
 				{
 					B[i*h_num+j]=rT[i*h_num+j];
 				}
 			}
+			if(d_sum<1.e-20)	break;
 			gauss(B,d,h_num);
 			//gauss(dfx,fx,h_num);
 
@@ -381,7 +386,7 @@ void q_QP_g(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,
 
 		if(count_min>c_max)	break;
 	}
-
+	cout<<"E"<<count<<"="<<E<<", En="<<En<<endl;
 
 
 
@@ -1344,6 +1349,7 @@ void p_QP_g(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int
 	double W=0.;
 	double g=0.;
 	double r=0.01;
+	double d_sum=0.;
 
 	double En=0.;
 	double *dE=new double [h_num];	
@@ -1487,12 +1493,18 @@ void p_QP_g(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int
 			//	}
 			//}
 
+			d_sum=0.;
 
 			for(int i=0;i<h_num;i++)
 			{
 				d[i]=dT[i];
-				for(int j=0;j<h_num;j++)	B[i*h_num+j]=rT[i*h_num+j];
+				d_sum+=fabs(dT[i]);
+				for(int j=0;j<h_num;j++)
+				{
+					B[i*h_num+j]=rT[i*h_num+j];
+				}
 			}
+			if(d_sum<1.e-20)	break;
 			gauss(B,d,h_num);
 			E_sum=0;
 			for(int i=0;i<h_num;i++)
@@ -1538,7 +1550,6 @@ void p_QP_g(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int
 			}
 
 		}
-		break;
 		E_sum=0;
 		for(int i=0;i<h_num;i++)	E_sum+=(HYPER[i].old_mu-HYPER[i].mu)*(HYPER[i].old_mu-HYPER[i].mu);
 		E_min=sqrt(E_sum);
@@ -1561,13 +1572,13 @@ void p_QP_g(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int
 		{
 			cout<<"Emin"<<count_min<<"="<<E_min<<endl;
 			stringstream ss0;
-			ss0<<"./E_min/E"<<t<<".csv"<<endl;
+			ss0<<"./E_min/g_E"<<t<<".csv";
 			stringstream ss1;
-			ss1<<"./p/p"<<t<<"_"<<count_min<<".csv"<<endl;
+			ss1<<"./p/g_p"<<t<<"_"<<count_min<<".csv";
 			stringstream ss3;
-			ss3<<"./mu/mu"<<t<<"_"<<count_min<<".csv"<<endl;
+			ss3<<"./mu/g_mu"<<t<<"_"<<count_min<<".csv";
 			stringstream ss4;
-			ss4<<"./p_T/T"<<t<<".csv"<<endl;
+			ss4<<"./p_T/g_T"<<t<<".csv";
 
 			if(count_min==1)
 			{
@@ -1602,8 +1613,7 @@ void p_QP_g(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int
 
 		if(count_min>c_max)	break;
 	}
-
-
+	cout<<"E"<<count<<"="<<E<<", En="<<En<<endl;
 
 
 	delete[]	dE;
