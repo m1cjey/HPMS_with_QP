@@ -100,7 +100,7 @@ void q_QP_g(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,
 	double hp[DIMENSION]={0,0,0};
 	double W=0.;
 
-	double r=0.1;
+	double r=1.0;
 
 	double En=0.;
 	double *dE=new double [h_num];	
@@ -124,6 +124,8 @@ void q_QP_g(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,
 	////////////èâä˙âªéZ///////////////
 	for(int i=0;i<h_num;i++)
 	{
+		HYPER[i].lam=1.;
+		HYPER[i].mu=1.;
 		dE[i]=0.;
 		dT[i]=0.;
 		g[i]=0.;
@@ -1340,15 +1342,16 @@ void p_QP_g(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int
 	double E=1;
 	double E_min=1;
 	double E_sum=0;
-	double ep=1.e-6;
-	double ep_min=1.e-6;
+	double ep=1.e-5;
+	double ep_min=1.e-5;
 	double d_ep=1.e-20;
 
 	double p_p[DIMENSION]={0,0,0};
 	double p[DIMENSION]={0,0,0};
 	double W=0.;
 	double g=0.;
-	double r=0.01;
+	double r=0.1;	//r=0.01ÇÕåÎç∑Ç™ëÂÇ´Ç¢
+	if(t>101) r=10.;
 	double d_sum=0.;
 
 	double En=0.;
@@ -1369,6 +1372,8 @@ void p_QP_g(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int
 	////////////èâä˙âªéZ///////////////
 	for(int i=0;i<h_num;i++)
 	{
+		HYPER[i].lam=1.;
+		HYPER[i].mu=1.;
 		dE[i]=0.;
 		dT[i]=0.;
 		G[i]=0.;
@@ -1545,7 +1550,7 @@ void p_QP_g(vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t, int
 			}
 			if(count==1||count%100==0)
 			{
-				//cout<<"E"<<count<<"="<<E<<", En="<<En<<endl;
+				cout<<"E"<<count<<"="<<E<<", En="<<En<<endl;
 				output_data_p_g(HYPER,HYPER1,dG,G,th_G,rT,dT,T,d,Nx,h_num,count,count_min,t,E,En,E0);
 			}
 

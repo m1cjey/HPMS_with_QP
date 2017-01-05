@@ -110,13 +110,14 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 	}
 	avs.Output_mgf_MicroAVS("check_particle",1);
 
-
+	exit(0);
 
 	//各粒子数をカウント or 並び替え．※ほとんど意味がない．実行しなくてもOK(2012/02/21)
 	calc_numbers_of_particles_and_change_the_order(&CON, PART, &fluid_number,&hyper_number,&magnetic_number, &out, &order_sw);
 
 
 	check_initial_position(&CON, PART);
+
 
 
 	//FEM3D

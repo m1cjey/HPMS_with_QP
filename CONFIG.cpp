@@ -26,7 +26,7 @@ mpsconfig::mpsconfig()
 	FEMCG=2;				//FEMにおける行列解法 0:CG 1:ICCG 2:並列ICCG 3:MRTR 4:ICMRTR
 
 //	dt= (switch_FEM==OFF) ? 1.0e-5: 5.0e-6; //0.0001;不安定要因！ 0.00001:推奨(Courant数考えて) //Cf. dt_for_FEM=0.000001/2;
-	dt=1e-3;//1.e-4;//1e-3;////5.e-3;//1.e-4;//5.e-3;//1e-5;
+	dt=1e-4;//1.e-4;//1e-3;////5.e-3;//1.e-4;//5.e-3;//1e-5;
 	dt_for_FEM=1e-5;
 	//FEMだと0.000001で止まる・・・
 	current_step=2;
@@ -42,7 +42,7 @@ mpsconfig::mpsconfig()
 	ave_P_for_FEM_flag=8000000000;//80.0;//75.0;//70.0;
 
 //モデル
-	model_number=21;			//4:引っ張り試験片 7:MREアクチュエータ 12:剛体
+	model_number=22;			//4:引っ張り試験片 7:MREアクチュエータ 12:剛体
 	model_set_way=1;		//modelをセットする方法　0=正方格子 1=MD
 
 

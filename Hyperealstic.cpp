@@ -148,7 +148,7 @@ void calc_constant(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> &
 	fc<<"Dt"<<","<<Dt<<endl;
 
 	//‚’¼~‰º
-	for(int i=0;i<h_num;i++)	HYPER[i].p[A_Z]=-10.*mi;
+	for(int i=0;i<h_num;i++)	HYPER[i].p[A_Z]=-1.*mi;
 
 	//‹È‚°‚Ë‚¶‚è
 	/*if(model==21)

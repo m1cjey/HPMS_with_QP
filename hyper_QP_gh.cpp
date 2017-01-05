@@ -92,8 +92,8 @@ void q_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,ve
 	double ep=1.e-5;
 	double ep_min=1.e-5;
 
-	double rg=0.1;
-	double rh=1.;
+	double rg=1.0e21;	//
+	double rh=10.;
 
 
 	double T=0.;
@@ -288,7 +288,7 @@ void q_QP(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,ve
 			for(int i=0;i<Nx;i++)
 			{
 				d[i]=dT[i];
-				d_sum+=fabs(d[i]);
+				d_sum+=fabs(dT[i]);
 				for(int j=0;j<Nx;j++)
 				{
 					B[i*Nx+j]=rT[i*Nx+j];
@@ -1029,16 +1029,16 @@ void q_nab_lap(vector<mpselastic> PART,vector<hyperelastic> HYPER,vector<hyperel
 	for(int l=0;l<h_num;l++)
 	{
 
-		int Nl=HYPER[l].N;
-		for(int k=0;k<Nl;k++)
+		//int Nl=HYPER[l].N;
+		for(int k=0;k<h_num;k++)
 		{
-			int kn=HYPER[l].NEI[k];;
+			//int kn=HYPER[l].NEI[k];;
 			for(int m=0;m<h_num;m++)
 			{
 				/////////////rmulam E2
-				Dgkm_n[A_X]=HYPER1[kn*h_num+m].DgDq_n[A_X];	Dgkm_n[A_Y]=HYPER1[kn*h_num+m].DgDq_n[A_Y];	Dgkm_n[A_Z]=HYPER1[kn*h_num+m].DgDq_n[A_Z];
+				Dgkm_n[A_X]=HYPER1[k*h_num+m].DgDq_n[A_X];	Dgkm_n[A_Y]=HYPER1[k*h_num+m].DgDq_n[A_Y];	Dgkm_n[A_Z]=HYPER1[k*h_num+m].DgDq_n[A_Z];
 				Dplm[A_X]=DpiDmu_x[l*h_num+m];	Dplm[A_Y]=DpiDmu_y[l*h_num+m];	Dplm[A_Z]=DpiDmu_z[l*h_num+m];
-				rE[(l+h_num)*Nx+kn]-=0.25*Dt*Dt*Dt*Dt/mi/mi/V*(Dplm[A_X]*Dgkm_n[A_X]+Dplm[A_Y]*Dgkm_n[A_Y]+Dplm[A_Z]*Dgkm_n[A_Z]);
+				rE[(l+h_num)*Nx+k]-=0.25*Dt*Dt*Dt*Dt/mi/mi/V*(Dplm[A_X]*Dgkm_n[A_X]+Dplm[A_Y]*Dgkm_n[A_Y]+Dplm[A_Z]*Dgkm_n[A_Z]);
 			}
 		}
 	}
@@ -1054,7 +1054,7 @@ void q_nab_lap(vector<mpselastic> PART,vector<hyperelastic> HYPER,vector<hyperel
 			{
 				/////////////rlammu E2
 				n0ki[A_X]=HYPER1[k*h_num+i].n0ij[A_X];	n0ki[A_Y]=HYPER1[k*h_num+i].n0ij[A_Y];	n0ki[A_Z]=HYPER1[k*h_num+i].n0ij[A_Z];
-				rE[l*h_num+k+h_num]-=0.25*Dt*Dt*Dt*Dt/mi/mi/V*DpiDlam[i*h_num+l]*n0ki[A_Z];
+				rE[l*Nx+k+h_num]-=0.25*Dt*Dt*Dt*Dt/mi/mi/V*DpiDlam[i*h_num+l]*n0ki[A_Z];
 			}
 		}
 
