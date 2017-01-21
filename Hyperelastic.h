@@ -44,6 +44,8 @@ public:
 	double q_n[DIMENSION];
 	double ph_n[DIMENSION];
 	double p_n[DIMENSION];
+	double Ef;
+	double E0;
 
 	hyperelastic();
 };

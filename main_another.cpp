@@ -10,12 +10,12 @@ void Make_STL();//STL用足し合わせ関数
 int _tmain(int argc, _TCHAR* argv[])
 {
 
-//メモリリーク検出
-_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
-_CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
-/*_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
-_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
-_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_DELAY_FREE_MEM_DF | _CRTDBG_CHECK_CRT_DF);
+	//メモリリーク検出
+	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+	_CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
+	/*_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);*/
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_DELAY_FREE_MEM_DF | _CRTDBG_CHECK_CRT_DF);
 
 
 
@@ -24,8 +24,8 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 
 
 	clock_t t1=clock();	//経過時間を秒で表現するには、CLOCKS_PER_SECで割る
-	
-    int particle_number=0;	//全粒子数
+
+	int particle_number=0;	//全粒子数
 	int fluid_number=0;		//流体粒子数（弾性体の場合は弾性体粒子数）
 	int out;				//fluid_number<=i<outがINWALL群で、out<=iがOUTWALL群になる。 なってないなら自動であとで並び替える
 	int count;				//カウント用変数
@@ -33,16 +33,16 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 	int t=0;				//ステップ数
 	int dimension=CON.get_dimension();
 	int model_set=CON.get_model_set_way();
-    double dt=CON.get_dt();
-    int STEP=CON.get_step();
-    double g[DIMENSION]={0,0,0};
-    if(dimension==2) g[A_Y]=CON.get_g();
-    if(dimension==3) g[A_Z]=CON.get_g();
+	double dt=CON.get_dt();
+	int STEP=CON.get_step();
+	double g[DIMENSION]={0,0,0};
+	if(dimension==2) g[A_Y]=CON.get_g();
+	if(dimension==3) g[A_Z]=CON.get_g();
 
-    //MPSにおける定数計算
+	//MPSにおける定数計算
 	double n0=initial_pnd(CON.get_re(), dimension, model_set);		//初期粒子密度n0
-    double n0_4=initial_pnd(CON.get_re4(), dimension, model_set);	//freeon用初期粒子密度
-    double TIME=0; //解析時間
+	double n0_4=initial_pnd(CON.get_re4(), dimension, model_set);	//freeon用初期粒子密度
+	double TIME=0; //解析時間
 	double Umax=0; //最大速度
 	double mindis; //CFLの最低粒子間距離 minimum distance
 	double lambda=calclambda(CON);
@@ -56,7 +56,7 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 
 	cout<<"初期粒子数密度 n0= "<<setprecision(10)<<n0<<endl;
 
-	
+
 	//FEM用のclass作成
 	vector<point3D> NODE_FEM3D;
 	vector<element3D> ELEM_FEM3D;
@@ -65,15 +65,15 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 
 	//初期粒子配置書き込み　restart=ONの場合は粒子数読み込み
 	initial_model_input(&CON, &particle_number, &TIME);
-//	Model model;
-//	particle_number=model.Model_set();
+	//	Model model;
+	//	particle_number=model.Model_set();
 
-	
+
 
 	//INDEX関係
-    int *INDEX=new int[CON.get_number_of_mesh()];	//各格子に含まれる粒子数を格納(格子の数だけ配列が必要)
-    cout<<"X_mesh="<<CON.get_X_mesh()<<" Y_mesh="<<CON.get_Y_mesh()<<" Z_mesh="<<CON.get_Z_mesh()<<endl;
-    cout<<"number_of_mesh="<<CON.get_number_of_mesh()<<endl;
+	int *INDEX=new int[CON.get_number_of_mesh()];	//各格子に含まれる粒子数を格納(格子の数だけ配列が必要)
+	cout<<"X_mesh="<<CON.get_X_mesh()<<" Y_mesh="<<CON.get_Y_mesh()<<" Z_mesh="<<CON.get_Z_mesh()<<endl;
+	cout<<"number_of_mesh="<<CON.get_number_of_mesh()<<endl;
 	Check check;
 	check.Out_put_config();
 	//vectorで確保するとアルゴリズムが利用できる
@@ -88,7 +88,7 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 	cout<<"ベクトル作成完了"<<endl;
 
 	cout<<"1"<<endl;
-//	PART.reserve(20000);
+	//	PART.reserve(20000);
 	for(int i=0;i<particle_number;i++){
 		PART1.emplace_back(PART0);
 		PART.emplace_back(PART0);
@@ -97,7 +97,7 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 
 
 	////////////STL/////////
-//	Make_STL();
+	//	Make_STL();
 	///////////////////////
 
 	//粒子データをファイルから読み取り
@@ -110,14 +110,13 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 	}
 	avs.Output_mgf_MicroAVS("check_particle",1);
 
-	exit(0);
+
 
 	//各粒子数をカウント or 並び替え．※ほとんど意味がない．実行しなくてもOK(2012/02/21)
 	calc_numbers_of_particles_and_change_the_order(&CON, PART, &fluid_number,&hyper_number,&magnetic_number, &out, &order_sw);
 
 
 	check_initial_position(&CON, PART);
-
 
 
 	//FEM3D
@@ -132,7 +131,7 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 	//陽解析の前にreloadINDEX	
 	//粒子ID更新・粒子数密度更新
 	reload_INDEX(CON,PART, INDEX);//格子内の粒子数更新
-	
+
 	count=0;
 	int **MESH0=new int *[CON.get_number_of_mesh()];
 	for(int i=0;i<CON.get_number_of_mesh();i++)
@@ -176,6 +175,8 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 	ofstream pt("PART_model.dat");
 	for(int i=0;i<PART.size();i++)	pt<<PART[i].r[A_Y]<<PART[i].r[A_Z]<<endl;
 	pt.close();
+	int Nw=0;
+	if(CON.get_flag_HYPER()==ON)	hyper_initial(CON,PART,HYPER,HYPER1,Nw);
 
 	double L=0;
 	double W=100;
@@ -185,26 +186,26 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 	double limP=0;
 	bool ff=0;
 
-	
+
 	//表面だけ表示//表面初期化
 	/*
 	if(bool cat=ON)
 	{
-		for(int i=0 ;i<PART.size();i++)
-		{
-			PART[i].surface=OFF;	
-			if(PART[i].PND<=18)
-			{
-				PART[i].surface=ON;
-			}
-		}
+	for(int i=0 ;i<PART.size();i++)
+	{
+	PART[i].surface=OFF;	
+	if(PART[i].PND<=18)
+	{
+	PART[i].surface=ON;
+	}
+	}
 	}*/
 
 	//表面粒子の存在確認
-/*	count_suf=0;
+	/*	count_suf=0;
 	for(int i=0 ;i<PART.size();i++)
 	{
-		if(PART[i].surface==ON) count_suf++;
+	if(PART[i].surface==ON) count_suf++;
 	}
 	cout<<count_suf<<endl;*/
 
@@ -256,27 +257,27 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 		{
 			if(CON.get_EM_method()==1)
 			{
-			//ELASTからCONの関数呼び出せるので二系統要らない・・・
-			if(ELAST.get_FEM_switch()==true && CON.get_mesh_input()!=2)
-			{
-				CON.change_step_size(); //こんな関数は混乱を招くだけなので要らない
-				ELAST.change_step_size();	//必要？15/2/3
-				if(t==1 || (t-1)%CON.get_EM_interval()==0)
+				//ELASTからCONの関数呼び出せるので二系統要らない・・・
+				if(ELAST.get_FEM_switch()==true && CON.get_mesh_input()!=2)
 				{
-					//自作デローニ分割
-					FEM3D(CON, PART, F, &node_FEM3D, &nelm_FEM3D, NODE_FEM3D, ELEM_FEM3D, t, TIME, fluid_number);	//HYPERELASTに対応できていない
+					CON.change_step_size(); //こんな関数は混乱を招くだけなので要らない
+					ELAST.change_step_size();	//必要？15/2/3
+					if(t==1 || (t-1)%CON.get_EM_interval()==0)
+					{
+						//自作デローニ分割
+						FEM3D(CON, PART, F, &node_FEM3D, &nelm_FEM3D, NODE_FEM3D, ELEM_FEM3D, t, TIME, fluid_number);	//HYPERELASTに対応できていない
+					}
+				}
+				else if(CON.get_mesh_input()==2)
+				{
+					if(t==1 || (t-1)%CON.get_EM_interval()==0)
+					{	
+						//TetGenによるメッシュ分割
+						TetGenInterface(CON, PART, F, fluid_number, dt, t, particle_number, n0, TIME);
+					}	
 				}
 			}
-			else if(CON.get_mesh_input()==2)
-			{
-				if(t==1 || (t-1)%CON.get_EM_interval()==0)
-				{	
-					//TetGenによるメッシュ分割
-					TetGenInterface(CON, PART, F, fluid_number, dt, t, particle_number, n0, TIME);
-				}	
-			}
-			}
-			else if(CON.get_EM_method()==3) Magnetic_Moment_Methodv2(CON,PART,F, n0, lambda,hyper_number, particle_number, TIME, t);			//Magnetic_Moment_Methodv2(CON,PART,F, n0, lambda,hyper_number, particle_number, TIME, t);		
+			else if(CON.get_EM_method()==3) Magnetic_Moment_Methodv2(CON,PART,HYPER,F, n0, lambda,magnetic_number, particle_number, TIME, t);			//Magnetic_Moment_Methodv2(CON,PART,F, n0, lambda,hyper_number, particle_number, TIME, t);		
 		}
 		cout<<"磁場解析終了"<<endl;
 
@@ -286,16 +287,16 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 		cout<<"hyper_number="<<hyper_number<<endl;
 
 		//粘弾性計算
-//		if(CON.get_flag_vis()==ON)	calc_vis_f(CON,PART,HYPER,HYPER1,hyper_number,t);
+		//		if(CON.get_flag_vis()==ON)	calc_vis_f(CON,PART,HYPER,HYPER1,hyper_number,t);
 
 		//超弾性計算
-		if(CON.get_flag_HYPER()==ON)	calc_hyper(CON,PART,HYPER,HYPER1,t,F);//if分の追加15/2/10
+		if(CON.get_flag_HYPER()==ON)	calc_hyper(CON,PART,HYPER,HYPER1,t,F,Nw);//if分の追加15/2/10
 		//if(CON.get_flag_HYPER()==ON)	calc_HYPER_QP_g(CON,PART,HYPER,HYPER1,t,F);
 		cout<<"hyper_calculation is ended."<<endl;
 
 
 		cout<<"陽解析終了"<<endl;
-//		cout<<"陽解析終了 umax="<<sqrt(Umax)<<"  limit U="<<0.2*mindis/dt<<endl;
+		//		cout<<"陽解析終了 umax="<<sqrt(Umax)<<"  limit U="<<0.2*mindis/dt<<endl;
 
 		//粒子が動いたのでINDEX更新
 		for(int i=0;i<CON.get_number_of_mesh();i++) delete [] MESH[i];
@@ -307,22 +308,22 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 			double speed=0.0;//粒子速度
 			for(int D=0;D<DIMENSION;D++) speed+=PART[i].u[D]*PART[i].u[D];
 			if(speed>umax2) umax2=speed;
-				
+
 		}
 		cout<<"umax="<<sqrt(umax2)<<endl;
 
 		if(t>=wait){
-		TIME+=dt;///時間更新
-		CON.set_current_time(TIME);
+			TIME+=dt;///時間更新
+			CON.set_current_time(TIME);
 		}
 		cout<<"解析物理時間="<<TIME<<"/ "<<(CON.get_step()*CON.get_dt())<<endl;
 
-		
+
 
 		//ポスト処理：
 		post_processing(CON, PART, ELAST, particle_number, particle_number, dt, Umax, t, TIME,F); //各物理量出力＆クーラン数によるdt改変&microAVS出力
 		post_processing3(CON, PART, particle_number, particle_number, t, TIME); //restart用ファイル生成
-//		order_sw=check_position(&CON, PART, particle_number, &particle_number); //領域外の粒子を検査 //領域外粒子を検知すれば、order_sw=ONになる
+		//		order_sw=check_position(&CON, PART, particle_number, &particle_number); //領域外の粒子を検査 //領域外粒子を検知すれば、order_sw=ONになる
 		clock_t t3=clock();
 		cout<<"CPU time="<<(t3-t1)/CLOCKS_PER_SEC<<"[sec]"<<endl;
 		ofstream t_log("time_log.dat", ios::app);
@@ -333,20 +334,20 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 		check.Courant_condition(PART);
 
 		cout<<endl;
-		
+
 	}
 	//ループ終了
 
 	for(int D=0;D<DIMENSION;D++){
 		delete[] F[D];
-//		delete [] laplacian[D];
+		//		delete [] laplacian[D];
 	}
 
 	delete [] INDEX;
 	delete [] F;
 	clock_t t2=clock();
 	cout<<"CPU last time="<<(t2-t1)/CLOCKS_PER_SEC<<"[sec]"<<endl;
-//	MessageBeep(MB_ICONEXCLAMATION);//作業の終了を知らせるBEEP音 マングリングエラーが起こるのでコメントアウト
+	//	MessageBeep(MB_ICONEXCLAMATION);//作業の終了を知らせるBEEP音 マングリングエラーが起こるのでコメントアウト
 
 	return 0;
 }
@@ -355,7 +356,7 @@ _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHE
 double kernel(double r,double dis)
 {
 	return r/dis-1;
-//	return r/dis-1;
+	//	return r/dis-1;
 	//return r*r/(dis*dis)-1;
 	//return r*r*r/(dis*dis*dis)-1;
 	//return (1-dis/r)*(1-dis/r);
@@ -366,7 +367,7 @@ double kernel(double r,double dis)
 double kernel2(double r,double dis,double d)
 {
 	return r/dis-1;
-    //return r*r*r/(dis*dis*dis)-1;
+	//return r*r*r/(dis*dis*dis)-1;
 	//return r*r*r*r/(dis*dis*dis*dis)-1;
 	//return pow(r,d)/pow(dis,d);
 }
@@ -485,7 +486,7 @@ double initial_pnd(double r,int dimension,int calc_type)
 //ラプラシアン用変数λ計算関数（108行）
 double calclambda(mpsconfig &CON)
 {
-	
+
 	int dimension=CON.get_dimension();	//解析次元
 	int Ini_place=CON.get_model_set_way();	//初期粒子配置方法　0=正方 1=細密
 	double R=CON.get_re2();			//ラプラシアン用影響半径
@@ -647,7 +648,7 @@ void input_particle_data(mpsconfig *CON, vector<mpselastic> &PART1, vector<mpsel
 			fin>>PART[i].toFEM;
 			PART[i].dir_Pem=0;
 			PART[i].dir_Pst=0;
-	//		for(int D=0;D<DIMENSION;D++) PART[i].u[D]=0; //位置だけ欲しいので速度は０ 
+			//		for(int D=0;D<DIMENSION;D++) PART[i].u[D]=0; //位置だけ欲しいので速度は０ 
 
 		}
 		fin.close();
@@ -655,50 +656,50 @@ void input_particle_data(mpsconfig *CON, vector<mpselastic> &PART1, vector<mpsel
 	bool num=false;
 	////粒子並べ替え/////
 	if(num==true){
-	for(int i=0;i<PART1.size();i++)
-	{
-	 if(PART1[i].type==MAGELAST) 
-	 {
-		 swap(PART[p],PART1[i]);
-		 p++;
-	 }
-	}
-	for(int i=0;i<PART1.size();i++)
-	{
-	 if(PART1[i].type==MAGELAST2) 
-	 {
-		 swap(PART[p],PART1[i]);
-		 p++;
-	 }
-	}
-	for(int i=0;i<PART1.size();i++)
-	{
-	 if(PART1[i].type==ELASTIC) 
-	 {
-		 swap(PART[p],PART1[i]);
-		 p++;
-	 }
-	}
-	for(int i=0;i<PART1.size();i++)
-	{
-	 if(PART1[i].type==TERMINAL1 || PART1[i].type==TERMINAL2 || PART1[i].type==WALL) 
-	 {
-		 swap(PART[p],PART1[i]);
-		 p++;
-		 
-	 }
-	}
-	for(int i=0;i<PART1.size();i++)
-	{
-		if(PART1[i].type==HYPERELAST) 
-		 {
-			 swap(PART[p],PART1[i]);
-			 p++;
-		 }
-	}
+		for(int i=0;i<PART1.size();i++)
+		{
+			if(PART1[i].type==MAGELAST) 
+			{
+				swap(PART[p],PART1[i]);
+				p++;
+			}
+		}
+		for(int i=0;i<PART1.size();i++)
+		{
+			if(PART1[i].type==MAGELAST2) 
+			{
+				swap(PART[p],PART1[i]);
+				p++;
+			}
+		}
+		for(int i=0;i<PART1.size();i++)
+		{
+			if(PART1[i].type==ELASTIC) 
+			{
+				swap(PART[p],PART1[i]);
+				p++;
+			}
+		}
+		for(int i=0;i<PART1.size();i++)
+		{
+			if(PART1[i].type==TERMINAL1 || PART1[i].type==TERMINAL2 || PART1[i].type==WALL) 
+			{
+				swap(PART[p],PART1[i]);
+				p++;
 
-	cout<<"並べ替え終了"<<endl;
-	//////////////////////////
+			}
+		}
+		for(int i=0;i<PART1.size();i++)
+		{
+			if(PART1[i].type==HYPERELAST) 
+			{
+				swap(PART[p],PART1[i]);
+				p++;
+			}
+		}
+
+		cout<<"並べ替え終了"<<endl;
+		//////////////////////////
 	}
 	else if(num==false){
 		for(int i=0;i<PART1.size();i++)
@@ -731,16 +732,15 @@ void calc_numbers_of_particles_and_change_the_order(mpsconfig *CON,vector <mpsel
 		else if(PART[i].type==TERMINAL2) wall_num++;
 		else if(PART[i].type==MAGELAST2) magelast_num2++;
 		else if(PART[i].type==HYPERELAST) hyper_num++;
-//		else if(PART[i].type==FLUID) fluid_num++;
-//		else if(PART[i].type==INWALL) inwall_num++;
+		//		else if(PART[i].type==FLUID) fluid_num++;
+		//		else if(PART[i].type==INWALL) inwall_num++;
 	}
-	
+
 	cout<<"elastic: "<<elastic_num<<", magelast: "<<magelast_num+magelast_num2<<", solid: "<<wall_num<<", hyperelast:"<<hyper_num<<endl;
 	out_num=elastic_num+magelast_num+magelast_num2+solid_num+wall_num+hyper_num;	//fluid_number<=i<outがINWALL群で、out<=iがOUTWALL群になる。
 	*out=out_num;
 	*fluid_number=elastic_num+magelast_num+magelast_num2+hyper_num;
-	*hyper_number=hyper_num;
-	if(hyper_num==0&&CON->get_flag_HYPER()==ON)	*hyper_number=magelast_num+magelast_num2+elastic_num;
+	*hyper_number=hyper_num+magelast_num+magelast_num2+elastic_num;
 	*magnetic_number=hyper_num+magelast_num+magelast_num2;
 	if(out_num!=PART.size()){
 		cout<<"\n！粒子数合計エラー！"<<endl;
@@ -748,15 +748,15 @@ void calc_numbers_of_particles_and_change_the_order(mpsconfig *CON,vector <mpsel
 	}
 
 	//並び替え
-/*	mpselastic PART_temp;			//並び替え用粒子クラス
+	/*	mpselastic PART_temp;			//並び替え用粒子クラス
 	for(int i=0;i<fluid_num;i++)
 	{
-		if(PART[i].type!=ELASTIC)//if(PART[i].type!=FLUID)
-		{
-			cout<<"並び替え必要あり"<<endl;
-		}
+	if(PART[i].type!=ELASTIC)//if(PART[i].type!=FLUID)
+	{
+	cout<<"並び替え必要あり"<<endl;
 	}
-*/	*order_sw=OFF;
+	}
+	*/	*order_sw=OFF;
 }
 
 //INDEX更新関数（17行）
@@ -764,18 +764,18 @@ void calc_numbers_of_particles_and_change_the_order(mpsconfig *CON,vector <mpsel
 //INDEXを数える。格子番号は２次元では左下で0。X方向につれ＋１で、右上で最大(X_mesh*Y_mesh)。３次元ではＺ方向にも増えていく
 void reload_INDEX(mpsconfig &CON, vector<mpselastic> &PART, int *INDEX)
 {       	
-	
+
 	int X, Y, Z;	//X, Y, Z方向に何個目の格子か 
 	int lattice_number;		//粒子iを含む格子の番号
 	double width=CON.get_distancebp()*CON.get_dx();		//格子幅
-//	cout<<"error_check"<<endl;
+	//	cout<<"error_check"<<endl;
 	for(int i=0;i<CON.get_number_of_mesh();i++) INDEX[i]=0; //
 	for(int i=0;i<PART.size();i++)
 	{
 		//領域外粒子
 		if(!(PART[i].r[A_X]>CON.get_minX() && PART[i].r[A_X]<CON.get_maxX())) cout<<"X="<<PART[i].r[A_X]<<", i="<<i<<endl;
 		else if(!(PART[i].r[A_Y]>CON.get_minY() && PART[i].r[A_Y]<CON.get_maxY())) cout<<"Y="<<PART[i].r[A_Y]<<", i="<<i<<endl;
-//		else if(!(PART[i].r[A_Z]>CON->get_minZ() && PART[i].r[A_Z]<CON->get_maxZ())) cout<<"Z="<<PART[i].r[A_Z]<<", i="<<i<<endl; 
+		//		else if(!(PART[i].r[A_Z]>CON->get_minZ() && PART[i].r[A_Z]<CON->get_maxZ())) cout<<"Z="<<PART[i].r[A_Z]<<", i="<<i<<endl; 
 
 		//////////////////
 
@@ -785,10 +785,10 @@ void reload_INDEX(mpsconfig &CON, vector<mpselastic> &PART, int *INDEX)
 
 		lattice_number=(Z*CON.get_X_mesh()*CON.get_Y_mesh())+(Y*CON.get_X_mesh())+X;
 
-        PART[i].index=lattice_number; //粒子iが何番目の格子に含まれているかを計算
+		PART[i].index=lattice_number; //粒子iが何番目の格子に含まれているかを計算
 		INDEX[lattice_number]++; //格子に含まれる粒子数を計算
 	}
-//	cout<<"error_check_end"<<endl;
+	//	cout<<"error_check_end"<<endl;
 }
 
 //INDEX更新関数その２ MESHに粒子番号を格納する（15行）
@@ -803,7 +803,7 @@ void reload_INDEX2(mpsconfig *CON, vector<mpselastic> &PART, int **MESH)
 	for(int i=0;i<PART.size();i++)
 	{
 		int lattice_number=PART[i].index; //粒子iが何番目の格子に含まれているかを取得
-        
+
 		MESH[lattice_number][count[lattice_number]]=i;
 		count[lattice_number]++;
 	}
@@ -813,7 +813,7 @@ void reload_INDEX2(mpsconfig *CON, vector<mpselastic> &PART, int **MESH)
 //法線ベクトル作成関数（30行）
 void direct_f(mpsconfig &CON,vector<mpselastic> &PART,int i,double *direct[DIMENSION])
 {
-	
+
 	double R=CON.get_re3()*CON.get_distancebp();//法線ベクトル計算に利用する影響半径
 
 	double px=PART[i].r[A_X]+CON.get_distancebp();//x+le
@@ -822,7 +822,7 @@ void direct_f(mpsconfig &CON,vector<mpselastic> &PART,int i,double *direct[DIMEN
 	double my=PART[i].r[A_Y]-CON.get_distancebp();//y-le
 	double pz=PART[i].r[A_Z]+CON.get_distancebp();//z+le
 	double mz=PART[i].r[A_Z]-CON.get_distancebp();//z-le
-	
+
 	double pnd_px=pnd_for_direct(CON,PART,px,PART[i].r[A_Y],PART[i].r[A_Z],R,i);
 	double pnd_mx=pnd_for_direct(CON,PART,mx,PART[i].r[A_Y],PART[i].r[A_Z],R,i);
 	double pnd_py=pnd_for_direct(CON,PART,PART[i].r[A_X],py,PART[i].r[A_Z],R,i);
@@ -833,7 +833,7 @@ void direct_f(mpsconfig &CON,vector<mpselastic> &PART,int i,double *direct[DIMEN
 	direct[A_X][i]=(pnd_px-pnd_mx)/(2*CON.get_distancebp());
 	direct[A_Y][i]=(pnd_py-pnd_my)/(2*CON.get_distancebp());
 	direct[A_Z][i]=(pnd_pz-pnd_mz)/(2*CON.get_distancebp());
-	
+
 	double a=sqrt(direct[A_X][i]*direct[A_X][i]+direct[A_Y][i]*direct[A_Y][i]+direct[A_Z][i]*direct[A_Z][i]);
 	if(a!=0)
 	{ 
@@ -879,7 +879,7 @@ void courant_elastic(vector<mpselastic> &PART, int fluid_number, int t, double *
 	double v=CON.get_v_m();
 	double lambda=v*E/((1.0+v)*(1.0-2.0*v));
 	double mu=E/(2.0*(1.0+v));
-//	double density=CON->Get_density();
+	//	double density=CON->Get_density();
 	double factor=20.0;
 	double uu;
 	double cfl2;
@@ -893,24 +893,24 @@ void courant_elastic(vector<mpselastic> &PART, int fluid_number, int t, double *
 	}
 	aaa<<"le="<<le<<", dt= "<<*dt<<", CFL= "<<CFL<<", CFL2="<<CFL2<<", new dt="<<le/CFL<<endl;
 	aaa.close();
-/*	///////////クーラン数//////////////////
+	/*	///////////クーラン数//////////////////
 	if(CFL>0)
 	{      
-		double newdt=*dt;	//新しいdt
-		CFL=sqrt((lambda+2.0*mu)/density);
+	double newdt=*dt;	//新しいdt
+	CFL=sqrt((lambda+2.0*mu)/density);
 
 	//	if(Umax!=0) newdt=CFL*le/Umax;
-		if(Umax!=0) newdt=(le/CFL)/factor;
-		if(newdt>CON->get_dt()) *dt=CON->get_dt();
-		else *dt=newdt;
-		
-		if(*dt!=CON->get_dt()) cout<<"CFL条件によるdt更新 dt="<<*dt<<endl;
+	if(Umax!=0) newdt=(le/CFL)/factor;
+	if(newdt>CON->get_dt()) *dt=CON->get_dt();
+	else *dt=newdt;
+
+	if(*dt!=CON->get_dt()) cout<<"CFL条件によるdt更新 dt="<<*dt<<endl;
 	}
 
 	///拡散数の正確な定義を調べて書きなおせ
 	if(CON->get_vis()!=0 && CON->get_vis_calc_type()==POSITIVE)
 	{
-		if(*dt>0.25*le*le/CON->get_vis()) cout<<"拡散数違反"<<endl;
+	if(*dt>0.25*le*le/CON->get_vis()) cout<<"拡散数違反"<<endl;
 	}
 	/////////////////////////////*/
 }
@@ -925,7 +925,7 @@ void CG_method(mpsconfig *CON,double *r,double *P,double *AP,double *val,int *in
 	double E=1;//誤差
 	double alp,beta;
 	for(int n=0;n<pn;n++) rr+=r[n]*r[n];
-	
+
 	if(CON->get_omp_P()==OFF)//通常版
 	{
 		while(E>EP)// EP=CON->get_CGep();//収束判定(convergence test)
@@ -940,17 +940,17 @@ void CG_method(mpsconfig *CON,double *r,double *P,double *AP,double *val,int *in
 			double PAP=0;
 			for(int n=0;n<pn;n++)  PAP+=P[n]*AP[n];
 			alp=rr/PAP;
-		//	cout<<"alp="<<alp<<" rr="<<rr<<" PAP="<<PAP<<endl;
+			//	cout<<"alp="<<alp<<" rr="<<rr<<" PAP="<<PAP<<endl;
 			//////////////////////
-		
+
 			//////////////// 解更新　X(k+1)=X(k)+alp*P
 			for(int n=0;n<pn;n++) X[n]+=alp*P[n];
 			//////////////////////////////
-			
+
 			//////////////// r=r-alp*AP
 			for(int n=0;n<pn;n++) r[n]-=alp*AP[n];
 			/////////////////////////////
-			
+
 			///////////////////////beta
 			beta=1.0/rr;
 			rr=0;
@@ -962,7 +962,7 @@ void CG_method(mpsconfig *CON,double *r,double *P,double *AP,double *val,int *in
 			E=sqrt(rr);
 			//cout<<"E="<<E<<endl;
 			////////////////////////
-			
+
 			///////////////////// P=r+beta*P
 			for(int n=0;n<pn;n++) P[n]=r[n]+beta*P[n];
 		}
@@ -974,7 +974,7 @@ void CG_method(mpsconfig *CON,double *r,double *P,double *AP,double *val,int *in
 			count++;
 			//////////////alpを求める
 			double PAP=0;
-			#pragma omp parallel for reduction(+:PAP)
+#pragma omp parallel for reduction(+:PAP)
 			for(int n=0;n<pn;n++)
 			{
 				AP[n]=0;
@@ -988,7 +988,7 @@ void CG_method(mpsconfig *CON,double *r,double *P,double *AP,double *val,int *in
 			E=0;//誤差
 			beta=1.0/rr;
 			rr=0;
-			#pragma omp parallel for reduction(+:rr)
+#pragma omp parallel for reduction(+:rr)
 			for(int n=0;n<pn;n++) 
 			{
 				X[n]+=alp*P[n];// 解更新　X(k+1)=X(k)+alp*P
@@ -997,9 +997,9 @@ void CG_method(mpsconfig *CON,double *r,double *P,double *AP,double *val,int *in
 			}
 			E=sqrt(rr);
 			//cout<<"E="<<E<<endl;
-		
+
 			beta=beta*rr;///beta
-			
+
 			for(int n=0;n<pn;n++) P[n]=r[n]+beta*P[n];/// P=r+beta*P
 		}
 	}
@@ -1015,11 +1015,11 @@ void iccg(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int numb
 	//X[n]:解
 
 	double accel=0.87;//CON->get_CGaccl();//加速ファクタ
-	
+
 	int num2=0;//対角成分を含む、下三角行列だけを考慮にいれた非ゼロ要素数
 	for(int k=0;k<pn;k++) for(int m=ptr[k];m<ptr[k+1];m++) if(ind[m]<=k) num2++;	
 	if(num2!=(number-pn)/2+pn) cout<<"ERROR"<<endl;
-	
+
 	double *val2=new double [num2];
 	int *ind2 = new int [num2];
 	int *ptr2 = new int [pn+1];
@@ -1028,8 +1028,8 @@ void iccg(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int numb
 	for(int k=0;k<pn;k++)
 	{	
 		ptr2[k]=num2;
-	    for(int m=ptr[k];m<ptr[k+1];m++)///k行目の非０要素
-	    {
+		for(int m=ptr[k];m<ptr[k+1];m++)///k行目の非０要素
+		{
 			if(ind[m]<=k)
 			{
 				val2[num2]=val[m];
@@ -1043,11 +1043,11 @@ void iccg(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int numb
 
 	int *NUM = new int [pn];
 	for(int k=0;k<pn;k++) NUM[k]=0;
-	
+
 	for(int k=0;k<pn;k++)
 	{	
-	    for(int m=ptr2[k];m<ptr2[k+1];m++)///k行目の非０要素
-	    {
+		for(int m=ptr2[k];m<ptr2[k+1];m++)///k行目の非０要素
+		{
 			int J=ind2[m];
 			NUM[J]=NUM[J]+1;
 		}
@@ -1056,7 +1056,7 @@ void iccg(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int numb
 	for(int i=0;i<pn;i++) VAL[i]=new double [NUM[i]];
 	int **IND = new int *[pn];//非ゼロ要素の行番号格納配列
 	for(int i=0;i<pn;i++) IND[i]=new int [NUM[i]];
-	
+
 	/////////////////////////////////////iccg法
 	double alp,beta;
 	double rLDLt_r;
@@ -1065,24 +1065,24 @@ void iccg(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int numb
 	double *y=new double [pn];
 	double *LDLt_r= new double [pn];
 	double *D1 = new double [pn];//D行列
-	
+
 	/////不完全コレスキｰ分解
 	for(int k=0;k<pn;k++)
 	{	
-	    for(int m=ptr2[k];m<ptr2[k+1];m++)///k行目の非０要素
-	    {
-	        int i=ind2[m];//列番号
-	        if(i==0)
+		for(int m=ptr2[k];m<ptr2[k+1];m++)///k行目の非０要素
+		{
+			int i=ind2[m];//列番号
+			if(i==0)
 			{
 				val2[m]=val2[m];
 				if(val2[m]<0.0001 &&val2[m]>=0) val2[m]=0.0001;
 				else if(val2[m]>-0.0001 &&val2[m]<=0) val2[m]=-0.0001;
-		    
+
 			}
 			if(i>0 && i<k)
 			{
 				double sum=0;
-				
+
 				for(int j=ptr2[k];j<m;j++)
 				{	
 					for(int J=ptr2[i];J<ptr2[i+1];J++)//i行目のなかから列の一致するものを探している。少し手間か？
@@ -1101,8 +1101,8 @@ void iccg(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int numb
 				else if(val2[m]>-0.0001 &&val2[m]<=0) val2[m]=-0.0001;
 				D1[k]=1/val2[m];
 				//if(val2[m]>0) cout<<"EE"<<endl;
-            }
-	    }
+			}
+		}
 	}    
 	///不完全コレスキー分解完了/////////*/
 
@@ -1110,8 +1110,8 @@ void iccg(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int numb
 	for(int k=0;k<pn;k++) NUM[k]=0;
 	for(int k=0;k<pn;k++)
 	{	
-	    for(int m=ptr2[k];m<ptr2[k+1];m++)///k行目の非０要素
-	    {
+		for(int m=ptr2[k];m<ptr2[k+1];m++)///k行目の非０要素
+		{
 			int J=ind2[m];
 			VAL[J][NUM[J]]=val2[m];
 			IND[J][NUM[J]]=k;
@@ -1125,21 +1125,21 @@ void iccg(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int numb
 		if(i==0) y[0]=r[0]/val2[0]; //式（3.77） 
 		else
 		{
-		    double sum=0;
-		    /////////        
-		    for(int m=ptr2[i];m<ptr2[i+1]-1;m++) sum+=val2[m]*y[ind2[m]];//式（3.78）
-		    int m=ptr2[i+1]-1;
-		    y[i]=(r[i]-sum)/val2[m];
+			double sum=0;
+			/////////        
+			for(int m=ptr2[i];m<ptr2[i+1]-1;m++) sum+=val2[m]*y[ind2[m]];//式（3.78）
+			int m=ptr2[i+1]-1;
+			y[i]=(r[i]-sum)/val2[m];
 		}
 	}////y[i]がもとまった。
 	for(int i=pn-1;i>=0;i--)
 	{
-	    double sum=0;
+		double sum=0;
 		for(int h=1;h<NUM[i];h++) sum+=VAL[i][h]*LDLt_r[IND[i][h]];
-	    LDLt_r[i]=y[i]-D1[i]*sum;	
+		LDLt_r[i]=y[i]-D1[i]*sum;	
 	}
 	/////////////////*/
-	
+
 	for(int n=0;n<pn;n++) P[n]=LDLt_r[n];
 
 	cout<<"ICCG法:未知数="<<pn<<" ---";
@@ -1154,20 +1154,20 @@ void iccg(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int numb
 		if(count==pn) cout<<"count=pn"<<endl;
 		//////////////alpを求める
 		double PAP=0;
-		#pragma omp parallel for reduction(+:PAP)
+#pragma omp parallel for reduction(+:PAP)
 		for(int n=0;n<pn;n++)
 		{
 			AP[n]=0;
 			for(int m=ptr[n];m<ptr[n+1];m++) AP[n]+=val[m]*P[ind[m]];
 			PAP+=P[n]*AP[n];
 		}
-		
+
 		//for(int n=0;n<pn;n++)  PAP+=P[n]*AP[n];
 		alp=rLDLt_r/PAP;
 		//cout<<"alp="<<alp<<endl;
 		//////////////////////
 		E=0;
-		#pragma omp parallel for reduction(+:E)
+#pragma omp parallel for reduction(+:E)
 		for(int n=0;n<pn;n++)
 		{
 			X[n]+=alp*P[n];// X(k+1)=X(k)+alp*P 更新後の場所
@@ -1177,47 +1177,47 @@ void iccg(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int numb
 		E=sqrt(E);
 		//cout<<"E="<<E<<endl;
 		////////////////////////
-		
+
 		///////////////////////beta
 		beta=1.0/rLDLt_r;
 		rLDLt_r=0;
-		
-        /////////////////y[i]をもとめ、LDLt_r[i]をもとめる。
+
+		/////////////////y[i]をもとめ、LDLt_r[i]をもとめる。
 		for(int i=0;i<pn;i++)
 		{
 			if(i==0) y[0]=r[0]/val2[0]; //式（3.77） 新
 			else
 			{
-			    double sum=0;
-			    for(int m=ptr2[i];m<ptr2[i+1]-1;m++)//対角成分は除くからptr[i+1]-1
-			    {
-			        sum+=val2[m]*y[ind2[m]];//式（3.78）
-			    }
-			    int m=ptr2[i+1]-1;
-			    y[i]=(r[i]-sum)/val2[m];
+				double sum=0;
+				for(int m=ptr2[i];m<ptr2[i+1]-1;m++)//対角成分は除くからptr[i+1]-1
+				{
+					sum+=val2[m]*y[ind2[m]];//式（3.78）
+				}
+				int m=ptr2[i+1]-1;
+				y[i]=(r[i]-sum)/val2[m];
 			}
 		}////y[i]がもとまった。
-	
+
 		/////////LDLt_r[i]を求める
 		for(int i=pn-1;i>=0;i--)
 		{
-		    double sum=0;
+			double sum=0;
 			for(int h=1;h<NUM[i];h++) sum+=VAL[i][h]*LDLt_r[IND[i][h]];
-			
-		    LDLt_r[i]=y[i]-D1[i]*sum;	
+
+			LDLt_r[i]=y[i]-D1[i]*sum;	
 		}
 		/////////////////*/
-	
+
 		for(int n=0;n<pn;n++) rLDLt_r+=r[n]*LDLt_r[n];
-		
+
 		beta=beta*rLDLt_r;
 		/////////////////*/
-		
+
 		///////////////////// P=r+beta*P
 		for(int n=0;n<pn;n++) P[n]=LDLt_r[n]+beta*P[n];//iccg
 	}
 	//cout<<"反復回数="<<count<<" time="<<(GetTickCount()-time)*0.001<<"/";
-		
+
 	delete [] AP;
 
 	delete [] y;
@@ -1244,27 +1244,37 @@ void iccg(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int numb
 //解は最終的にBのなかへ
 void gauss(double *matrix,double *B,int N)
 {
-	for(int k=0;k<N;k++)
+#ifdef _OPENMP
+#pragma omp parallel for
+	omp_set_num_threads(8);
+#endif
 	{
-		double akk=matrix[k*N+k];
-		
-		for(int i=0;i<N;i++)
+
+
+#ifdef _OPENMP
+#pragma omp for
+#endif
+		for(int k=0;k<N;k++)
 		{
-			if(i!=k)
+			double akk=matrix[k*N+k];
+
+			for(int i=0;i<N;i++)
 			{
-				double A=matrix[i*N+k]/akk;
-				//for(int j=0;j<N;j++)
-				for(int j=k;j<N;j++)
-				{					
-					matrix[i*N+j]-=A*matrix[k*N+j];
+				if(i!=k)
+				{
+					double A=matrix[i*N+k]/akk;
+					//for(int j=0;j<N;j++)
+					for(int j=k;j<N;j++)
+					{					
+						matrix[i*N+j]-=A*matrix[k*N+j];
+					}
+					B[i]-=A*B[k];
 				}
-				B[i]-=A*B[k];
 			}
 		}
+		for(int k=0;k<N;k++) B[k]/=matrix[k*N+k];
 	}
-	for(int k=0;k<N;k++) B[k]/=matrix[k*N+k];
 }
-
 
 
 //仮の速度および位置決定（46行）
@@ -1281,7 +1291,7 @@ void renewal_u_and_r_in_positive(vector<mpselastic> &PART,int fluid_number,int t
 	for(int D=0;D<DIMENSION;D++) old_U[D]=new double [fluid_number];//変更前の速度を記憶しておく
 
 	if(t==1) for(int i=0;i<fluid_number;i++)for(int D=0;D<DIMENSION;D++) previous_Un[D][i]=0;//t=1のときは初期化      
-			
+
 
 	//potential[D][i]を場合によってはゼロに初期化する
 	if(CON.get_dir_for_P()==1 || CON.get_dir_for_P()==3) //表面粒子の表面張力は圧力値として計算されているので,ここでは考慮しないよう初期化する
@@ -1299,9 +1309,9 @@ void renewal_u_and_r_in_positive(vector<mpselastic> &PART,int fluid_number,int t
 			if(PART[i].type==ELASTIC) vis=CON.Get_Silicone_vis();
 			else if(PART[i].type==MAGELAST || PART[i].type==MAGELAST2) vis=CON.Get_MRE_vis();
 			old_U[D][i]=PART[i].u[D];
-			
+
 			PART[i].u[D]+=dt*(vis *laplacian[D][i]+potential[D][i]+g[D]+F[D][i]/mass);
-			
+
 			//PART[i].u[D]=previous_Un[D][i]+dt*(vis*laplacian[D][i]+potential[D][i]+g[D]);//蛙とび法
 			speed+=PART[i].u[D]*PART[i].u[D];
 		}
@@ -1311,36 +1321,36 @@ void renewal_u_and_r_in_positive(vector<mpselastic> &PART,int fluid_number,int t
 
 	//位置更新
 	if(sw==ON) for(int i=0;i<fluid_number;i++) for(int D=0;D<d;D++) PART[i].r[D]+=dt*0.5*(PART[i].u[D]+old_U[D][i]);//台形則
-	
+
 }
 
 //速度発散計算関数（27行）
 double divergence(mpsconfig *CON,vector<mpselastic> &PART,int i,double n0)
 {
-    double W=0;										//粒子数密度
-    double R=CON->get_distancebp()*CON->get_re();	//影響半径
-    double div=0;									//発散の値
+	double W=0;										//粒子数密度
+	double R=CON->get_distancebp()*CON->get_re();	//影響半径
+	double div=0;									//発散の値
 
 	for(int k=0;k<PART[i].N;k++)
-    {    
-        int j=PART[i].NEI[k]; 
-        double X=PART[j].r[A_X]-PART[i].r[A_X];
+	{    
+		int j=PART[i].NEI[k]; 
+		double X=PART[j].r[A_X]-PART[i].r[A_X];
 		double Y=PART[j].r[A_Y]-PART[i].r[A_Y];
 		double Z=PART[j].r[A_Z]-PART[i].r[A_Z];
 		double dis=sqrt(X*X+Y*Y+Z*Z);
-			       
+
 		double w=kernel(R,dis);
-		
+
 		div+=(PART[j].u[A_X]-PART[i].u[A_X])*X*w/(dis*dis);
 		div+=(PART[j].u[A_Y]-PART[i].u[A_Y])*Y*w/(dis*dis);
 		div+=(PART[j].u[A_Z]-PART[i].u[A_Z])*Z*w/(dis*dis);
 		W+=w;
-    }
-    if(W!=0)
+	}
+	if(W!=0)
 	{
 		div*=CON->get_dimension()/W;
 	}
-    return div;
+	return div;
 }
 
 
@@ -1348,15 +1358,15 @@ double divergence(mpsconfig *CON,vector<mpselastic> &PART,int i,double n0)
 ///WLSM=Weighed Least Square Method：重み付き最小二乗法
 double divergence2(mpsconfig *CON,vector<mpselastic> &PART,int i)
 {
-    double div=0;//発散の値
+	double div=0;//発散の値
 	double le=CON->get_distancebp();
-	
+
 	double r=CON->get_re();
 	double R=r*le;
 	int d=CON->get_dimension();
 	int N=0;					//係数行列の元
 	int order=1;				//近似曲面のｵｰﾀﾞｰ。 1=線形 2=二次
-    
+
 	//係数行列の大きさの決定
 	if(d==2)
 	{
@@ -1383,26 +1393,26 @@ double divergence2(mpsconfig *CON,vector<mpselastic> &PART,int i)
 		for(int k=0;k<PART[i].N;k++)
 		{
 			int j=PART[i].NEI[k];
-			
+
 			double X=(PART[j].r[A_X]-PART[i].r[A_X])/le;// leで割るのは打ち切り誤差防止
 			double Y=(PART[j].r[A_Y]-PART[i].r[A_Y])/le;
 			double U=(PART[j].u[A_X]-PART[i].u[A_X]);
 			double V=(PART[j].u[A_Y]-PART[i].u[A_Y]);
 			double dis=sqrt(X*X+Y*Y);
-					
+
 			double w=1;
 			if(dis>1) w=1/(dis*dis*dis*dis);
-					
+
 			matrix[0]+=X*X*w;			//ΣXjwj
 			matrix[1]+=X*Y*w;		//ΣXjYjwj
 			matrix[3]+=Y*Y*w;			//ΣYjwj
-				
+
 			B1[0]+=U*X*w;//ΣujXjwj
 			B1[1]+=U*Y*w;//ΣujYjwj
 			B2[0]+=V*X*w;//ΣvjXjwj
 			B2[1]+=V*Y*w;//ΣvjYjwj
 		}
-			
+
 		matrix[2]=matrix[1];		//ΣXjYjwj
 		for(int n=0;n<N;n++)
 		{
@@ -1411,7 +1421,7 @@ double divergence2(mpsconfig *CON,vector<mpselastic> &PART,int i)
 		}
 
 		double determinant=matrix[0]*matrix[3]-matrix[1]*matrix[2];//行列式
-			
+
 		double dudx=(B1[0]*matrix[3]-matrix[1]*B1[1])/determinant;
 		double dvdy=(B2[1]*matrix[0]-matrix[2]*B2[0])/determinant;
 
@@ -1422,17 +1432,17 @@ double divergence2(mpsconfig *CON,vector<mpselastic> &PART,int i)
 		for(int k=0;k<PART[i].N;k++)
 		{
 			int j=PART[i].NEI[k];
-			
+
 			double X=(PART[j].r[A_X]-PART[i].r[A_X]);// leで割るのは打ち切り誤差防止
 			double Y=(PART[j].r[A_Y]-PART[i].r[A_Y]);
 			double U=(PART[j].u[A_X]-PART[i].u[A_X]);
 			double V=(PART[j].u[A_Y]-PART[i].u[A_Y]);
 			double dis=sqrt(X*X+Y*Y);
-					
+
 			double w=1;
 			//if(dis>1) w=r*r*r*r/(dis*dis*dis*dis);
 			if(dis>le) w=le*le*le*le/(dis*dis*dis*dis);
-					
+
 			matrix[0]+=X*X*w;			//ΣXjwj
 			matrix[1]+=X*Y*w;		//ΣXjYjwj
 			matrix[2]+=X*X*X*w;			//ΣXj^3wj
@@ -1445,12 +1455,12 @@ double divergence2(mpsconfig *CON,vector<mpselastic> &PART,int i)
 			matrix[12]+=X*X*X*X*w;			//ΣXj^4wj
 			matrix[13]+=X*X*X*Y*w;			//ΣXj^3Yjwj
 			matrix[14]+=X*X*Y*Y*w;			//ΣXj^2Yj^2wj
-	
+
 			matrix[19]+=X*Y*Y*Y*w;			//ΣXjYj^3wj
 
 			matrix[24]+=Y*Y*Y*Y*w;			//ΣYj^4wj
 
-				
+
 			B1[0]+=U*X*w;//ΣujXjwj
 			B1[1]+=U*Y*w;//ΣujYjwj
 			B1[2]+=U*X*X*w;//ΣujXj^2wj
@@ -1463,7 +1473,7 @@ double divergence2(mpsconfig *CON,vector<mpselastic> &PART,int i)
 			B2[3]+=V*X*Y*w;//ΣvjXjYjwj
 			B2[4]+=V*Y*Y*w;//ΣvjYj^2wj
 		}
-			
+
 		matrix[5]=matrix[1];		//ΣXjYjwj
 		matrix[7]=matrix[3];		//ΣXj^2Yjwj
 		matrix[8]=matrix[4];		//ΣXjYj^2wj
@@ -1489,9 +1499,9 @@ double divergence2(mpsconfig *CON,vector<mpselastic> &PART,int i)
 		double dudx=0;
 		double dvdy=0;
 		return_X_for5N(matrix,N,B1,B2,&dudx,&dvdy);//5次連立方程式の、解１，２を返す関数
-		
+
 		div=(dudx+dvdy);
-			
+
 	}
 	else if(d==3 && order==1)//3次元1次式
 	{
@@ -1519,7 +1529,7 @@ double divergence2(mpsconfig *CON,vector<mpselastic> &PART,int i)
 		///   ΣΔx2Δy   ΣΔxΔy2   ΣΔxΔyΔz ΣΔx3Δy    ΣΔxΔy3    ΣΔxΔyΔz2 ΣΔx2Δy2    ΣΔxΔy2Δz ΣΔx2ΔyΔz  g = ΣΔxΔyΔP
 		///   ΣΔxΔyΔz ΣΔy2Δz   ΣΔyΔz2   ΣΔx2ΔyΔz ΣΔy3Δz    ΣΔyΔz3    ΣΔxΔy2Δz  ΣΔy2Δz2   ΣΔxΔyΔz2  h = ΣΔyΔzΔP
 		///   ΣΔx2Δz   ΣΔxΔyΔz ΣΔxΔz2   ΣΔx3Δz    ΣΔxΔy2Δz  ΣΔxΔz3   ΣΔx2Δy Δz ΣΔxΔyΔz2 ΣΔx2Δz2    g = ΣΔxΔzΔP
-		
+
 		if(PART[i].N>8)
 		{
 			//div=calc_WLSM_divu_D3_order2(CON,PART,matrix,B1,B2,B3,i,9);
@@ -1542,7 +1552,7 @@ double divergence2(mpsconfig *CON,vector<mpselastic> &PART,int i)
 	delete [] B2;
 	delete [] B3;
 
-    return div;
+	return div;
 }
 
 //5次の連立方程式の解1,2を返す関数（24行）
@@ -1560,12 +1570,12 @@ void return_X_for5N(double *matrix,int N,double *B1,double *B2,double *dudx,doub
 
 	b1=B1[0];b2=B1[1];b3=B1[2];b4=B1[3];b5=B1[4];
 	c1=B2[0];c2=B2[1];c3=B2[2];c4=B2[3];c5=B2[4];
-	
+
 	double determinant=(a11*a22*a33*a44*a55-a11*a22*a33*a45*a54-a11*a22*a34*a43*a55+a11*a22*a34*a45*a53+a11*a22*a35*a43*a54-a11*a22*a35*a44*a53-a11*a23*a32*a44*a55+a11*a23*a32*a45*a54+a11*a23*a34*a42*a55-a11*a23*a34*a45*a52-a11*a23*a35*a42*a54+a11*a23*a35*a44*a52+a11*a24*a32*a43*a55-a11*a24*a32*a45*a53-a11*a24*a33*a42*a55+a11*a24*a33*a45*a52+a11*a24*a35*a42*a53-a11*a24*a35*a43*a52-a11*a25*a32*a43*a54+a11*a25*a32*a44*a53+a11*a25*a33*a42*a54-a11*a25*a33*a44*a52-a11*a25*a34*a42*a53+a11*a25*a34*a43*a52-a12*a21*a33*a44*a55+a12*a21*a33*a45*a54+a12*a21*a34*a43*a55-a12*a21*a34*a45*a53-a12*a21*a35*a43*a54+a12*a21*a35*a44*a53+a12*a23*a31*a44*a55-a12*a23*a31*a45*a54-a12*a23*a34*a41*a55+a12*a23*a34*a45*a51+a12*a23*a35*a41*a54-a12*a23*a35*a44*a51-a12*a24*a31*a43*a55+a12*a24*a31*a45*a53+a12*a24*a33*a41*a55-a12*a24*a33*a45*a51-a12*a24*a35*a41*a53+a12*a24*a35*a43*a51+a12*a25*a31*a43*a54-a12*a25*a31*a44*a53-a12*a25*a33*a41*a54+a12*a25*a33*a44*a51+a12*a25*a34*a41*a53-a12*a25*a34*a43*a51+a13*a21*a32*a44*a55-a13*a21*a32*a45*a54-a13*a21*a34*a42*a55+a13*a21*a34*a45*a52+a13*a21*a35*a42*a54-a13*a21*a35*a44*a52-a13*a22*a31*a44*a55+a13*a22*a31*a45*a54+a13*a22*a34*a41*a55-a13*a22*a34*a45*a51-a13*a22*a35*a41*a54+a13*a22*a35*a44*a51+a13*a24*a31*a42*a55-a13*a24*a31*a45*a52-a13*a24*a32*a41*a55+a13*a24*a32*a45*a51+a13*a24*a35*a41*a52-a13*a24*a35*a42*a51-a13*a25*a31*a42*a54+a13*a25*a31*a44*a52+a13*a25*a32*a41*a54-a13*a25*a32*a44*a51-a13*a25*a34*a41*a52+a13*a25*a34*a42*a51-a14*a21*a32*a43*a55+a14*a21*a32*a45*a53+a14*a21*a33*a42*a55-a14*a21*a33*a45*a52-a14*a21*a35*a42*a53+a14*a21*a35*a43*a52+a14*a22*a31*a43*a55-a14*a22*a31*a45*a53-a14*a22*a33*a41*a55+a14*a22*a33*a45*a51+a14*a22*a35*a41*a53-a14*a22*a35*a43*a51-a14*a23*a31*a42*a55+a14*a23*a31*a45*a52+a14*a23*a32*a41*a55-a14*a23*a32*a45*a51-a14*a23*a35*a41*a52+a14*a23*a35*a42*a51+a14*a25*a31*a42*a53-a14*a25*a31*a43*a52-a14*a25*a32*a41*a53+a14*a25*a32*a43*a51+a14*a25*a33*a41*a52-a14*a25*a33*a42*a51+a15*a21*a32*a43*a54-a15*a21*a32*a44*a53-a15*a21*a33*a42*a54+a15*a21*a33*a44*a52+a15*a21*a34*a42*a53-a15*a21*a34*a43*a52-a15*a22*a31*a43*a54+a15*a22*a31*a44*a53+a15*a22*a33*a41*a54-a15*a22*a33*a44*a51-a15*a22*a34*a41*a53+a15*a22*a34*a43*a51+a15*a23*a31*a42*a54-a15*a23*a31*a44*a52-a15*a23*a32*a41*a54+a15*a23*a32*a44*a51+a15*a23*a34*a41*a52-a15*a23*a34*a42*a51-a15*a24*a31*a42*a53+a15*a24*a31*a43*a52+a15*a24*a32*a41*a53-a15*a24*a32*a43*a51-a15*a24*a33*a41*a52+a15*a24*a33*a42*a51);
-	
+
 	*dudx=(b1*a22*a33*a44*a55-b1*a22*a33*a45*a54-b1*a22*a34*a43*a55+b1*a22*a34*a45*a53+b1*a22*a35*a43*a54-b1*a22*a35*a44*a53-b1*a23*a32*a44*a55+b1*a23*a32*a45*a54+b1*a23*a34*a42*a55-b1*a23*a34*a45*a52-b1*a23*a35*a42*a54+b1*a23*a35*a44*a52+b1*a24*a32*a43*a55-b1*a24*a32*a45*a53-b1*a24*a33*a42*a55+b1*a24*a33*a45*a52+b1*a24*a35*a42*a53-b1*a24*a35*a43*a52-b1*a25*a32*a43*a54+b1*a25*a32*a44*a53+b1*a25*a33*a42*a54-b1*a25*a33*a44*a52-b1*a25*a34*a42*a53+b1*a25*a34*a43*a52-a12*b2*a33*a44*a55+a12*b2*a33*a45*a54+a12*b2*a34*a43*a55-a12*b2*a34*a45*a53-a12*b2*a35*a43*a54+a12*b2*a35*a44*a53+a12*a23*b3*a44*a55-a12*a23*b3*a45*a54-a12*a23*a34*b4*a55+a12*a23*a34*a45*b5+a12*a23*a35*b4*a54-a12*a23*a35*a44*b5-a12*a24*b3*a43*a55+a12*a24*b3*a45*a53+a12*a24*a33*b4*a55-a12*a24*a33*a45*b5-a12*a24*a35*b4*a53+a12*a24*a35*a43*b5+a12*a25*b3*a43*a54-a12*a25*b3*a44*a53-a12*a25*a33*b4*a54+a12*a25*a33*a44*b5+a12*a25*a34*b4*a53-a12*a25*a34*a43*b5+a13*b2*a32*a44*a55-a13*b2*a32*a45*a54-a13*b2*a34*a42*a55+a13*b2*a34*a45*a52+a13*b2*a35*a42*a54-a13*b2*a35*a44*a52-a13*a22*b3*a44*a55+a13*a22*b3*a45*a54+a13*a22*a34*b4*a55-a13*a22*a34*a45*b5-a13*a22*a35*b4*a54+a13*a22*a35*a44*b5+a13*a24*b3*a42*a55-a13*a24*b3*a45*a52-a13*a24*a32*b4*a55+a13*a24*a32*a45*b5+a13*a24*a35*b4*a52-a13*a24*a35*a42*b5-a13*a25*b3*a42*a54+a13*a25*b3*a44*a52+a13*a25*a32*b4*a54-a13*a25*a32*a44*b5-a13*a25*a34*b4*a52+a13*a25*a34*a42*b5-a14*b2*a32*a43*a55+a14*b2*a32*a45*a53+a14*b2*a33*a42*a55-a14*b2*a33*a45*a52-a14*b2*a35*a42*a53+a14*b2*a35*a43*a52+a14*a22*b3*a43*a55-a14*a22*b3*a45*a53-a14*a22*a33*b4*a55+a14*a22*a33*a45*b5+a14*a22*a35*b4*a53-a14*a22*a35*a43*b5-a14*a23*b3*a42*a55+a14*a23*b3*a45*a52+a14*a23*a32*b4*a55-a14*a23*a32*a45*b5-a14*a23*a35*b4*a52+a14*a23*a35*a42*b5+a14*a25*b3*a42*a53-a14*a25*b3*a43*a52-a14*a25*a32*b4*a53+a14*a25*a32*a43*b5+a14*a25*a33*b4*a52-a14*a25*a33*a42*b5+a15*b2*a32*a43*a54-a15*b2*a32*a44*a53-a15*b2*a33*a42*a54+a15*b2*a33*a44*a52+a15*b2*a34*a42*a53-a15*b2*a34*a43*a52-a15*a22*b3*a43*a54+a15*a22*b3*a44*a53+a15*a22*a33*b4*a54-a15*a22*a33*a44*b5-a15*a22*a34*b4*a53+a15*a22*a34*a43*b5+a15*a23*b3*a42*a54-a15*a23*b3*a44*a52-a15*a23*a32*b4*a54+a15*a23*a32*a44*b5+a15*a23*a34*b4*a52-a15*a23*a34*a42*b5-a15*a24*b3*a42*a53+a15*a24*b3*a43*a52+a15*a24*a32*b4*a53-a15*a24*a32*a43*b5-a15*a24*a33*b4*a52+a15*a24*a33*a42*b5)/determinant;
 	*dudy=(a11*c2*a33*a44*a55-a11*c2*a33*a45*a54-a11*c2*a34*a43*a55+a11*c2*a34*a45*a53+a11*c2*a35*a43*a54-a11*c2*a35*a44*a53-a11*a23*c3*a44*a55+a11*a23*c3*a45*a54+a11*a23*a34*c4*a55-a11*a23*a34*a45*c5-a11*a23*a35*c4*a54+a11*a23*a35*a44*c5+a11*a24*c3*a43*a55-a11*a24*c3*a45*a53-a11*a24*a33*c4*a55+a11*a24*a33*a45*c5+a11*a24*a35*c4*a53-a11*a24*a35*a43*c5-a11*a25*c3*a43*a54+a11*a25*c3*a44*a53+a11*a25*a33*c4*a54-a11*a25*a33*a44*c5-a11*a25*a34*c4*a53+a11*a25*a34*a43*c5-c1*a21*a33*a44*a55+c1*a21*a33*a45*a54+c1*a21*a34*a43*a55-c1*a21*a34*a45*a53-c1*a21*a35*a43*a54+c1*a21*a35*a44*a53+c1*a23*a31*a44*a55-c1*a23*a31*a45*a54-c1*a23*a34*a41*a55+c1*a23*a34*a45*a51+c1*a23*a35*a41*a54-c1*a23*a35*a44*a51-c1*a24*a31*a43*a55+c1*a24*a31*a45*a53+c1*a24*a33*a41*a55-c1*a24*a33*a45*a51-c1*a24*a35*a41*a53+c1*a24*a35*a43*a51+c1*a25*a31*a43*a54-c1*a25*a31*a44*a53-c1*a25*a33*a41*a54+c1*a25*a33*a44*a51+c1*a25*a34*a41*a53-c1*a25*a34*a43*a51+a13*a21*c3*a44*a55-a13*a21*c3*a45*a54-a13*a21*a34*c4*a55+a13*a21*a34*a45*c5+a13*a21*a35*c4*a54-a13*a21*a35*a44*c5-a13*c2*a31*a44*a55+a13*c2*a31*a45*a54+a13*c2*a34*a41*a55-a13*c2*a34*a45*a51-a13*c2*a35*a41*a54+a13*c2*a35*a44*a51+a13*a24*a31*c4*a55-a13*a24*a31*a45*c5-a13*a24*c3*a41*a55+a13*a24*c3*a45*a51+a13*a24*a35*a41*c5-a13*a24*a35*c4*a51-a13*a25*a31*c4*a54+a13*a25*a31*a44*c5+a13*a25*c3*a41*a54-a13*a25*c3*a44*a51-a13*a25*a34*a41*c5+a13*a25*a34*c4*a51-a14*a21*c3*a43*a55+a14*a21*c3*a45*a53+a14*a21*a33*c4*a55-a14*a21*a33*a45*c5-a14*a21*a35*c4*a53+a14*a21*a35*a43*c5+a14*c2*a31*a43*a55-a14*c2*a31*a45*a53-a14*c2*a33*a41*a55+a14*c2*a33*a45*a51+a14*c2*a35*a41*a53-a14*c2*a35*a43*a51-a14*a23*a31*c4*a55+a14*a23*a31*a45*c5+a14*a23*c3*a41*a55-a14*a23*c3*a45*a51-a14*a23*a35*a41*c5+a14*a23*a35*c4*a51+a14*a25*a31*c4*a53-a14*a25*a31*a43*c5-a14*a25*c3*a41*a53+a14*a25*c3*a43*a51+a14*a25*a33*a41*c5-a14*a25*a33*c4*a51+a15*a21*c3*a43*a54-a15*a21*c3*a44*a53-a15*a21*a33*c4*a54+a15*a21*a33*a44*c5+a15*a21*a34*c4*a53-a15*a21*a34*a43*c5-a15*c2*a31*a43*a54+a15*c2*a31*a44*a53+a15*c2*a33*a41*a54-a15*c2*a33*a44*a51-a15*c2*a34*a41*a53+a15*c2*a34*a43*a51+a15*a23*a31*c4*a54-a15*a23*a31*a44*c5-a15*a23*c3*a41*a54+a15*a23*c3*a44*a51+a15*a23*a34*a41*c5-a15*a23*a34*c4*a51-a15*a24*a31*c4*a53+a15*a24*a31*a43*c5+a15*a24*c3*a41*a53-a15*a24*c3*a43*a51-a15*a24*a33*a41*c5+a15*a24*a33*c4*a51)/determinant;
-	
+
 }
 
 //divergence2における、3次元1次近似を行う関数（169行）
@@ -1583,7 +1593,7 @@ double calc_WLSM_divu_D3_order1(mpsconfig *CON,vector<mpselastic> &PART,double *
 	for(int k=0;k<PART[i].N;k++)
 	{
 		int j=PART[i].NEI[k];
-			
+
 		double X=(PART[j].r[A_X]-PART[i].r[A_X]);// leで割るのは打ち切り誤差防止
 		double Y=(PART[j].r[A_Y]-PART[i].r[A_Y]);
 		double Z=(PART[j].r[A_Z]-PART[i].r[A_Z]);
@@ -1591,20 +1601,20 @@ double calc_WLSM_divu_D3_order1(mpsconfig *CON,vector<mpselastic> &PART,double *
 		double V=(PART[j].u[A_Y]-PART[i].u[A_Y]);
 		double W=(PART[j].u[A_Z]-PART[i].u[A_Z]);
 		double dis=sqrt(X*X+Y*Y+Z*Z);
-					
+
 		double w=1;
 		if(dis>le) w=le*le*le*le/(dis*dis*dis*dis);
 		weight[k]=w;
-					
+
 		matrix[0]+=X*X*w;			//ΣXj^2wj
 		matrix[1]+=X*Y*w;		//ΣXjYjwj
 		matrix[2]+=X*Z*w;		//ΣXjZjwj
-					
+
 		matrix[4]+=Y*Y*w;			//ΣYj^2wj
 		matrix[5]+=Y*Z*w;		//ΣYjZjwj
 
 		matrix[8]+=Z*Z*w;			//ΣZj^2wj
-			
+
 		B1[0]+=U*X*w;//ΣfjXjwj
 		B1[1]+=U*Y*w;//ΣfjYjwj
 		B1[2]+=U*Z*w;//ΣfjZjwj
@@ -1617,7 +1627,7 @@ double calc_WLSM_divu_D3_order1(mpsconfig *CON,vector<mpselastic> &PART,double *
 		B3[1]+=W*Y*w;//ΣfjYjwj
 		B3[2]+=W*Z*w;//ΣfjZjwj
 	}
-			
+
 	matrix[3]=matrix[1];		//ΣXjYjwj
 	matrix[6]=matrix[2];		//ΣXjZjwj
 	matrix[7]=matrix[5];		//ΣYjZjwj
@@ -1628,7 +1638,7 @@ double calc_WLSM_divu_D3_order1(mpsconfig *CON,vector<mpselastic> &PART,double *
 	double dvdy=0;
 	double dwdz=0;
 	double determinant=(matrix[0]*matrix[4]*matrix[8]-matrix[0]*matrix[5]*matrix[7]-matrix[1]*matrix[3]*matrix[8]+matrix[1]*matrix[5]*matrix[6]+matrix[2]*matrix[3]*matrix[7]-matrix[2]*matrix[4]*matrix[6]);//行列式
-			
+
 	dudx=(B1[0]*matrix[4]*matrix[8]-B1[0]*matrix[5]*matrix[7]-matrix[1]*B1[1]*matrix[8]+matrix[1]*matrix[5]*B1[2]+matrix[2]*B1[1]*matrix[7]-matrix[2]*matrix[4]*B1[2])/determinant;
 	dvdy=(matrix[0]*B2[1]*matrix[8]-matrix[0]*matrix[5]*B2[2]-B2[0]*matrix[3]*matrix[8]+B2[0]*matrix[5]*matrix[6]+matrix[2]*matrix[3]*B2[2]-matrix[2]*B2[1]*matrix[6])/determinant;
 	dwdz=(matrix[0]*matrix[4]*B3[2]-matrix[0]*B3[1]*matrix[7]-matrix[1]*matrix[3]*B3[2]+matrix[1]*B3[1]*matrix[6]+B3[0]*matrix[3]*matrix[7]-B3[0]*matrix[4]*matrix[6])/determinant;
@@ -1651,14 +1661,14 @@ double calc_WLSM_divu_D3_order1(mpsconfig *CON,vector<mpselastic> &PART,double *
 		for(int L=0;L<9;L++) matrix[L]=matrix_val[L];//matrixを変更前に戻す
 	}
 	else B1[0]=0; //flagがOFFならどのみちdudxはゼロ。
-	
+
 	if(Yflag==ON)
 	{
 		gauss(matrix,B2,N);
 		for(int L=0;L<9;L++) matrix[L]=matrix_val[L];//matrixを変更前に戻す
 	}
 	else B2[1]=0;	//flagがOFFならどのみちdvdyはゼロ。
-	
+
 	if(Zflag==ON) gauss(matrix,B3,N);
 	else B3[2]=0;	//flagがOFFならどのみちdwdzはゼロ。
 
@@ -1724,7 +1734,7 @@ double calc_WLSM_divu_D3_order1_2(mpsconfig *CON,vector<mpselastic> &PART,double
 	for(int k=0;k<PART[i].N;k++)
 	{
 		int j=PART[i].NEI[k];
-			
+
 		double X=(PART[j].r[A_X]-PART[i].r[A_X]);// leで割るのは打ち切り誤差防止
 		double Y=(PART[j].r[A_Y]-PART[i].r[A_Y]);
 		double Z=(PART[j].r[A_Z]-PART[i].r[A_Z]);
@@ -1735,16 +1745,16 @@ double calc_WLSM_divu_D3_order1_2(mpsconfig *CON,vector<mpselastic> &PART,double
 		double V=(PART[j].u[A_Y]);
 		double W=(PART[j].u[A_Z]);
 		double dis=sqrt(X*X+Y*Y+Z*Z);
-					
+
 		double w=1;
 		if(dis>le) w=le*le*le*le/(dis*dis*dis*dis);
 		weight[k]=w;
-					
+
 		matrix[0]+=X*X*w;			//ΣXj^2wj
 		matrix[1]+=X*Y*w;		//ΣXjYjwj
 		matrix[2]+=X*Z*w;		//ΣXjZjwj
 		matrix[3]+=X*w;
-					
+
 		matrix[5]+=Y*Y*w;			//ΣYj^2wj
 		matrix[6]+=Y*Z*w;		//ΣYjZjwj
 		matrix[7]+=Y*w;
@@ -1753,7 +1763,7 @@ double calc_WLSM_divu_D3_order1_2(mpsconfig *CON,vector<mpselastic> &PART,double
 		matrix[11]+=Z*w;
 
 		matrix[15]+=w;
-			
+
 		B1[0]+=U*X*w;//ΣfjXjwj
 		B1[1]+=U*Y*w;//ΣfjYjwj
 		B1[2]+=U*Z*w;//ΣfjZjwj
@@ -1769,7 +1779,7 @@ double calc_WLSM_divu_D3_order1_2(mpsconfig *CON,vector<mpselastic> &PART,double
 		B3[2]+=W*Z*w;//ΣfjZjwj
 		B3[3]+=W*w;//Σfjwj
 	}
-			
+
 	matrix[4]=matrix[1];	
 	matrix[8]=matrix[2];		
 	matrix[9]=matrix[6];
@@ -1801,14 +1811,14 @@ double calc_WLSM_divu_D3_order1_2(mpsconfig *CON,vector<mpselastic> &PART,double
 		for(int L=0;L<16;L++) matrix[L]=matrix_val[L];//matrixを変更前に戻す
 	}
 	else for(int k=0;k<4;k++) B1[k]=0; //flagがOFFならどのみちdudxはゼロ。
-	
+
 	if(Yflag==ON)
 	{
 		gauss(matrix,B2,N);
 		for(int L=0;L<16;L++) matrix[L]=matrix_val[L];//matrixを変更前に戻す
 	}
 	else for(int k=0;k<4;k++) B2[k]=0;	//flagがOFFならどのみちdvdyはゼロ。
-	
+
 	if(Zflag==ON) gauss(matrix,B3,N);
 	else for(int k=0;k<4;k++) B3[k]=0;	//flagがOFFならどのみちdwdzはゼロ。
 
@@ -1835,7 +1845,7 @@ double calc_WLSM_divu_D3_order1_2(mpsconfig *CON,vector<mpselastic> &PART,double
 		double W=(PART[j].u[A_Z]);
 		double w=weight[k];
 		W+=w;
-		
+
 		err[A_X]=B1[0]*X+B1[1]*Y+B1[2]*Z+B1[3]-U;
 		err[A_Y]=B2[0]*X+B2[1]*Y+B2[2]*Z+B2[3]-V;
 		err[A_Z]=B3[0]*X+B3[1]*Y+B3[2]*Z+B3[3]-W;
@@ -1875,7 +1885,7 @@ double calc_WLSM_divu_D3_order2(mpsconfig *CON,vector<mpselastic> &PART,double *
 	for(int k=0;k<PART[i].N;k++)
 	{
 		int j=PART[i].NEI[k];
-		
+
 		double X=(PART[j].r[A_X]-PART[i].r[A_X]);
 		double Y=(PART[j].r[A_Y]-PART[i].r[A_Y]);
 		double Z=(PART[j].r[A_Z]-PART[i].r[A_Z]);
@@ -1883,7 +1893,7 @@ double calc_WLSM_divu_D3_order2(mpsconfig *CON,vector<mpselastic> &PART,double *
 		double V=(PART[j].u[A_Y]-PART[i].u[A_Y]);
 		double W=(PART[j].u[A_Z]-PART[i].u[A_Z]);
 		double dis=sqrt(X*X+Y*Y+Z*Z);
-						
+
 		double w=1;
 		if(dis>le) w=le*le*le*le/(dis*dis*dis*dis);//この式だとdis=Rのとき重みがゼロに近くなる
 		weight[k]=w;
@@ -1897,7 +1907,7 @@ double calc_WLSM_divu_D3_order2(mpsconfig *CON,vector<mpselastic> &PART,double *
 		matrix[6]+=X*X*Y*w;		//ΣXj^2Yjwj
 		matrix[7]+=X*Y*Z*w;		//ΣXjYjZjwj
 		matrix[8]+=X*X*Z*w;		//ΣXj^2Zjwj
-	
+
 		matrix[10]+=Y*Y*w;		
 		matrix[11]+=Y*Z*w;		
 		matrix[12]+=X*X*Y*w;		
@@ -1905,17 +1915,17 @@ double calc_WLSM_divu_D3_order2(mpsconfig *CON,vector<mpselastic> &PART,double *
 		matrix[14]+=Y*Z*Z*w;
 		matrix[15]+=X*Y*Y*w;
 		matrix[16]+=Y*Y*Z*w;
-						
+
 		matrix[20]+=Z*Z*w;			
 		matrix[23]+=Z*Z*Z*w;		
-					
+
 		matrix[30]+=X*X*X*X*w;
 		matrix[31]+=X*X*Y*Y*w;
 		matrix[32]+=X*X*Z*Z*w;	
 		matrix[33]+=X*X*X*Y*w;	
 		matrix[34]+=X*X*Y*Z*w;	
 		matrix[35]+=X*X*X*Z*w;	
-					
+
 		matrix[40]+=Y*Y*Y*Y*w;
 		matrix[41]+=Y*Y*Z*Z*w;
 		matrix[42]+=X*Y*Y*Y*w;
@@ -1959,7 +1969,7 @@ double calc_WLSM_divu_D3_order2(mpsconfig *CON,vector<mpselastic> &PART,double *
 		B3[6]+=W*X*Y*w;		//g
 		B3[7]+=W*Y*Z*w;		//h
 		B3[8]+=W*X*Z*w;		//i
-		
+
 	}
 	matrix[9]=matrix[1];		//ΣXjYjwj
 	matrix[17]=matrix[7];
@@ -2018,7 +2028,7 @@ double calc_WLSM_divu_D3_order2(mpsconfig *CON,vector<mpselastic> &PART,double *
 	matrix[80]=matrix[32];
 
 	for(int L=0;L<81;L++) matrix_val[L]=matrix[L];//行列の値を保存
-			
+
 	//行列をガウスの消去法で解く　解はBに格納される
 	int Xflag=OFF;
 	int Yflag=OFF;//ガウスの消去法をするかしないか。解行列がゼロならガウスの消去法したらだめ。
@@ -2086,7 +2096,7 @@ double calc_WLSM_divu_D3_order2(mpsconfig *CON,vector<mpselastic> &PART,double *
 	double dudx=B1[0];
 	double dvdy=B2[1];
 	double dwdz=B3[2];
-			
+
 	double div=dudx+dvdy+dwdz;
 
 	delete [] weight;
@@ -2117,7 +2127,7 @@ double calc_WLSM_divu_D3_order2_2(mpsconfig *CON,vector<mpselastic> &PART,double
 	for(int k=0;k<PART[i].N;k++)
 	{
 		int j=PART[i].NEI[k];
-		
+
 		double X=(PART[j].r[A_X]-PART[i].r[A_X]);
 		double Y=(PART[j].r[A_Y]-PART[i].r[A_Y]);
 		double Z=(PART[j].r[A_Z]-PART[i].r[A_Z]);
@@ -2125,7 +2135,7 @@ double calc_WLSM_divu_D3_order2_2(mpsconfig *CON,vector<mpselastic> &PART,double
 		double V=(PART[j].u[A_Y]-PART[i].u[A_Y]);
 		double W=(PART[j].u[A_Z]-PART[i].u[A_Z]);
 		double dis=sqrt(X*X+Y*Y+Z*Z);
-						
+
 		double w=1;
 		if(dis>le) w=le*le*le*le/(dis*dis*dis*dis);//この式だとdis=Rのとき重みがゼロに近くなる
 		weight[k]=w;
@@ -2140,7 +2150,7 @@ double calc_WLSM_divu_D3_order2_2(mpsconfig *CON,vector<mpselastic> &PART,double
 		matrix[7]+=X*Y*Z*w;		//ΣXjYjZjwj
 		matrix[8]+=X*X*Z*w;		//ΣXj^2Zjwj
 		matrix[9]+=X*w;		//ΣXj^2Zjwj
-	
+
 		matrix[11]+=Y*Y*w;		
 		matrix[12]+=Y*Z*w;		
 		matrix[13]+=X*X*Y*w;		
@@ -2149,20 +2159,20 @@ double calc_WLSM_divu_D3_order2_2(mpsconfig *CON,vector<mpselastic> &PART,double
 		matrix[16]+=X*Y*Y*w;
 		matrix[17]+=Y*Y*Z*w;
 		matrix[19]+=Y*w;
-					
+
 		matrix[22]+=Z*Z*w;			
 		matrix[23]+=X*X*Z*w;
 		matrix[24]+=Y*Y*Z*w;
 		matrix[25]+=Y*Y*Y*w;
 		matrix[29]+=Z*w;
-					
+
 		matrix[33]+=X*X*X*X*w;
 		matrix[34]+=X*X*Y*Y*w;
 		matrix[35]+=X*X*Z*Z*w;	
 		matrix[36]+=X*X*X*Y*w;	
 		matrix[37]+=X*X*Y*Z*w;	
 		matrix[38]+=X*X*X*Z*w;	
-					
+
 		matrix[44]+=Y*Y*Y*Y*w;
 		matrix[45]+=Y*Y*Z*Z*w;
 		matrix[46]+=X*Y*Y*Y*w;
@@ -2239,7 +2249,7 @@ double calc_WLSM_divu_D3_order2_2(mpsconfig *CON,vector<mpselastic> &PART,double
 	matrix[77]=matrix[54];
 	matrix[78]=matrix[56];
 	matrix[79]=matrix[12];
-	
+
 	for(int k=0;k<=7;k++) matrix[80+k]=matrix[8+10*k];//80～87要素
 	matrix[88]=matrix[35];
 	matrix[89]=matrix[20];
@@ -2252,7 +2262,7 @@ double calc_WLSM_divu_D3_order2_2(mpsconfig *CON,vector<mpselastic> &PART,double
 	B3[9]+=PART[i].u[A_Z];
 
 	for(int L=0;L<100;L++) matrix_val[L]=matrix[L];//行列の値を保存
-			
+
 	//行列をガウスの消去法で解く　解はBに格納される
 	int Xflag=OFF;
 	int Yflag=OFF;//ガウスの消去法をするかしないか。解行列がゼロならガウスの消去法したらだめ。
@@ -2320,7 +2330,7 @@ double calc_WLSM_divu_D3_order2_2(mpsconfig *CON,vector<mpselastic> &PART,double
 	double dudx=B1[0];
 	double dvdy=B2[1];
 	double dwdz=B3[2];
-			
+
 	double div=dudx+dvdy+dwdz;
 
 	delete [] weight;
@@ -2347,7 +2357,7 @@ int check_position(mpsconfig *CON,vector<mpselastic> &PART,int fluid_number,int 
 
 	vector<mpselastic>::iterator p,p0;//反復子
 	p0=PART.begin();
-	
+
 	for(int i=0;i<fluid_number;i++) 
 	{
 		flag[i]=ON;
@@ -2355,7 +2365,7 @@ int check_position(mpsconfig *CON,vector<mpselastic> &PART,int fluid_number,int 
 		else if(PART[i].r[A_Y]<Ymin || PART[i].r[A_Y]>Ymax) flag[i]=OFF;
 		else if(PART[i].r[A_Z]<Zmin || PART[i].r[A_Z]>Zmax) flag[i]=OFF;
 	}//flag[i]が求まった
-	
+
 	for(int i=0;i<fluid_number;i++) if(PART[i].N<=4) flag[i]=OFF;//周辺粒子数が少ない粒子も削除?
 
 	for(int i=0;i<fluid_number;i++) if(flag[i]==OFF) num++;
@@ -2373,14 +2383,14 @@ int check_position(mpsconfig *CON,vector<mpselastic> &PART,int fluid_number,int 
 				erase_id[count]=i;//消すべきidを記憶
 				count++;
 			}
-			
+
 		}
-	
+
 		for(int i=0;i<num;i++)
 		{
 			p=PART.begin();
 			p+=erase_id[i];
-			
+
 			PART.erase(p);
 			for(int j=i+1;j<num;j++)
 			{
@@ -2393,13 +2403,13 @@ int check_position(mpsconfig *CON,vector<mpselastic> &PART,int fluid_number,int 
 		//idがずれたから戻す
 		for(int i=0;i<(int) PART.size();i++) if(PART[i].ID!=i) PART[i].ID=i; 
 	}
-	
+
 	if(sw==ON)
 	{
 		cout<<"領域外粒子を探知 "<<num<<"個の粒子を消去--現在の粒子数="<<PART.size()<<endl;
 		*particle_number=*particle_number-num;
 	}
-	
+
 	delete [] flag;
 
 	return sw;
@@ -2445,10 +2455,10 @@ void modify_position(mpsconfig *CON,vector<mpselastic> &PART,int fluid_number,do
 				for(int D=0;D<DIMENSION;D++)
 				{
 					double dU=0.5*L/dt;	//変化すべき速度
-				//	PART[J].u[D]+=dL[D]/mindis*dU;
+					//	PART[J].u[D]+=dL[D]/mindis*dU;
 					PART[J].r[D]+=dL[D]/mindis*dU*dt;
 
-				//	PART[i].u[D]-=dL[D]/mindis*dU;
+					//	PART[i].u[D]-=dL[D]/mindis*dU;
 					PART[i].r[D]-=dL[D]/mindis*dU*dt;
 				}				
 			}
@@ -2461,7 +2471,7 @@ void modify_position(mpsconfig *CON,vector<mpselastic> &PART,int fluid_number,do
 				for(int D=0;D<DIMENSION;D++)
 				{
 					double dU=L/dt;	//変化すべき速度
-				//	PART[i].u[D]-=dL[D]/mindis*dU;
+					//	PART[i].u[D]-=dL[D]/mindis*dU;
 					PART[i].r[D]-=dL[D]/mindis*dU*dt;
 				}				
 			}
@@ -2526,7 +2536,7 @@ void check_initial_position(mpsconfig *CON,vector<mpselastic> &PART)
 	{
 		int flag=OFF;
 		for(int D=0;D<3;D++) if(PART[i].r[D]>=region[D][1] || PART[i].r[D]<=region[D][0]) flag=ON;
-		
+
 		if(flag==ON)	cout<<"error:解析領域外に初期粒子(id="<<i<<")が存在します x,y,z="<<PART[i].r[A_X]<<" "<<PART[i].r[A_Y]<<" "<<PART[i].r[A_Z]<<endl;
 	}
 }
@@ -2540,7 +2550,7 @@ void FEM3D(mpsconfig &CON, vector<mpselastic> &PART, double **F, int *static_nod
 	if(CON.get_EM_interval()==1 || t==1 || (t-1)%CON.get_EM_interval()==0){
 		FEM3D_calculation(CON, static_node, static_nelm, static_NODE, static_ELEM, t, TIME, PART, fluid_number, particle_number, dt, F);
 	}else{ //何ステップかに一度だけ電磁場計算を行う場合
-	
+
 		if(CON.get_dir_for_P()!=2 && CON.get_dir_for_P()!=3)//電磁力が圧力ディリクレ値のときはここでは計算しない
 		{
 			double F_val;
@@ -2573,26 +2583,26 @@ void initial_model_input(mpsconfig *CON, int *particle_number, double *TIME)
 		//モデル作成と全粒子数の計算。
 		set_initial_placement_using_MD(CON, particle_number);//set_initial_placement_using_MD(&CON,&particle_number);//分子動力学によるモデルセット。計算時間はかかるが、表面をきれいに表現
 	}
-    else if(CON->get_restart()==ON)
-    {
+	else if(CON->get_restart()==ON)
+	{
 		ifstream fin("number.dat");
 		if(!fin) cout<<"number.dat cannot be opened" <<endl;
 		fin.unsetf(ifstream::dec);
 		fin.setf(ifstream::skipws);
-    
+
 		fin>>*particle_number;
 		TIME=0;//fin>>*TIME;
 		fin.close();
 		cout<<"前回における解析を引き継ぎ"<<endl;
-    }
-	
-    cout<<"粒子数は"<<*particle_number<<endl;
+	}
+
+	cout<<"粒子数は"<<*particle_number<<endl;
 }
 
 //TetGenによるメッシュ生成
 void TetGenInterface(mpsconfig &CON, vector<mpselastic> &PART, double **F, int fluid_number, double dt, int t, int particle_number, double n0, double TIME)
 {
-	
+
 	vector<int>	flag_hyper;
 	flag_hyper.reserve(particle_number);
 
@@ -2613,10 +2623,10 @@ void TetGenInterface(mpsconfig &CON, vector<mpselastic> &PART, double **F, int f
 	/////////////////////////////////////////////////
 	if(CON.get_EM_interval()==1 || t==1 || (t-1)%CON.get_EM_interval()==0){
 
-			usingTetGen(CON,PART,F,fluid_number,particle_number,t,TIME); //delaun3D関係の変数は全て不要
+		usingTetGen(CON,PART,F,fluid_number,particle_number,t,TIME); //delaun3D関係の変数は全て不要
 
-			if(CON.get_Ferror()==ON){ //エラーなら
-				double F_val;
+		if(CON.get_Ferror()==ON){ //エラーなら
+			double F_val;
 			ifstream fin5("FEM_interval.dat");
 			if(!fin5) cout<<"cannot open FEM_interval.dat"<<endl;
 			fin5.unsetf(ifstream::dec);
@@ -2626,19 +2636,19 @@ void TetGenInterface(mpsconfig &CON, vector<mpselastic> &PART, double **F, int f
 			{
 				if(PART[i].type==MAGELAST)
 				{//MAGELAST
-						for(int D=0;D<3;D++)
-						{
-							fin5>>F_val;
-							F[D][i]+=F_val;//F[D][i]は宣言した直後にゼロセットしてある
-						}
+					for(int D=0;D<3;D++)
+					{
+						fin5>>F_val;
+						F[D][i]+=F_val;//F[D][i]は宣言した直後にゼロセットしてある
 					}
 				}
-			fin5.close();			
 			}
+			fin5.close();			
+		}
 	}
 	else
 	{ //何ステップかに一度だけ電磁場計算を行う場合
-	
+
 		if(CON.get_dir_for_P()!=2 && CON.get_dir_for_P()!=3)//電磁力が圧力ディリクレ値のときはここでは計算しない
 		{
 			double F_val;
@@ -2662,17 +2672,17 @@ void TetGenInterface(mpsconfig &CON, vector<mpselastic> &PART, double **F, int f
 		}
 	}
 	//////////////////////////////////////////////////*/
-/*	//電磁力プロット
+	/*	//電磁力プロット
 	plot_F(CON, PART, fluid_number,t);
 	if(CON.get_F_interval()>0)
 	{
-		if(t==1 || t%CON.get_F_interval()==0) plot_F_log(CON,PART,fluid_number,t);
+	if(t==1 || t%CON.get_F_interval()==0) plot_F_log(CON,PART,fluid_number,t);
 	}
 
 	//電磁力AVSファイル出力
 	if(CON.get_avs_eforce_interval()>0)
 	{
-		if(t==1 || t%CON.get_avs_eforce_interval()==0) plot_avs_eforce(CON,PART,fluid_number,t);
+	if(t==1 || t%CON.get_avs_eforce_interval()==0) plot_avs_eforce(CON,PART,fluid_number,t);
 	}//*/
 
 
@@ -2700,7 +2710,7 @@ void file_initialization()
 	//system("rmdir /s /q Speed");
 	//system("rmdir /s /q FluxContour");
 	//system("rmdir /s /q FluxAVS");
-	
+
 	//system("rmdir /s /q Residual");
 	//system("rmdir /s /q Pressure");
 	//system("rmdir /s /q Current");
@@ -2714,17 +2724,14 @@ void file_initialization()
 	//system("mkdir Residual");
 	//system("mkdir Pressure");
 	//system("mkdir Current");
-	
+
 	//超弾性
 	system("mkdir T");
-	system("mkdir p_T");
 	//system("mkdir dT");
 	system("mkdir p");
 	system("mkdir q");
 	system("mkdir g");
 	system("mkdir h");
-	system("mkdir p_G");
-	system("mkdir p_H");
 	//system("mkdir dg");
 	//system("mkdir h_lam");
 	system("mkdir lam");
@@ -2747,11 +2754,11 @@ void file_initialization()
 	//system("mkdir Position");
 	//system("mkdir Newton_raphson2");
 	ofstream init10("P.csv", ios::trunc);
-/*	ofstream init11("d_P.csv", ios::trunc);
+	/*	ofstream init11("d_P.csv", ios::trunc);
 	ofstream init12("h_P.csv", ios::trunc);*/
 	ofstream init13("lambda.csv", ios::trunc);
 	ofstream init14("pnd.csv", ios::trunc);
-/*	ofstream init15("E.csv", ios::trunc);
+	/*	ofstream init15("E.csv", ios::trunc);
 	ofstream init16("E_T.csv", ios::trunc);
 	ofstream init17("E_g.csv", ios ::trunc);
 	ofstream init18("E_W.csv", ios::trunc);
@@ -2782,11 +2789,11 @@ void file_initialization()
 	//init8.close();
 	//init9.close();
 	init10.close();
-/*	init11.close();
+	/*	init11.close();
 	init12.close();*/
 	init13.close();
 	init14.close();
-/*	init15.close();
+	/*	init15.close();
 	init16.close();
 	init17.close();
 	init18.close();
@@ -2806,75 +2813,75 @@ void file_initialization()
 }
 
 void Make_STL(){
-			double normal[368][3];
-			double cooda[368][3];
-			double coodb[368][3];
-			double coodc[368][3];
-			double normal_no[368][3];
-			double cood1[368][3];
-			double cood2[368][3];
-			double cood3[368][3];
-		/////////////////coordinate file///////////////
-		ifstream fin1("cood.txt");
-		if(!fin1) cout<<"cood.txt cannot be opened."<<endl;
-		fin1.unsetf(ifstream::dec);
-		fin1.setf(ifstream::skipws);
+	double normal[368][3];
+	double cooda[368][3];
+	double coodb[368][3];
+	double coodc[368][3];
+	double normal_no[368][3];
+	double cood1[368][3];
+	double cood2[368][3];
+	double cood3[368][3];
+	/////////////////coordinate file///////////////
+	ifstream fin1("cood.txt");
+	if(!fin1) cout<<"cood.txt cannot be opened."<<endl;
+	fin1.unsetf(ifstream::dec);
+	fin1.setf(ifstream::skipws);
 
-		for(int i=0;i<368;i++)
-		{       
-			for(int D=0;D<3;D++) fin1>>normal[i][D];
-			for(int D=0;D<3;D++) fin1>>cooda[i][D];
-			for(int D=0;D<3;D++) fin1>>coodb[i][D];
-			for(int D=0;D<3;D++) fin1>>coodc[i][D];
-			
-		}
-		fin1.close();	
-		//////////////////////////////////////////////////
-		/////////////////non coordinate file/////////////
-		ifstream fin2("noncood.txt");
-		if(!fin2) cout<<"noncood.txt cannot be opened."<<endl;
-		fin2.unsetf(ifstream::dec);
-		fin2.setf(ifstream::skipws);
-		for(int i=0;i<368;i++)
-		{       
-			for(int D=0;D<3;D++) fin2>>normal_no[i][D];
-			for(int D=0;D<3;D++) fin2>>cood1[i][D];
-			for(int D=0;D<3;D++) fin2>>cood2[i][D];
-			for(int D=0;D<3;D++) fin2>>cood3[i][D];
-			
-		}
-		fin2.close();	
-		//////////////////////////////////////////////////
+	for(int i=0;i<368;i++)
+	{       
+		for(int D=0;D<3;D++) fin1>>normal[i][D];
+		for(int D=0;D<3;D++) fin1>>cooda[i][D];
+		for(int D=0;D<3;D++) fin1>>coodb[i][D];
+		for(int D=0;D<3;D++) fin1>>coodc[i][D];
 
-		///////////////足し合わせ/////////////////////////
-		for(int i=0;i<368;i++){
-			for(int D=0;D<3;D++) cood1[i][D]+=cooda[i][D];
-			for(int D=0;D<3;D++) cood2[i][D]+=coodb[i][D];
-			for(int D=0;D<3;D++) cood3[i][D]+=coodc[i][D];
-		}
-		/////////////////////////////////////////////////
+	}
+	fin1.close();	
+	//////////////////////////////////////////////////
+	/////////////////non coordinate file/////////////
+	ifstream fin2("noncood.txt");
+	if(!fin2) cout<<"noncood.txt cannot be opened."<<endl;
+	fin2.unsetf(ifstream::dec);
+	fin2.setf(ifstream::skipws);
+	for(int i=0;i<368;i++)
+	{       
+		for(int D=0;D<3;D++) fin2>>normal_no[i][D];
+		for(int D=0;D<3;D++) fin2>>cood1[i][D];
+		for(int D=0;D<3;D++) fin2>>cood2[i][D];
+		for(int D=0;D<3;D++) fin2>>cood3[i][D];
 
-		////////////////STLファイル出力//////////////////
-		ofstream fout1("COIL.STL");
-		if(!fout1) cout<<"COIL.STL cannot be opened."<<endl;
-		fout1.precision(6);
-	
-		fout1<<"COIL"<<endl;
-		for(int i=0;i<368;i++)
-		{       
-			fout1<<"   facet normal";
-			for(int D=0;D<3;D++) fout1<<" "<<normal[i][D];
-			fout1<<endl<<"      outer loop"<<endl;
-			fout1<<"         vertex";
-			for(int D=0;D<3;D++) fout1<<" "<<cooda[i][D];
-			fout1<<endl<<"         vertex";
-			for(int D=0;D<3;D++) fout1<<" "<<coodb[i][D];
-			fout1<<endl<<"         vertex";
-			for(int D=0;D<3;D++) fout1<<" "<<coodc[i][D];
-			fout1<<endl<<"      endloop"<<endl;
-			fout1<<"   endfacet"<<endl;
-			
-		}
-		fout1.close();	
-		/////////////////////////////////////////////////
+	}
+	fin2.close();	
+	//////////////////////////////////////////////////
+
+	///////////////足し合わせ/////////////////////////
+	for(int i=0;i<368;i++){
+		for(int D=0;D<3;D++) cood1[i][D]+=cooda[i][D];
+		for(int D=0;D<3;D++) cood2[i][D]+=coodb[i][D];
+		for(int D=0;D<3;D++) cood3[i][D]+=coodc[i][D];
+	}
+	/////////////////////////////////////////////////
+
+	////////////////STLファイル出力//////////////////
+	ofstream fout1("COIL.STL");
+	if(!fout1) cout<<"COIL.STL cannot be opened."<<endl;
+	fout1.precision(6);
+
+	fout1<<"COIL"<<endl;
+	for(int i=0;i<368;i++)
+	{       
+		fout1<<"   facet normal";
+		for(int D=0;D<3;D++) fout1<<" "<<normal[i][D];
+		fout1<<endl<<"      outer loop"<<endl;
+		fout1<<"         vertex";
+		for(int D=0;D<3;D++) fout1<<" "<<cooda[i][D];
+		fout1<<endl<<"         vertex";
+		for(int D=0;D<3;D++) fout1<<" "<<coodb[i][D];
+		fout1<<endl<<"         vertex";
+		for(int D=0;D<3;D++) fout1<<" "<<coodc[i][D];
+		fout1<<endl<<"      endloop"<<endl;
+		fout1<<"   endfacet"<<endl;
+
+	}
+	fout1.close();	
+	/////////////////////////////////////////////////
 }

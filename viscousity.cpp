@@ -7,7 +7,8 @@ void calc_vis_f(mpsconfig &CON,vector<mpselastic>PART,vector<hyperelastic>&HYPER
 	double r=CON.get_h_dis();
 	int h_num=HYPER.size();
 	int d=3;
-	double mi=CON.get_hyper_density()*get_volume(&CON);
+	double mh=CON.get_hyper_density()*get_volume(&CON);
+	double ms=CON.get_silicone_density()*get_volume(&CON);
 	double lambda=calclambda(CON);
 
 	stringstream ss;
@@ -34,10 +35,19 @@ void calc_vis_f(mpsconfig &CON,vector<mpselastic>PART,vector<hyperelastic>&HYPER
 				if(dis<r)
 				{
 					double w=kernel4(r,dis);
-					p_vis[A_X]+=(HYPER[j].p[A_X]-HYPER[i].p[A_X])/mi*w;
-					p_vis[A_Y]+=(HYPER[j].p[A_Y]-HYPER[i].p[A_Y])/mi*w;
-					p_vis[A_Z]+=(HYPER[j].p[A_Z]-HYPER[i].p[A_Z])/mi*w;
-					
+
+					if(PART[i].toFEM==1)
+					{
+						p_vis[A_X]+=(HYPER[j].p[A_X]-HYPER[i].p[A_X])/mh*w;
+						p_vis[A_Y]+=(HYPER[j].p[A_Y]-HYPER[i].p[A_Y])/mh*w;
+						p_vis[A_Z]+=(HYPER[j].p[A_Z]-HYPER[i].p[A_Z])/mh*w;
+					}else
+					{
+						p_vis[A_X]+=(HYPER[j].p[A_X]-HYPER[i].p[A_X])/ms*w;
+						p_vis[A_Y]+=(HYPER[j].p[A_Y]-HYPER[i].p[A_Y])/ms*w;
+						p_vis[A_Z]+=(HYPER[j].p[A_Z]-HYPER[i].p[A_Z])/ms*w;
+					}
+
 					p_lambda+=(qij[A_X]*qij[A_X]+qij[A_Y]*qij[A_Y]+qij[A_Z]*qij[A_Z])*w;
 					pnd+=w;
 				}

@@ -298,6 +298,7 @@ class mpsconfig
 	int flag_GRAVITY;
 	int flag_vis;
 	double hyper_density;
+	double silicone_density;
 	double c01;
 	double c10;
 	double h_dis;
@@ -594,6 +595,7 @@ public:
 	int get_flag_G(){return flag_GRAVITY;}
 	int get_flag_vis(){return flag_vis;}
 	double get_hyper_density(){return hyper_density;}
+	double get_silicone_density(){return silicone_density;}
 	double get_c10(){return c10;}
 	double get_c01(){return c01;}
 	double get_h_dis(){return h_dis;}

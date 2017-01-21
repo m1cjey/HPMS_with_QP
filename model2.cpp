@@ -1158,7 +1158,7 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 	///////////////////////////////////////////モデル21　超弾性体///////////////////////////////////////////////////////////
 	else if(model==21)	//越塚先生先行研究の角柱
 	{
-		double height=3;//4;//3;//18;//3;////4
+		double height=18;//4;//3;//18;//3;////4
 		double base=3;//4;//48
 
 		for(int i=0;i<base;i++)
@@ -1167,13 +1167,11 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 			{
 				for(int k=0;k<height;k++)
 				{
-					//writedata2(fq,number,(i-(base-1)/2)*le,(j-(base-1)/2)*le,(k-(height-1)/2)*le,HYPERELAST,1,ON,0,0,0,0,0,0,0,0,0,1);
-					writedata2(fq,number,(i-(base-1)/2)*le,(j-(base-1)/2)*le,(k+0.1)*le,HYPERELAST,1,ON,0,0,0,0,0,0,0,0,0,1);
+					writedata2(fq,number,(i-(base-1)/2)*le, (j-(base-1)/2)*le, (k-(height-1)/2)*le, HYPERELAST, 1,ON,0,0,0,0,0,0,0,0,0,1);
 					number++;
 				}
 			}
 		}
-
 		/*		 int number2=0;
 		double w_b=27;
 		double w_h=3;
@@ -1260,15 +1258,19 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 	/////////////////////////////////////////////////////////////////////////////
 	else if(model==22)	//越塚先生先行研究の円筒型
 	{
-		double height=0.5;	//単位：cm
-		double r0=3.5;	//直径
 
-		int Nh=height/le;
+		//double height=2./3.e-3;	//単位：cm
+		//double r0=35.e-3;	//直径
+
+
+		double height=9.e-3;	//4.0e-3;//10./3.*1.e-3;	//4.0e-3;	//単位：cm
+		double r0=30.e-3;	//直径
+
+		int Nh=height/le+1;
 		int Nd=r0*0.5/le;
-
 		double r=0.;
 		int Nr=0;	//PI*r0/le;
-		double dr=0.;
+		double d_the=0.;
 		double theta=0.;
 		double x,y,z=0.;
 
@@ -1276,63 +1278,189 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 
 		for(int k=0;k<Nh;k++)
 		{
-			X.push_back(0);
-			Y.push_back(0);
-			Z.push_back(k);
-			number++;
-
-			for(int i=0;i<Nd;i++)
+			if(k%2==1)
 			{
-				r=(i+1)*le;
-				Nr=(int)2*r*PI/le;
-				for(int j=0;j<Nr;j++)
-				{
-					theta=2*PI/Nr*j;
-					x=(i+1)*cos(theta);
-					y=(i+1)*sin(theta);
+				//X.push_back(0);
+				//Y.push_back(0);
+				//Z.push_back(k);
+				//number++;
+				X.push_back(0);
+				Y.push_back(0);
+				Z.push_back(k);
+				number++;
 
-					X.push_back(x);
-					Y.push_back(y);
-					Z.push_back(k);
-					number++;
+
+				//for(int i=0;i<Nd+2;i++)
+				for(int i=0;i<Nd;i++)
+				{
+
+					//r=(r0/le/(r0/le+3)*(i+2+r0*0.5/le)-r0*0.5/le)*le;
+					r=(i+1)*le;
+					d_the=2.*asin(0.5*le/r);
+					Nr=(int)2*PI/d_the;
+					//Nr=(int)2*r*PI/le;
+					for(int j=0;j<Nr;j++)
+					{
+						theta=2*PI/Nr*j;
+						x=r/le*cos(theta);
+						y=r/le*sin(theta);
+
+						X.push_back(x);
+						Y.push_back(y);
+						Z.push_back(k);
+						number++;
+					}
 				}
 			}
+			else
+			{
+				X.push_back(0);
+				Y.push_back(0);
+				Z.push_back(k);
+				number++;
+				//for(int i=0;i<Nd+2;i++)
+				for(int i=0;i<Nd;i++)
+				{
+					//r=(i+1.)*r0*0.5/(r0*0.5/le+2.);
+					r=(i+1)*le;
+					d_the=2.*asin(0.5*le/r);
+					Nr=(int)2*PI/d_the;
+					//Nr=(int)2*r*PI/le;
+					for(int j=0;j<Nr;j++)
+					{
+						theta=2*PI/Nr*j+PI/Nr;
+						x=r/le*cos(theta);
+						y=r/le*sin(theta);
+
+						X.push_back(x);
+						Y.push_back(y);
+						Z.push_back(k);
+						number++;
+					}
+				}
+			}
+			//if(k%2==0)
+			//{
+			//	X.push_back(0+0.001);
+			//	Y.push_back(0+0.001);
+			//	Z.push_back(k);
+			//	number++;
+			//	for(int i=0;i<Nd;i++)
+			//	{
+			//		if(i%2==0)	r=(i+1)*le;
+			//		else
+			//		{
+			//			r=(i+1)*le*1.001;
+			//		}
+			//		Nr=(int)2*r*PI/le;
+			//		for(int j=0;j<Nr;j++)
+			//		{
+			//			theta=2*PI/Nr*j+PI/Nr;
+			//			x=(i+1)*cos(theta);
+			//			y=(i+1)*sin(theta);
+
+			//			X.push_back(x);
+			//			Y.push_back(y);
+			//			Z.push_back(k);
+			//			number++;
+			//		}
+			//	}
+			//}
+			//else
+			//{
+			//	X.push_back(0-0.001);
+			//	Y.push_back(0-0.001);
+			//	Z.push_back(k);
+			//	number++;
+			//	for(int i=0;i<Nd;i++)
+			//	{
+			//		if(i%2==0)	r=(i+1)*le;
+			//		else
+			//		{
+			//			r=(i+1)*le*1.001;
+			//		}
+			//		Nr=(int)2*r*PI/le;
+			//		for(int j=0;j<Nr;j++)
+			//		{
+			//			theta=2*PI/Nr*j;
+			//			x=(i+1)*cos(theta);
+			//			y=(i+1)*sin(theta);
+
+			//			X.push_back(x);
+			//			Y.push_back(y);
+			//			Z.push_back(k);
+			//			number++;
+			//		}
+			//	}
+			//}
 		}
 		for(int i=0;i<number;i++)
 		{
-			writedata2(fq,i,X[i]*le,Y[i]*le,Z[i]*le,ELASTIC,1,ON,0,0,0,0,0,0,0,0,0,0);
+			writedata2(fq,i,X[i]*le,Y[i]*le,(Z[i])*le,HYPERELAST,1,ON,0,0,0,0,0,0,0,0,0,1);
 		}
-		int number_E=number;
-		for(int k=0;k<Nh;k++)
-		{
-			X.push_back(0);
-			Y.push_back(0);
-			Z.push_back(k);
-			number++;
+		int  number2=0;
+		//for(int k=0;k<Nh*2-1;k++)
+		//{
+		//	if(k%2==1)
+		//	{
+		//		//X2.push_back(0);
+		//		//Y2.push_back(0);
+		//		//Z2.push_back(k);
+		//		//number2++;
+		//		//for(int i=0;i<Nd+2;i++)
+		//		for(int i=0;i<Nd;i++)
+		//		{
+		//			r=(i+1)*le;
+		//			//r=(r0/le/(r0/le+3)*(i+2+r0*0.5/le)-r0*0.5/le)*le;
+		//			d_the=2.*asin(0.5*le/r);
+		//			Nr=(int)2*PI/d_the;
+		//			//Nr=(int)2*r*PI/le;
+		//			for(int j=0;j<Nr;j++)
+		//			{
+		//				theta=2*PI/Nr*j+PI/Nr;
+		//				x=r/le*cos(theta);
+		//				y=r/le*sin(theta);
 
-			for(int i=0;i<Nd;i++)
-			{
-				r=(i+1)*le;
-				Nr=(int)2*r*PI/le;
-				for(int j=0;j<Nr;j++)
-				{
-					theta=2*PI/Nr*j;
-					x=(i+1)*cos(theta);
-					y=(i+1)*sin(theta);
+		//				X2.push_back(x);
+		//				Y2.push_back(y);
+		//				Z2.push_back(k);
+		//				number2++;
+		//			}
+		//		}
+		//	}
+		//	else
+		//	{
+		//		X2.push_back(0);
+		//		Y2.push_back(0);
+		//		Z2.push_back(k);
+		//		number2++;
+		//		//for(int i=0;i<Nd+2;i++)
+		//		for(int i=0;i<Nd;i++)
+		//		{
+		//			r=(i+1)*le;
+		//			//r=r0*(i+1.)*0.5/(r0*0.5/le+2.);
+		//			d_the=2.*asin(0.5*le/r);
+		//			Nr=(int)2*PI/d_the;
+		//			//Nr=(int)2*r*PI/le;
+		//			for(int j=0;j<Nr;j++)
+		//			{
+		//				theta=2*PI/Nr*j;
+		//				x=r/le*cos(theta);
+		//				y=r/le*sin(theta);
 
-					X.push_back(x);
-					Y.push_back(y);
-					Z.push_back(k);
-					number++;
-				}
-			}
-		}
-		for(int i=number_E;i<number;i++)
-		{
-			writedata2(fq,i,X[i]*le,Y[i]*le,(Z[i]+Nh)*le,HYPERELAST,1,ON,0,0,0,0,0,0,0,0,0,1);
-		}
-
-
+		//				X2.push_back(x);
+		//				Y2.push_back(y);
+		//				Z2.push_back(k);
+		//				number2++;
+		//			}
+		//		}
+		//	}
+		//}
+		//for(int i=0;i<number2;i++)
+		//{
+		//	writedata2(fq,i+number,X2[i]*le,Y2[i]*le,(Z2[i]/2)*le,ELASTIC,1,ON,0,0,0,0,0,0,0,0,0,0);
+		//}
+		//number+=number2;
 
 
 		//double r1=1;
@@ -1378,11 +1506,6 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 		//		number++;
 		//	}
 		//}
-
-		for(int i=0;i<number;i++)
-		{
-			writedata2(fq,i,X[i]*le,Y[i]*le,Z[i]*le,HYPERELAST,1,ON,0,0,0,0,0,0,0,0,0,0);
-		}
 		cout<<"model完成\n";
 	}
 	///////////////////////////////////////

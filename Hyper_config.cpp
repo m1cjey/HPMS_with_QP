@@ -23,6 +23,8 @@ hyperelastic::hyperelastic()
 	W_n=0;
 	fw=0;
 	W0=0;
+	Ef=0.;
+	E0=0.;
 
 	for(int D=0;D<DIMENSION;D++)
 	{

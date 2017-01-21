@@ -207,6 +207,8 @@ void check_FEM_flag(mpsconfig &CON, elastic &ELAST, double ave_P);
 
 //超弾性
 void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t,double **F);
+void calc_hyper(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t,double **F,int Nw);
+void hyper_initial(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int Nw);
 void calc_HYPER_QP_gh(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t,double **F,vector<double > NEIw);
 void calc_HYPER_QP_g(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t,double **F);
 double calc_det3(double **M);
@@ -224,6 +226,6 @@ void force_movie_AVS(mpsconfig *CON,int t,vector<mpselastic> &PART,int particle_
 
 //磁気モーメント法
 void Magnetic_Moment_Method(mpsconfig &CON,vector<mpselastic>&PART,double **F,double n0,double lamda,int fluid_number,int particle_number, double current_time, int t);
-void Magnetic_Moment_Methodv2(mpsconfig &CON,vector<mpselastic> &PART,double **F,double n0,double lamda,int fluid_number,int particle_number, double current_time, int t);
+void Magnetic_Moment_Methodv2(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,double **F,double n0,double lamda,int fluid_number,int particle_number, double current_time, int t);
 void Magnetic_Moment_Methodv2_mag2(mpsconfig &CON,vector<mpselastic> &PART,double **F,double n0,double lamda,int fluid_number,int particle_number, double current_time, int t);
 
