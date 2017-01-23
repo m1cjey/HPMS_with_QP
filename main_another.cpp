@@ -175,9 +175,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	ofstream pt("PART_model.dat");
 	for(int i=0;i<PART.size();i++)	pt<<PART[i].r[A_Y]<<PART[i].r[A_Z]<<endl;
 	pt.close();
-	int Nw=0;
-	if(CON.get_flag_HYPER()==ON)	hyper_initial(CON,PART,HYPER,HYPER1,Nw);
 
+	int Nw=0;
+	if(CON.get_flag_HYPER()==ON)	hyper_initial(CON,PART,HYPER,HYPER1, &Nw);
+	//cout<<"Nw="<<Nw<<endl;
 	double L=0;
 	double W=100;
 	double P=0;

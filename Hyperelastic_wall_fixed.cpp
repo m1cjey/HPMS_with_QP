@@ -1,7 +1,7 @@
 #include "stdafx.h"	
 
 //諸定義
-void hyper_initial(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> HYPER1,int Nw);
+//void hyper_initial(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> HYPER1,int *Nw);
 void calc_half_p(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> HYPER1,bool repetation,double **F,int Nw);
 void renew_lambda(mpsconfig &CON,vector<mpselastic>PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> HYPER1,int t);
 void calc_differential_p(mpsconfig &CON,vector<mpselastic>PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> HYPER1,double **F);
@@ -10,7 +10,7 @@ void calc_stress(mpsconfig &CON,vector<hyperelastic> &HYPER);
 void calc_constant(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1);
 void newton_raphson(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int t,double **F,int Nw);
 void calc_F(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1);
-void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> HYPER1,double *lambda,double *fx,double *DfDx,int hyper_number,int count,int t,double **F,double *hp_x,double *hp_y,double *hp_z,int Nw);
+void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> HYPER1,double *lambda,double *XX_old,double *fx,double *DfDx,int hyper_number,int count,int t,double **F,double *hp_x,double *hp_y,double *hp_z,int Nw);
 void previous_strage(vector<mpselastic>PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int h_num);
 void calc_W(mpsconfig &CON,vector<hyperelastic> &HYPER,int h_num);
 
@@ -27,14 +27,14 @@ void iccg2(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int num
 void CG3D(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int number,double *X);
 void GaussSeidelvh(double *A, int pn, double *b,double ep);
 
-void hyper_initial(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int Nw)
+void hyper_initial(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> &HYPER1,int *Nw)
 {
 	int h_num=HYPER.size();
 	double Dt=CON.get_dt();
 	double mh=CON.get_hyper_density()*get_volume(&CON);
 	double ms=CON.get_silicone_density()*get_volume(&CON);
 	double V=get_volume(&CON);
-	Nw=0;
+	int Nw_p=0;
 
 	for(int i=0;i<h_num;i++)
 	{
@@ -43,10 +43,14 @@ void hyper_initial(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> 
 			PART[i].q0[D]=0.;
 			PART[i].q0[D]=PART[i].r[D];
 		}
-		if(PART[i].q0[A_Z]>-1.e-20&&PART[i].q0[A_Z]<1.e-20)	HYPER[i].fw=1;
-		Nw++;
+		if(PART[i].q0[A_Z]>-1.e-20&&PART[i].q0[A_Z]<1.e-20)
+		{
+			HYPER[i].fw=1;
+			Nw_p++;
+		}
 	}
-
+	*Nw=Nw_p;
+	//cout<<"Nw="<<Nw_p<<endl;
 	//ofstream fm("h_min.csv");
 	//for(int i=0;i<h_num;i++)
 	//{
@@ -538,16 +542,11 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> 
 #ifdef _OPENMP
 #pragma omp for
 #endif
-			for(int i=0; i<h_num; i++)
-			{
-				XX_old[i]=XX[i];	//解を記憶
-				//HYPER[i].flag_wall=OFF;			
-			}
 
 
 			//		if(count==1)	for(int i=0;i<h_num;i++)	for(int j=0;j<h_num;j++)	for(int D=0;D<DIMENSION;D++)	HYPER1[i*h_num+j].newton_DgDq[D]=HYPER1[i*N+j].DgDq[D];
 
-			calc_newton_function(CON,PART,HYPER,HYPER1,XX,fx,DfDx,h_num,count,t,F,hp_x,hp_y,hp_z,Nw);
+			calc_newton_function(CON,PART,HYPER,HYPER1,XX,XX_old,fx,DfDx,h_num,count,t,F,hp_x,hp_y,hp_z,Nw);
 
 
 			/*		//現在の関数値を求める
@@ -704,7 +703,7 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> 
 		cout<<"---------- OK"<<endl;
 	}
 }
-void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> HYPER1,double *lambda,double *fx,double *DfDx,int hyper_number,int count,int t,double **F,double *hp_x,double *hp_y,double *hp_z, int Nw)
+void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> &HYPER,vector<hyperelastic2> HYPER1,double *lambda,double *XX_old,double *fx,double *DfDx,int hyper_number,int count,int t,double **F,double *hp_x,double *hp_y,double *hp_z, int Nw)
 {
 
 
@@ -736,11 +735,23 @@ void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperela
 		////位置座標の更新	
 		double p_half_p[DIMENSION]={0,0,0};
 
+
+#ifdef _OPENMP
+#pragma omp for
+#endif
+		for(int i=0; i<Nw; i++)
+		{
+			XX_old[i]=lambda[i];	//解を記憶
+			//HYPER[i].flag_wall=OFF;			
+		}
+
 #ifdef _OPENMP
 #pragma omp for
 #endif
 		for(int i=Nw;i<h_num;i++)
 		{
+			XX_old[i]=lambda[i];	//解を記憶
+
 			//half_pの計算
 			p_half_p[A_X]=0.;
 			p_half_p[A_Y]=0.;
@@ -3358,7 +3369,7 @@ void CG3D(mpsconfig *CON,double *val,int *ind,int *ptr,int pn,double *B,int numb
 void GaussSeidelvh(double *A, int pn, double *b,double ep)
 {
 
-		double tmp;
+	double tmp;
 	double e = 0.0;
 	double *x=new double [pn];
 	for(int k = 0; k < 10000; k++){
