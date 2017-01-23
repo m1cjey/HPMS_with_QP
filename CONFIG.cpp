@@ -195,7 +195,7 @@ mpsconfig::mpsconfig()
 	J_input_way=0;			//電流密度入手方法 0:OFF 1:自分 2:ソフト
 	J0=0.0;//100;//180000000;		//強制電流密度[A/m2]
 	I0=450.0;//200; mA?
-	RP=2.0;//2//1.5;//1.28;	//比透磁率
+	RP=2.680487046;	//2//1.5;//1.28;	//比透磁率
 	ele_conduc=1e7;			//電気伝導率
 	Hz=10;			//周波数
 	div_Hz=4;				//１周期の分割数(解析精度) 4の倍数がいい 40?
@@ -328,13 +328,13 @@ mpsconfig::mpsconfig()
 	flag_HYPER=ON;
 	flag_GRAVITY=ON;
 	hyper_density=1554.354;///1829.53;//磁性エラストマー30%vol:2970; シリコーン         //water:997.04  エタノール:798[kg/m3]
-	silicone_density=1000;980.0;
+	silicone_density=1000;	//980.0;
 	c10=30000;//30000;
 	c01=20000;//20000;
 	h_dis=1.9*distancebp;
 	//h_vis=100;
 	flag_vis=ON;
-	nr_time=5000;	//15/2/8
+	nr_time=10000;	//15/2/8
 }
 
 
