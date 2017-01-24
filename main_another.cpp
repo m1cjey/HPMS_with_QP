@@ -291,6 +291,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		//		if(CON.get_flag_vis()==ON)	calc_vis_f(CON,PART,HYPER,HYPER1,hyper_number,t);
 
 		//í¥íeê´åvéZ
+		//if(CON.get_flag_HYPER()==ON)	calc_hyper(CON,PART,HYPER,HYPER1,t,F);//ifï™ÇÃí«â¡15/2/10
 		if(CON.get_flag_HYPER()==ON)	calc_hyper(CON,PART,HYPER,HYPER1,t,F,Nw);//ifï™ÇÃí«â¡15/2/10
 		//if(CON.get_flag_HYPER()==ON)	calc_HYPER_QP_g(CON,PART,HYPER,HYPER1,t,F);
 		cout<<"hyper_calculation is ended."<<endl;

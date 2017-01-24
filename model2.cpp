@@ -1158,16 +1158,16 @@ void set_initial_placement_using_MD(mpsconfig *CON,int *particle_number)
 	///////////////////////////////////////////モデル21　超弾性体///////////////////////////////////////////////////////////
 	else if(model==21)	//越塚先生先行研究の角柱
 	{
-		double height=18;//4;//3;//18;//3;////4
+		double height=3;//4;//3;//18;//3;////4
 		double base=3;//4;//48
 
-		for(int i=0;i<base;i++)
+		for(int k=0;k<height;k++)
 		{
-			for(int j=0;j<base;j++)
+			for(int i=0;i<base;i++)
 			{
-				for(int k=0;k<height;k++)
+				for(int j=0;j<base;j++)
 				{
-					writedata2(fq,number,(i-(base-1)/2)*le, (j-(base-1)/2)*le, (k-(height-1)/2)*le, HYPERELAST, 1,ON,0,0,0,0,0,0,0,0,0,1);
+					writedata2(fq,number,(i-(base-1)/2)*le, (j-(base-1)/2)*le, /*(k-(height-1)/2)*/k*le, HYPERELAST, 1,ON,0,0,0,0,0,0,0,0,0,1);
 					number++;
 				}
 			}

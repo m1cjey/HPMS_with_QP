@@ -20,7 +20,7 @@ mpsconfig::mpsconfig()
 	fin.close();*/
 	
 	step=1e6;				//全step数	step=20000;//40000;	//30000;//10000;;	//79*20+1;7
-	switch_FEM=true;		//FEMを実行するかしないか false
+	switch_FEM=false;		//FEMを実行するかしないか false
 	nonlinear_elastic=false;	//弾性体非線形計算するかtrue
 	switch_vis=OFF;			//粘性項計算するかしないか・・・これはあとで消す
 	FEMCG=2;				//FEMにおける行列解法 0:CG 1:ICCG 2:並列ICCG 3:MRTR 4:ICMRTR
@@ -42,7 +42,7 @@ mpsconfig::mpsconfig()
 	ave_P_for_FEM_flag=8000000000;//80.0;//75.0;//70.0;
 
 //モデル
-	model_number=22;			//4:引っ張り試験片 7:MREアクチュエータ 12:剛体
+	model_number=21;			//4:引っ張り試験片 7:MREアクチュエータ 12:剛体
 	model_set_way=1;		//modelをセットする方法　0=正方格子 1=MD
 
 
@@ -79,7 +79,6 @@ mpsconfig::mpsconfig()
 	MRE_density=1826;          //water:997.04  エタノール:798[kg/m3]
 	Silicone_density=980;
 	flag_modify_density=OFF;	//密度補償するかどうか
-	nensei=0.8; //[Pa・s]//water:0.001 エタノール:0.001084 nensei 8.0
 	sigma=0.07196;			//water:0.07196 エタノール:0.02361 SUS404:1.85 表面張力係数
 	Cp=640/10;     			//water:4.2[kJ/(kg・K)] 鋼:800J SUS404:645J/(kgK)　
 	k=28;       			//water:0.6[W/(m・K)] //熱伝導率
@@ -329,12 +328,14 @@ mpsconfig::mpsconfig()
 	flag_GRAVITY=ON;
 	hyper_density=1554.354;///1829.53;//磁性エラストマー30%vol:2970; シリコーン         //water:997.04  エタノール:798[kg/m3]
 	silicone_density=1000;	//980.0;
-	c10=30000;//30000;
+	c10=4621.012789;	//30000;		//実験値：4621.012789;	//30000;
 	c01=20000;//20000;
 	h_dis=1.9*distancebp;
 	//h_vis=100;
 	flag_vis=ON;
 	nr_time=10000;	//15/2/8
+	nensei=800*1.e6/hyper_density; //[Pa・s]//water:0.001 エタノール:0.001084 nensei 8.0
+
 }
 
 
