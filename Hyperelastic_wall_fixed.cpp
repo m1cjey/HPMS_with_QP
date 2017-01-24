@@ -492,7 +492,7 @@ void newton_raphson(mpsconfig &CON,vector<mpselastic> PART,vector<hyperelastic> 
 #ifdef _OPENMP
 #pragma omp for
 #endif
-		for(int i=Nw;i<h_num;i++)
+		for(int i=0;i<h_num;i++)
 		{
 			//half_pの計算
 			p_half_p[A_X]=0.;
@@ -764,9 +764,9 @@ void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperela
 			//位置座標の計算
 			PART[i].r[A_X]=HYPER[i].q_n[A_X]+Dt*(hp_x[i]+Dt*0.5*p_half_p[A_X])/mh;
 			PART[i].r[A_Y]=HYPER[i].q_n[A_Y]+Dt*(hp_y[i]+Dt*0.5*p_half_p[A_Y])/mh;
-			//PART[i].r[A_Z]=HYPER[i].q_n[A_Z]+Dt*(hp_z[i]+Dt*0.5*p_half_p[A_Z])/mh;
+			PART[i].r[A_Z]=HYPER[i].q_n[A_Z]+Dt*(hp_z[i]+Dt*0.5*p_half_p[A_Z])/mh;
 			//fx[i]=(PART[i].r[A_X]-PART[i].q0[A_X])*(PART[i].r[A_X]-PART[i].q0[A_X])+(PART[i].r[A_Y]-PART[i].q0[A_Y])*(PART[i].r[A_Y]-PART[i].q0[A_Y])+(PART[i].r[A_Z]-PART[i].q0[A_Z])*(PART[i].r[A_Z]-PART[i].q0[A_Z]);
-			fx[i]=0.;
+			fx[i]=PART[i].r[A_X]-PART[i].q0[A_X]+PART[i].r[A_Y]-PART[i].q0[A_Y]+PART[i].r[A_Z]-PART[i].q0[A_Z];
 			//PART[i].r[A_X]=PART[i].q0[A_X];
 			//PART[i].r[A_Y]=PART[i].q0[A_Y];
 			PART[i].r[A_Z]=PART[i].q0[A_Z];
@@ -1111,32 +1111,32 @@ void calc_newton_function(mpsconfig &CON,vector<mpselastic> PART,vector<hyperela
 		double DgDq_ji[DIMENSION]={0,0,0};
 		double DgDq_ii[DIMENSION]={0,0,0};
 
-//#ifdef _OPENMP
-//#pragma omp for
-//#endif
-		//for(int i=0;i<Nw;i++)
-		//{
-		//	int Ni=HYPER[i].N;
+#ifdef _OPENMP
+#pragma omp for
+#endif
+		for(int i=0;i<Nw;i++)
+		{
+			int Ni=HYPER[i].N;
 
-		//	DgDq_ii[A_X]=HYPER1[i*h_num+i].DgDq_n[A_X];
-		//	DgDq_ii[A_Y]=HYPER1[i*h_num+i].DgDq_n[A_Y];
-		//	DgDq_ii[A_Z]=HYPER1[i*h_num+i].DgDq_n[A_Z];
+			DgDq_ii[A_X]=HYPER1[i*h_num+i].DgDq_n[A_X];
+			DgDq_ii[A_Y]=HYPER1[i*h_num+i].DgDq_n[A_Y];
+			DgDq_ii[A_Z]=HYPER1[i*h_num+i].DgDq_n[A_Z];
 
-		//	for(int j=0;j<Ni;j++)
-		//	{
-		//		int jn=HYPER[i].NEI[j];
-		//		DgDq_ji[A_X]=HYPER1[jn*h_num+i].DgDq_n[A_X];
-		//		DgDq_ji[A_Y]=HYPER1[jn*h_num+i].DgDq_n[A_Y];
-		//		DgDq_ji[A_Z]=HYPER1[jn*h_num+i].DgDq_n[A_Z];
+			for(int j=0;j<Ni;j++)
+			{
+				int jn=HYPER[i].NEI[j];
+				DgDq_ji[A_X]=HYPER1[jn*h_num+i].DgDq_n[A_X];
+				DgDq_ji[A_Y]=HYPER1[jn*h_num+i].DgDq_n[A_Y];
+				DgDq_ji[A_Z]=HYPER1[jn*h_num+i].DgDq_n[A_Z];
 
-		//		DfDx[i*h_num+jn]+=-Dt*Dt/mi*(DgDq_ji[A_X]*(PART[i].r[A_X]-PART[i].q0[A_X])+DgDq_ji[A_Y]*(PART[i].r[A_Y]-PART[i].q0[A_Y])+DgDq_ji[A_Z]*(PART[i].r[A_Z]-PART[i].q0[A_Z]));
-		//		//DfDx[i*h_num+jn]+=-Dt*Dt/mi*(DgDq_ji[A_X]+DgDq_ji[A_Y]+DgDq_ji[A_Z]);
-		//		//cout<<"DfDx"<<jn<<"_"<<i<<"="<<DfDx[jn*h_num+i]<<endl;
-		//	}//*/
-		//	DfDx[i*h_num+i]+=-Dt*Dt/mi*(DgDq_ii[A_X]*(PART[i].r[A_X]-PART[i].q0[A_X])+DgDq_ii[A_Y]*(PART[i].r[A_Y]-PART[i].q0[A_Y])+DgDq_ii[A_Z]*(PART[i].r[A_Z]-PART[i].q0[A_Z]));
-		//	//cout<<"DfDx"<<i<<"_"<<i<<"="<<DfDx[i*h_num+i]<<endl;
-		//}
-		///*
+				//DfDx[i*h_num+jn]+=-Dt*Dt/mi*(DgDq_ji[A_X]*(PART[i].r[A_X]-PART[i].q0[A_X])+DgDq_ji[A_Y]*(PART[i].r[A_Y]-PART[i].q0[A_Y])+DgDq_ji[A_Z]*(PART[i].r[A_Z]-PART[i].q0[A_Z]));
+				DfDx[i*h_num+jn]+=-0.5*Dt*Dt/mi*(DgDq_ji[A_X]+DgDq_ji[A_Y]+DgDq_ji[A_Z]);
+				//cout<<"DfDx"<<jn<<"_"<<i<<"="<<DfDx[jn*h_num+i]<<endl;
+			}//*/
+			DfDx[i*h_num+i]+=-0.5*Dt*Dt/mi*(DgDq_ii[A_X]+DgDq_ii[A_Y]+DgDq_ii[A_Z]);
+			//DfDx[i*h_num+i]+=-Dt*Dt/mi*(DgDq_ii[A_X]*(PART[i].r[A_X]-PART[i].q0[A_X])+DgDq_ii[A_Y]*(PART[i].r[A_Y]-PART[i].q0[A_Y])+DgDq_ii[A_Z]*(PART[i].r[A_Z]-PART[i].q0[A_Z]));
+			//cout<<"DfDx"<<i<<"_"<<i<<"="<<DfDx[i*h_num+i]<<endl;
+		}
 		//double *part_fx=new double [h_num];
 		//double *w_DfDx=new double [h_num*h_num];
 		//double *w_fx=new double [h_num];
@@ -1300,11 +1300,11 @@ void calc_half_p(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &H
 				PART[i].r[A_Z]=HYPER[i].q_n[A_Z]+Dt*HYPER[i].half_p[A_Z]/mi;
 
 				//位置座標の更新
-				if(i<Nw)
-				{
-					HYPER[i].half_p[A_Z]=0.;
-					PART[i].r[A_Z]=PART[i].q0[A_Z];
-				}
+				//if(i<Nw)
+				//{
+				//	HYPER[i].half_p[A_Z]=0.;
+				//	PART[i].r[A_Z]=PART[i].q0[A_Z];
+				//}
 
 			}
 			//}
@@ -1366,7 +1366,7 @@ void calc_half_p(mpsconfig &CON,vector<mpselastic> &PART,vector<hyperelastic> &H
 				HYPER[i].p[A_X]=HYPER[i].half_p[A_X]+Dt*0.5*p_half_p[A_X];
 				HYPER[i].p[A_Y]=HYPER[i].half_p[A_Y]+Dt*0.5*p_half_p[A_Y];
 				HYPER[i].p[A_Z]=HYPER[i].half_p[A_Z]+Dt*0.5*p_half_p[A_Z];////
-				if(i<Nw)	HYPER[i].p[A_Z]=0.;
+				//if(i<Nw)	HYPER[i].p[A_Z]=0.;
 
 				//速度の更新
 				PART[i].u[A_X]=HYPER[i].half_p[A_X]/mi;
